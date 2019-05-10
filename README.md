@@ -1,13 +1,23 @@
-<h2>circRNAprofiler</h2>
 
-<p>circRNAprofiler: an R-based computational framework to study circRNA molecules</p>
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+circRNAprofiler: an R-based computational framework to explore expression, genomic context, and function of circular RNAs
+=========================================================================================================================
 
-For further information, please have a look at the Vignettes.</p>
+circRNAprofiler is an R-based framework that that only requires an R installation and offers 15 modules for a comprehensive in silico analysis of circRNAs. This computational framework allows to combine and analyze circRNAs previously detected by multiple publicly available annotation-based circRNA detection tools. It covers different aspects of circRNAs analysis from differential expression analysis, evolutionary conservation, biogenesis to functional analysis.
+The pipeline used by circRNAprofiler is highly automated and customizable, different species and genome assemblies can be used. Furthermore, circRNAprofiler includes additional plotting functions for the visualization of the data which facilitate the interpretation of the results.
 
-<h2>Installation</h2>
-You can use devtools to install the development version. To do so:
+Installation
+------------
 
-if(!require('devtools')) install.packages('devtools')
+You can install the released version of circRNAprofiler using the devtools package. To do so:
+
+``` r
+install.packages("devtools")
 library(devtools)
-install_github('Aufiero/circRNAprofiler')
+install_github("Aufiero/circRNAprofiler")
+```
 
+Documentation
+-------------
+
+Detiled information on using this package can be found in the package vignettes.
