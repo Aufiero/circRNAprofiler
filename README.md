@@ -21,3 +21,12 @@ Documentation
 -------------
 
 Detiled information on using this package can be found in the package vignettes.
+
+``` r
+browseVignettes("circRNAprofiler")
+```
+
+Bugs and Issues
+---------------
+
+We work hard to ensure that circRNAprofiler is a powerful tool empowering your research. However, no software is free of bugs and issues, therefore we would love to get feedback from our users.
