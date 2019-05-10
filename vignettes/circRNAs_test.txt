@@ -1,0 +1,3 @@
+chrom	gene	strand	startUpBSE	endDownBSE	coverage
+chr15	ABHD2	+	89656956	89659752	35
+chr19	AGTPBP1	-	88248289	88190230	40

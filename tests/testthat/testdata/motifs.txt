@@ -1,0 +1,5 @@
+id	motif	length
+p1	UUCU	4
+p1	UCUU	4
+p2	AGAG	4
+p2	GAGA	4

@@ -1,0 +1,9 @@
+label	fileName	condition
+wt1	circRNAs_002.txt	A
+wt2	circRNAs_005.txt	A
+wt3	circRNAs_006.txt	A
+ko1	circRNAs_001.txt	B
+ko2	circRNAs_003.txt	B
+ko3	circRNAs_004.txt	B
+
+

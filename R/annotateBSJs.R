@@ -1,0 +1,628 @@
+#' @title Annotate circRNA features
+#'
+#' @description The function annotateBSJs() annotates the circRNA structure
+#' and the introns flanking the corresponding back-spliced junctions.
+#' The features are extrated from the user provided gene annotation.
+#'
+#' @param backSplicedJunctions A data frame containing the back-spliced junction
+#' coordinates (e.g. detected or randomly selected).
+#' For detected back-spliced junctions see \code{\link{getBackSplicedJunctions}}
+#' and \code{\link{mergeBSJunctions}} (to group circRNAs detected by multiple
+#' detection tools). For randomly selected back-spliced junctions see
+#' \code{\link{getRandomBSJunctions}}
+#'
+#' @param gtf A data frame containing genome annotation information. It can be
+#' generated with \code{\link{formatGTF}}.
+#'
+#' @param isRandom A logical indicating whether the back-spliced junctions have
+#' been randomly generated with \code{\link{getRandomBSJunctions}}.
+#' Deafult value is FALSE.
+#'
+#' @param pathToTranscripts A string containing the path to the transcripts.txt
+#' file. The file transcripts.txt contains the transcript ids of the
+#' circRNA host gene to analyze. It must have one column with header id.
+#' By default pathToTranscripts is set to NULL and the file it is searched in
+#' the working directory. If transcripts.txt is located in a different directory
+#' then the path needs to be specified. If this file is empty or absent the
+#' longest transcript of the circRNA host gene containing the back-spliced
+#' junctions are considered in the annotation analysis.
+#'
+#' @return A data frame.
+#'
+#' @examples
+#' # Load a data frame containing detected back-spliced junctions
+#' data("mergedBSJunctions")
+#'
+#' # Load short version of the gencode v19 annotation file
+#' data("gtf")
+#'
+#' # Annotate the first 10 back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
+#'     isRandom = FALSE)
+#'
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_detect
+#' @import dplyr
+#' @importFrom rlang .data
+#' @importFrom utils read.table
+#'
+#' @export
+annotateBSJs <-
+    function(backSplicedJunctions,
+             gtf,
+             isRandom = FALSE,
+             pathToTranscripts = NULL) {
+        if (is.null(pathToTranscripts)) {
+            pathToTranscripts <- "transcripts.txt"
+        }
+
+        # Read from working directory
+        if (file.exists(pathToTranscripts) & !isRandom) {
+            transcriptsFromFile <-
+                utils::read.table(
+                    pathToTranscripts,
+                    stringsAsFactors = FALSE,
+                    header = TRUE,
+                    sep = "\t"
+                )
+            # colnames(transcriptsFromFile) <- "id"
+
+            # Read from path
+        } else {
+            transcriptsFromFile <- data.frame()
+        }
+
+        if (nrow(transcriptsFromFile) == 0 & !isRandom) {
+            cat(
+                "transcripts.txt is empty or absent. The longest
+                transcripts for all circRNAs will be analyzed"
+            )
+
+        }
+
+        # Remove rows where strand is not available.
+        # (Note: This step is done if the backSplicedJunctions data frame
+        # contains liftedover coordinates. In this case if the strand is NA
+        # means that the coordinates were not found in the new species:
+        # conversion failed)
+        backSplicedJunctions <-
+            backSplicedJunctions[!is.na(backSplicedJunctions$strand),]
+
+        # Check the validity and the content of the given backSplicedJunctions
+        # data frame
+        backSplicedJunctions <- checkBSJsDF(backSplicedJunctions)
+
+        # Create an empty data frame to store the extracted information
+        annotatedBSJs <-
+            data.frame(matrix(
+                nrow = nrow(backSplicedJunctions),
+                ncol = length(getAnnotatedBSJsColNames())
+            ))
+        colnames(annotatedBSJs) <- getAnnotatedBSJsColNames()
+
+        # Retrieve the longest isoform containing the back-spliced junction
+        # coordinates given in input. Considering that the back-spliced
+        # junctions coordinates might not exactly correspond to the start
+        # and the end coordinates of the exons in the transcript (due to a not
+        # perfect mapping of the back-spliced junction reads to that
+        # locations) we do not consider the last 2 values in the given
+        # back-spliced junctions coordinates to find the matching exons
+        # in the GTF file.
+        for (i in seq_along(backSplicedJunctions$id)) {
+            exJ1 <-
+                substr(backSplicedJunctions[i, "startUpBSE"],
+                       1,
+                       nchar(backSplicedJunctions[i, "startUpBSE"]) - 1)
+            exJ2 <-
+                substr(backSplicedJunctions[i, "endDownBSE"],
+                       1,
+                       nchar(backSplicedJunctions[i, "endDownBSE"]) - 1)
+            gene <- backSplicedJunctions$gene[i]
+
+            annotatedBSJs$id[i] <- backSplicedJunctions$id[i]
+            annotatedBSJs$gene[i] <- backSplicedJunctions$gene[i]
+            annotatedBSJs$strand[i] <-
+                backSplicedJunctions$strand[i]
+            annotatedBSJs$chrom[i] <- backSplicedJunctions$chrom[i]
+
+            # Retrieve all the trancripts containing the back-spliced exons
+            # junctions (exJ1 and exJ2). If the trancripts are not found it
+            # might be that the annotation file is different from the one used
+            # for mapping or it can be due to the circRNA prediction tool
+            # analysis. In both cases since the genomic features can
+            # not be extrated an NA value is reported.
+
+            allTranscripts <-
+                getAllTranscripts(gtf, gene, exJ1, exJ2)
+            if (!is.na(allTranscripts[1])) {
+                annotatedBSJs$allTranscripts[i] <-
+                    paste(allTranscripts, collapse = ",")
+
+
+                if (nrow(transcriptsFromFile) > 0 &
+                    any(transcriptsFromFile$id %in% allTranscripts)) {
+                    # Analyze the transcript specified by the user in
+                    # transcripts.txt
+                    index <-
+                        which(allTranscripts %in%  transcriptsFromFile$id)
+                    # In case multiple transcripts are given in input for
+                    # the same circRNA, the first is taken. Only one isoform
+                    # at the time can be analyzed.
+                    # For this reason index[1]
+                    annotatedBSJs$transcript[i] <-
+                        allTranscripts[index[1]]
+
+                } else{
+                    # The first transcript in allTranscript is the longest
+                    annotatedBSJs$transcript[i] <- allTranscripts[1]
+
+                }
+
+
+                # The isoform that is analyzed can be the longest isoform
+                # containing the BSJs or the isoform specified by the user
+                # in transcripts.txt
+                # TODO consider the exons to keep if this is known
+                transcriptToAnalyze <- gtf  %>%
+                    dplyr::filter(.data$transcript_id ==
+                                      annotatedBSJs$transcript[i]) %>%
+                    dplyr::arrange(.data$exon_number)
+
+                annotatedBSJs$totExons[i] <-
+                    nrow(transcriptToAnalyze)
+                # If the isoform is present then it retrieves the missing
+                # coordinates of the back-spliced exons
+                bsExons <- transcriptToAnalyze %>%
+                    dplyr::filter(
+                        stringr::str_detect(.data$start, exJ1) |
+                            stringr::str_detect(.data$end, exJ1) |
+                            stringr::str_detect(.data$start, exJ2) |
+                            stringr::str_detect(.data$end, exJ2)
+                    ) %>%
+                    dplyr::arrange(.data$exon_number)
+
+                # If only one exon is present then the row is duplicated.
+                # This step is only made to simplify the code below without
+                # introducing an additional if statment when a single
+                # back-spliced exon is present.
+                if (nrow(bsExons) == 1) {
+                    bsExons[2,] <- bsExons[1,]
+                }
+
+                # Fill the annotatedBSJs data frame with the coordinates of the
+                # back-spliced exons retrieved above, the exon numbers and
+                # calculates the number of exons in between the back-spliced
+                # junctions.
+                # For negative strand
+                if (bsExons$strand[1] == "-") {
+                    annotatedBSJs$startUpBSE[i] <- bsExons$end[1]
+                    annotatedBSJs$endUpBSE[i] <- bsExons$start[1]
+                    annotatedBSJs$startDownBSE[i] <- bsExons$end[2]
+                    annotatedBSJs$endDownBSE[i] <- bsExons$start[2]
+                    annotatedBSJs$exNumUpBSE[i] <-
+                        bsExons$exon_number[1]
+                    annotatedBSJs$exNumDownBSE[i] <-
+                        bsExons$exon_number[2]
+                    annotatedBSJs$numOfExons[i] <-
+                        length(c(bsExons$exon_number[1]:bsExons$exon_number[2]))
+
+                    # For negative strand
+                } else if (bsExons$strand[1] == "+") {
+                    annotatedBSJs$startUpBSE[i] <- bsExons$start[1]
+                    annotatedBSJs$endUpBSE[i] <- bsExons$end[1]
+                    annotatedBSJs$startDownBSE[i] <-
+                        bsExons$start[2]
+                    annotatedBSJs$endDownBSE[i] <- bsExons$end[2]
+                    annotatedBSJs$exNumUpBSE[i] <-
+                        bsExons$exon_number[1]
+                    annotatedBSJs$exNumDownBSE[i] <-
+                        bsExons$exon_number[2]
+                    annotatedBSJs$numOfExons[i] <-
+                        length(c(bsExons$exon_number[1]:bsExons$exon_number[2]))
+                }
+
+
+                # Retrieve the coordinates of the flanking introns
+                if (bsExons$exon_number[1] != 1 &
+                    bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
+                    # If the back-spliced exons are not the first and last exon
+                    # of the transcript
+                    intronCoords <-
+                        getFlankIntrons(transcriptToAnalyze, bsExons)
+                    annotatedBSJs$startUpIntron[i] <-
+                        intronCoords$startUpIntron
+                    annotatedBSJs$endUpIntron[i] <-
+                        intronCoords$endUpIntron
+                    annotatedBSJs$startDownIntron[i] <-
+                        intronCoords$startDownIntron
+                    annotatedBSJs$endDownIntron[i] <-
+                        intronCoords$endDownIntron
+
+                } else if (bsExons$exon_number[1] == 1 &
+                           bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
+                    # If one of the back-spliced exons is the first exon of the
+                    # transcript
+                    intronCoords <-
+                        getFlankIntronFirst(transcriptToAnalyze, bsExons)
+                    annotatedBSJs$startDownIntron[i] <-
+                        intronCoords$startDownIntron
+                    annotatedBSJs$endDownIntron[i] <-
+                        intronCoords$endDownIntron
+
+
+                } else if (bsExons$exon_number[2] == nrow(transcriptToAnalyze) &
+                           bsExons$exon_number[1] != 1) {
+                    # If one of the back-spliced exons is the last exon of the
+                    # transcript
+                    intronCoords <-
+                        getFlankIntronLast(transcriptToAnalyze, bsExons)
+                    annotatedBSJs$startUpIntron[i] <-
+                        intronCoords$startUpIntron
+                    annotatedBSJs$endUpIntron[i] <-
+                        intronCoords$endUpIntron
+                }
+
+
+                # Calculate circRNA length considering only the lenght of the
+                # exons in between the back-spliced junctions
+                lenCircRNA <-
+                    transcriptToAnalyze %>%
+                    dplyr::filter(.data$exon_number %in% c(bsExons$exon_number[1]:bsExons$exon_number[2])) %>%
+                    dplyr::summarise(lenCircRNA = sum(.data$width))
+
+                annotatedBSJs$lenCircRNA[i] <- lenCircRNA[[1]]
+
+
+            } else if (is.na(allTranscripts[1])) {
+                annotatedBSJs$startUpBSE[i] <-
+                    backSplicedJunctions$startUpBSE[i]
+                annotatedBSJs$endDownBSE[i] <-
+                    backSplicedJunctions$endDownBSE[i]
+            }
+        }
+
+        # Retrieve the length (bp) of the back-spliced exons and flanking
+        # introns by using their genomic coordinates
+        exInLength <- getLength(annotatedBSJs)
+
+        annotatedBSJs$lenUpIntron <- exInLength$lenUpIntron
+        annotatedBSJs$lenUpBSE <- exInLength$lenUpBSE
+        annotatedBSJs$lenDownBSE <- exInLength$lenDownBSE
+        annotatedBSJs$lenDownIntron <- exInLength$lenDownIntron
+        annotatedBSJs$meanLengthBSEs <- exInLength$meanLengthBSEs
+        annotatedBSJs$meanLengthIntrons <-
+            exInLength$meanLengthIntrons
+
+        # Return a data frame in which each row contains the genomic coordinates
+        # of the back-spliced exons, the corresponding flanking introns and
+        # their length in bp.
+        return(annotatedBSJs)
+    }
+
+
+#' @title Return column names
+#'
+#' @description The function getAnnotatedBSJsColNames() returns the column
+#' names.
+#'
+#' @return A character vector.
+#'
+#' @examples
+#' # Inner function.
+#' getAnnotatedBSJsColNames()
+#'
+#' @export
+getAnnotatedBSJsColNames <- function() {
+    basicColumns <- getBasicColNames()
+
+    annotatedBSJsColNames <-
+        c(
+            basicColumns[1],
+            basicColumns[2],
+            "allTranscripts",
+            "transcript",
+            "totExons",
+            basicColumns[3],
+            basicColumns[4],
+            c("startUpIntron",
+              "endUpIntron"),
+            basicColumns[5],
+            c("endUpBSE",
+              "startDownBSE"),
+            basicColumns[6],
+            c(
+                "startDownIntron",
+                "endDownIntron",
+                "exNumUpBSE",
+                "exNumDownBSE",
+                "numOfExons",
+                "lenUpIntron",
+                "lenUpBSE",
+                "lenDownBSE",
+                "lenDownIntron",
+                "meanLengthBSEs",
+                "meanLengthIntrons",
+                "lenCircRNA"
+            )
+        )
+
+    return(annotatedBSJsColNames)
+
+}
+
+
+#' @title Retrieve transcripts
+#'
+#' @description The function getAllTranscripts() retrieves all transcripts whose
+#' exon coordinates overlap that of the given back-spliced junctions.
+#'
+#' @param gtf A data frame containing genome annotation information,
+#' generated with \code{\link{formatGTF}}.
+#'
+#' @param gene A string specifying the gene name whose exon coordinates
+#' overlap that of the given back-spliced junctions.
+#'
+#' @param exJ1 A string specifying one of the two back-spliced junction
+#' coordinates.
+#'
+#' @param exJ2 A string specifying one of the two back-spliced junction
+#' coordinates.
+#'
+#' @return A data frame.
+#'
+#' @examples
+#' # Inner function.
+#'
+#' # Load short version of the gencode v19 annotation file
+#' data("gtf")
+#'
+#' allTranscripts <- getAllTranscripts(gtf, "SYCP2", "58497514", "58497445")
+#'
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_detect
+#' @import dplyr
+#' @importFrom rlang .data
+#'
+#' @export
+getAllTranscripts <- function(gtf, gene, exJ1, exJ2) {
+    # Find the isofom containing the back-spliced exon junction coordinates
+    #  given in input
+    start <- gtf %>%
+        dplyr::filter(.data$gene_name == gene,
+                      .data$type == "exon") %>%
+        dplyr::group_by(.data$transcript_id) %>%
+        dplyr::filter(
+            stringr::str_detect(.data$start, exJ1) |
+                stringr::str_detect(.data$start, exJ2)
+        )
+
+    # Find the isofom containing the back-spliced exon junction coordinates
+    # given in input
+    end <- gtf %>%
+        dplyr::filter(.data$gene_name == gene,
+                      .data$type == "exon") %>%
+        dplyr::group_by(.data$transcript_id) %>%
+        dplyr::filter(stringr::str_detect(.data$end, exJ1) |
+                          stringr::str_detect(.data$end, exJ2))
+
+    # Check whether the end and the start coordinates are present and
+    # if so take the the transcripts and sort by lenght. The first transcript
+    # will be the longest one
+    inter <- intersect(start$transcript_id, end$transcript_id)
+    . <- NULL   # satisfy R CMD check
+    if (length(inter) != 0) {
+        allTranscripts <- gtf %>%
+            dplyr::filter(.data$transcript_id %in% inter) %>%
+            dplyr::group_by(.data$transcript_id) %>%
+            dplyr::summarise(len = sum(.data$width)) %>%
+            dplyr::arrange(desc(.data$len)) %>%
+            .$transcript_id
+
+    } else{
+        # If one of the 2 back-spliced junction is not among the exons annotated
+        # in the gtf file given in input, it can be that a different gtf file
+        # has been used during the mapping procedure to idetified the circRNAs.
+        allTranscripts <-  NA_character_
+
+    }
+
+    # Return a data frame with the genomic coordinates of all the exons of
+    # the longest isoform containing the given back-spliced exon junction
+    # coordinates (exJ1 and exJ2)
+    return(allTranscripts)
+}
+
+
+#' @title Retrieve flanking intron coordinates
+#'
+#' @description The function getFlankIntrons() retrieves the genomic coordinates
+#' of the introns flanking the back-spliced exons given in input.
+#' This function is called when the back-spliced exons are not the first and
+#' last exon of the transcript.
+#'
+#' @param transcriptToAnalyze A data frame with the genomic coordinates of all
+#' exons present in the transcript whose exon coordinates overlap that
+#' of the given back-spliced junctions.
+#'
+#' @param bsExons A data frame with the back-spliced exon coordinates.
+#'
+#' @return A data frame.
+#'
+#' @examples
+#' # Inner function.
+#'
+#' # Load short version of the gencode v19 annotation file
+#' data("gtf")
+#'
+#' transcriptToAnalyze <- gtf[gtf$transcript_id== "ENST00000357552.3",]
+#' bsExons <- transcriptToAnalyze[c(2,3),]
+#'
+#' intronCoords <- getFlankIntrons(transcriptToAnalyze, bsExons)
+#'
+#' @import dplyr
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+#' @export
+getFlankIntrons <- function(transcriptToAnalyze, bsExons) {
+    # Create an empty data frame
+    intronCoords <- data.frame(matrix(
+        nrow = 1,
+        ncol = length(getAnnotatedBSJsColNames())
+    ))
+    colnames(intronCoords) <- getAnnotatedBSJsColNames()
+
+    # Retrieve the upstream and the downstream exons (adiacent exons) flanking
+    # the back-spliced given in input.
+    adiacentExons <- transcriptToAnalyze %>%
+        dplyr::filter(.data$exon_number %in% c(bsExons$exon_number[1] - 1,
+                                               bsExons$exon_number[2] + 1))
+
+    # Retrive the intron coordinates flanking the back-spliced exons given in
+    # input
+    # for positive strand
+    if (bsExons$strand[1] == "+") {
+        intronCoords$startUpIntron <- adiacentExons$end[1] + 1
+        intronCoords$endUpIntron <- bsExons$start[1] - 1
+        intronCoords$startDownIntron <- bsExons$end[2] + 1
+        intronCoords$endDownIntron <- adiacentExons$start[2] - 1
+
+        # for negative strand
+    } else if (bsExons$strand[1] == "-") {
+        intronCoords$startUpIntron <- adiacentExons$start[1] - 1
+        intronCoords$endUpIntron <- bsExons$end[1] + 1
+        intronCoords$startDownIntron <- bsExons$start[2] - 1
+        intronCoords$endDownIntron <- adiacentExons$end[2] + 1
+    }
+
+    return(intronCoords)
+
+}
+
+
+#' @title Retrieve flanking intron coordinates
+#'
+#' @description The function getFlankIntronFirst() retrieves the genomic
+#' coordinates of the introns flanking the back-spliced exons given in input.
+#' This function is called when one of the two back-spliced exons is the
+#' first of the transcript.
+#'
+#' @param transcriptToAnalyze A data frame with the genomic coordinates of all
+#' exons present in the transcript whose exon coordinates overlap that
+#' of the given back-spliced junctions.
+#'
+#' @param bsExons A data frame with the back-spliced exon coordinates.
+#'
+#' @return A data frame.
+#'
+#' @examples
+#' # Inner function.
+#'
+#' # Load short version of the gencode v19 annotation file
+#' data("gtf")
+#'
+#' transcriptToAnalyze <- gtf[gtf$transcript_id== "ENST00000357552.3",]
+#' bsExons <- transcriptToAnalyze[c(1,2),]
+#'
+#' intronCoords <- getFlankIntronFirst(transcriptToAnalyze, bsExons)
+#'
+#' @import dplyr
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+#' @export
+getFlankIntronFirst <- function(transcriptToAnalyze, bsExons) {
+    # Create an empty data frame with 1 row
+    intronCoords <- data.frame(matrix(
+        nrow = 1,
+        ncol = length(getAnnotatedBSJsColNames())
+    ))
+    colnames(intronCoords) <- getAnnotatedBSJsColNames()
+
+    # Retrieve the upstream and the downstream exons (adiacent exons) flanking
+    # the back-spliced exons given in input.
+    adiacentExons <- transcriptToAnalyze %>%
+        dplyr::filter(.data$exon_number ==
+                          bsExons$exon_number[2] + 1)
+
+    # Retrive the coordinates of the downstream intron.
+    # Since one of the exon is the first exon of the transcritpt the upstream
+    # introns is not available "NA"
+
+    # for positive strand
+    if (bsExons$strand[1] == "+") {
+        intronCoords$startDownIntron <- bsExons$end[2] + 1
+        intronCoords$endDownIntron <- adiacentExons$start[1] - 1
+
+
+        # for negative strand
+    } else if (bsExons$strand[1] == "-") {
+        intronCoords$startDownIntron <- bsExons$start[2] - 1
+        intronCoords$endDownIntron <- adiacentExons$end[1] + 1
+    }
+
+    return(intronCoords)
+
+}
+
+
+#' @title Retrieve flanking intron coordinates
+#'
+#' @description The function getFlankIntronLast() retrieves the coordinates of
+#' the introns flanking the back-spliced exons given in input.
+#' This function is called when one of the two back-spliced exons is the last
+#' of the transcript.
+#'
+#' @param transcriptToAnalyze A data frame with the genomic coordinates of all
+#' exons present in the transcript whose exon coordinates overlap that
+#' of the given back-spliced junctions.
+#'
+#' @param bsExons A data frame with the back-spliced exon coordinates.
+#'
+#' @return A data frame in which each row contains the coordinates of
+#' back-spliced exons and the corresponding flanking introns.
+#'
+#' @examples
+#' # Inner function.
+#'
+#' # Load short version of the gencode v19 annotation file
+#' data("gtf")
+#'
+#' transcriptToAnalyze <- gtf[gtf$transcript_id== "ENST00000357552.3",]
+#' bsExons <- transcriptToAnalyze[c(43,45),]
+#'
+#' intronCoords <- getFlankIntronLast(transcriptToAnalyze, bsExons)
+#'
+#' @import dplyr
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
+#' @export
+getFlankIntronLast <- function(transcriptToAnalyze, bsExons) {
+    # Create an empty data frame with 1 row
+    intronCoords <- data.frame(matrix(
+        nrow = 1,
+        ncol = length(getAnnotatedBSJsColNames())
+    ))
+    colnames(intronCoords) <- getAnnotatedBSJsColNames()
+
+    # Retrieve the upstream and the downstream exons (adiacent exons) flanking
+    # the back-spliced exons given in input.
+    adiacentExons <- transcriptToAnalyze %>%
+        dplyr::filter(.data$exon_number ==
+                          bsExons$exon_number[1] - 1)
+
+    # Retrive the coordinates of the upstream intron
+    # Since one the exon is the last exon of the transcritpt the downstream
+    # intron is not available "NA"
+
+    # For positive strand
+    if (bsExons$strand[1] == "+") {
+        intronCoords$startUpIntron <- adiacentExons$end[1] + 1
+        intronCoords$endUpIntron <- bsExons$start[1] - 1
+
+        # For negative strand
+    } else if (bsExons$strand[1] == "-") {
+        intronCoords$startUpIntron <- adiacentExons$start[1] - 1
+        intronCoords$endUpIntron <- bsExons$end[1] + 1
+    }
+    return(intronCoords)
+
+}

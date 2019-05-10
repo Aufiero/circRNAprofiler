@@ -1,0 +1,2 @@
+id	gene	strand	chrom	startUpBSE	endDownBSE	tool	wt1	wt2	wt3	ko1	ko2	ko3
+Ext1:+:chr15:53329172:53329564	Ext1	+	chr15	53329172	53329564	o	10	0	0	3	8	0

@@ -1,0 +1,5 @@
+id
+>mmu-mySeq
+>mmu-mySeq2
+>mmu-miR-7000-3p
+
