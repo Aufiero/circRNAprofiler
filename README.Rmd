@@ -12,6 +12,9 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
+
+[![HitCount](http://hits.dwyl.io/Aufiero/circRNAprofiler.svg)](http://hits.dwyl.io/Aufiero/circRNAprofiler) [![Build Status](https://travis-ci.org/{Aufiero}/{circRNAprofiler}.png?branch=master)](https://travis-ci.org/{Aufiero}/{circRNAprofiler})
+
 # circRNAprofiler: an R-based computational framework to explore expression, genomic context, and function of circular RNAs 
 
 circRNAprofiler is an R-based framework that that only requires an R installation
