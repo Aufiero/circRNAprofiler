@@ -78,15 +78,15 @@
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #'
-#' miRsites <- getMiRsites(
-#'     targets,
-#'     species = "Hsapiens",
-#'     genome = "hg19",
-#'     miRspeciesCode = "hsa",
-#'     miRBaseLatestRelease = TRUE,
-#'     totalMatches = 6,
-#'     maxNonCanonicalMatches = 1,
-#'     pathToMiRs)
+#' #miRsites <- getMiRsites(
+#' #    targets,
+#' #    species = "Hsapiens",
+#' #    genome = "hg19",
+#' #    miRspeciesCode = "hsa",
+#' #    miRBaseLatestRelease = TRUE,
+#' #    totalMatches = 6,
+#' #    maxNonCanonicalMatches = 1,
+#' #    pathToMiRs)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
@@ -999,15 +999,15 @@ compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #'
-#' miRsites <- getMiRsites(
-#'     targets,
-#'     species = "Hsapiens",
-#'     genome = "hg19",
-#'     miRspeciesCode = "hsa",
-#'     miRBaseLatestRelease = TRUE,
-#'     totalMatches = 6,
-#'     maxNonCanonicalMatches = 1,
-#'     pathToMiRs)
+#' #miRsites <- getMiRsites(
+#' #    targets,
+#' #    species = "Hsapiens",
+#' #    genome = "hg19",
+#' #    miRspeciesCode = "hsa",
+#' #    miRBaseLatestRelease = TRUE,
+#' #    totalMatches = 6,
+#' #    maxNonCanonicalMatches = 1,
+#' #    pathToMiRs)
 #'
 #' # Rearrange miR results
 #' rearragedMiRres <- rearrangeMiRres(miRsites)
