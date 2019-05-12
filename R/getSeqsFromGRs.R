@@ -63,11 +63,11 @@
 #' @export
 getSeqsFromGRs <-
     function(annotatedBSJs,
-             lIntron = 100,
-             lExon = 10,
-             type = "ie",
-             species = "Hsapiens",
-             genome = "hg19") {
+        lIntron = 100,
+        lExon = 10,
+        type = "ie",
+        species = "Hsapiens",
+        genome = "hg19") {
         requiredGenome <-
             paste0("BSgenome.", species, ".", "UCSC", ".", genome)
 
@@ -140,8 +140,8 @@ getSeqsFromGRs <-
                 # first or the last of the transcript so in that case we do
                 # not have the seq.
                 if (targets[[i]]$strand[j] == "-" &
-                    !is.na(targets[[i]]$startGR[j]) &
-                    !is.na(targets[[i]]$endGR[j])) {
+                        !is.na(targets[[i]]$startGR[j]) &
+                        !is.na(targets[[i]]$endGR[j])) {
                     # Note: the sequences retrieved by getSeq function from
                     # BSgenome correspond to the positive strand of the DNA
                     # (genome reference). For a circRNA that arises from a gene
@@ -152,23 +152,23 @@ getSeqsFromGRs <-
                     # from 5' to 3' in the final data frame.
                     targets[[i]]$seq[j] <-
                         gsub("T",
-                             "U",
-                             as.character(
-                                 Biostrings::reverseComplement(
-                                     BSgenome::getSeq(
-                                         genome,
-                                         names = targets[[i]]$chrom[j],
-                                         targets[[i]]$startGR[j],
-                                         targets[[i]]$endGR[j]
-                                     )
-                                 )
-                             ))
+                            "U",
+                            as.character(
+                                Biostrings::reverseComplement(
+                                    BSgenome::getSeq(
+                                        genome,
+                                        names = targets[[i]]$chrom[j],
+                                        targets[[i]]$startGR[j],
+                                        targets[[i]]$endGR[j]
+                                    )
+                                )
+                            ))
                     targets[[i]]$length[j] <- nchar(targets[[i]]$seq[j])
 
 
                 } else if (targets[[i]]$strand[j] == "+" &
-                           !is.na(targets[[i]]$startGR[j]) &
-                           !is.na(targets[[i]]$endGR[j])) {
+                        !is.na(targets[[i]]$startGR[j]) &
+                        !is.na(targets[[i]]$endGR[j])) {
                     # For the positive strand no modification is needed because
                     # the sense strand corresponds to the posiive strand that
                     # is the genome reference.
@@ -269,8 +269,8 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
             # When the back-spliced exons are NOT the FIRST and LAST of
             # the transcript
             if (annotatedBSJs$strand[i] == "+" &
-                !is.na(annotatedBSJs$endUpIntron[i]) &
-                !is.na(annotatedBSJs$startDownIntron[i])) {
+                    !is.na(annotatedBSJs$endUpIntron[i]) &
+                    !is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     (annotatedBSJs$startUpBSE[i]) - lIntron
@@ -286,8 +286,8 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the upstream back-spliced exon IS the FIRST of the
                 # transcript
             } else if (annotatedBSJs$strand[i] == "+" &
-                       is.na(annotatedBSJs$endUpIntron[i]) &
-                       !is.na(annotatedBSJs$startDownIntron[i])) {
+                    is.na(annotatedBSJs$endUpIntron[i]) &
+                    !is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     (annotatedBSJs$startUpBSE[i])
@@ -303,8 +303,8 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the downstream back-spliced exon IS the LAST of the
                 # transcript
             } else if (annotatedBSJs$strand[i] == "+" &
-                       !is.na(annotatedBSJs$endUpIntron[i]) &
-                       is.na(annotatedBSJs$startDownIntron[i])) {
+                    !is.na(annotatedBSJs$endUpIntron[i]) &
+                    is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     (annotatedBSJs$startUpBSE[i]) - lIntron
@@ -322,8 +322,8 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # transcript
 
             } else if (annotatedBSJs$strand[i] == "+" &
-                       is.na(annotatedBSJs$endUpIntron[i]) &
-                       is.na(annotatedBSJs$startDownIntron[i])) {
+                    is.na(annotatedBSJs$endUpIntron[i]) &
+                    is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     (annotatedBSJs$startUpBSE[i])
@@ -341,9 +341,9 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the back-spliced exons are NOT the FIRST and LAST of the
                 # transcript
             } else if (!is.na(annotatedBSJs$strand[i]) &
-                       annotatedBSJs$strand[i] == "-" &
-                       !is.na(annotatedBSJs$endUpIntron[i]) &
-                       !is.na(annotatedBSJs$startDownIntron[i])) {
+                    annotatedBSJs$strand[i] == "-" &
+                    !is.na(annotatedBSJs$endUpIntron[i]) &
+                    !is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     annotatedBSJs$startUpBSE[i] - lExon
@@ -359,9 +359,9 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the upstream back-spliced exon IS the FIRST of the
                 # transcript
             } else if (!is.na(annotatedBSJs$strand[i]) &
-                       annotatedBSJs$strand[i] == "-" &
-                       is.na(annotatedBSJs$endUpIntron[i]) &
-                       !is.na(annotatedBSJs$startDownIntron[i])) {
+                    annotatedBSJs$strand[i] == "-" &
+                    is.na(annotatedBSJs$endUpIntron[i]) &
+                    !is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     annotatedBSJs$startUpBSE[i] - lExon
@@ -378,9 +378,9 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the downstream the back-spliced exon IS the LAST of
                 # the transcript
             } else if (!is.na(annotatedBSJs$strand[i]) &
-                       annotatedBSJs$strand[i] == "-" &
-                       !is.na(annotatedBSJs$endUpIntron[i]) &
-                       is.na(annotatedBSJs$startDownIntron[i])) {
+                    annotatedBSJs$strand[i] == "-" &
+                    !is.na(annotatedBSJs$endUpIntron[i]) &
+                    is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     annotatedBSJs$startUpBSE[i] - lExon
@@ -396,9 +396,9 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
                 # When the back-spliced exons ARE the FIRST and LAST of the
                 # transcript
             } else if (!is.na(annotatedBSJs$strand[i]) &
-                       annotatedBSJs$strand[i] == "-" &
-                       is.na(annotatedBSJs$endUpIntron[i]) &
-                       is.na(annotatedBSJs$startDownIntron[i])) {
+                    annotatedBSJs$strand[i] == "-" &
+                    is.na(annotatedBSJs$endUpIntron[i]) &
+                    is.na(annotatedBSJs$startDownIntron[i])) {
                 # For the upstream genomic range
                 grCoords$startUpGR[i] <-
                     annotatedBSJs$startUpBSE[i] - lExon

@@ -19,7 +19,7 @@ A data frame.
 \description{
 The function importMapSplice is specifically designed to read
 and adapt the MapSplice2-v2.2.0 output file (circularRNAs.txt).
-See \url{http://www.netlab.uky.edu/p/bioinfo/MapSplice} for more details.
+See \url{https://github.com/davidroberson/MapSplice2} for more details.
 }
 \examples{
 # Load short version of the gencode v19 annotation file

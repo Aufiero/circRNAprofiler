@@ -1,5 +1,6 @@
 ^\.travis\.yml$
 ^README\.Rmd$
+^NEWS\.Rmd$
 ^Meta$
 ^doc$
 ^docs$

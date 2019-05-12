@@ -1,15 +1,15 @@
 Package: circRNAprofiler
 Type: Package
-Title: circRNAprofiler: an R-based framework for downstream analysis of predicted circRNA molecules
+Title: An R-Based Computational Framework to Explore Expression, Genomic Context, and Function of Circular RNAs
 Version: 0.1.1
 Author: Simona Aufiero
 Maintainer: The package maintainer <simo.aufiero@gmail.com>
-Description: R-based framework for structural and functional profiling of predicted circRNA molecules.
+Description: R-based framework for downstream analysis of predicted circRNA molecules.
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
 biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, GenomeAssembly
-Depends: R(>= 3.5.0)
+Depends: R(>= 3.6.0)
 RoxygenNote: 6.1.1
 Suggests: testthat,
     knitr,
@@ -32,7 +32,6 @@ Imports:
     edgeR,
     GenomicRanges,
     IRanges,
-    gwascat,
     seqinr,
     R.utils,
     reshape2,
@@ -44,4 +43,5 @@ Imports:
     stats,
     AnnotationHub,
     GenomeInfoDb,
+    gwascat,
 VignetteBuilder: knitr

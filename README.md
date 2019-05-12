@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![HitCount](http://hits.dwyl.io/Aufiero/circRNAprofiler.svg)](http://hits.dwyl.io/Aufiero/circRNAprofiler) [![Build Status](https://travis-ci.org/%7BAufiero%7D/%7BcircRNAprofiler%7D.png?branch=master)](https://travis-ci.org/%7BAufiero%7D/%7BcircRNAprofiler%7D)
+[![HitCount](http://hits.dwyl.io/Aufiero/circRNAprofiler.svg)](http://hits.dwyl.io/Aufiero/circRNAprofiler)
 
 circRNAprofiler: an R-based computational framework to explore expression, genomic context, and function of circular RNAs
 =========================================================================================================================

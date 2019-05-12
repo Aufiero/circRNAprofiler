@@ -74,11 +74,11 @@
 #' @export
 checkProjectFolder <-
     function(pathToExperiment = NULL,
-             pathToGTF = NULL,
-             pathToMotifs = NULL,
-             pathToMiRs = NULL,
-             pathToTranscripts = NULL,
-             pathToTraits = NULL) {
+        pathToGTF = NULL,
+        pathToMotifs = NULL,
+        pathToMiRs = NULL,
+        pathToTranscripts = NULL,
+        pathToTraits = NULL) {
         check <- 0
 
         # Check  optional files
@@ -100,7 +100,7 @@ checkProjectFolder <-
             cnm <- c("id", "motif", "length")
             if (!all(colnames(motifsFromFile) %in%  cnm)) {
                 missingNamesId <- which(!cnm %in%
-                                            colnames(motifsFromFile))
+                        colnames(motifsFromFile))
                 cat(
                     "(!) missing or wrong column names in motifs.txt: ",
                     paste(cnm[missingNamesId], collapse = " \t"),
@@ -295,7 +295,7 @@ checkProjectFolder <-
                             cat(
                                 "Missing files:",
                                 paste(experiment$fileName[missingFilesId],
-                                      collapse = " \t"),
+                                    collapse = " \t"),
                                 "\n"
                             )
                             check <- check + 1

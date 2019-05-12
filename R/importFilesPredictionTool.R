@@ -2,7 +2,7 @@
 #'
 #' @description The function importMapSplice is specifically designed to read
 #' and adapt the MapSplice2-v2.2.0 output file (circularRNAs.txt).
-#' See \url{http://www.netlab.uky.edu/p/bioinfo/MapSplice} for more details.
+#' See \url{https://github.com/davidroberson/MapSplice2} for more details.
 #'
 #' @param pathToFile A character string specifying the path to the file
 #' containing the detected circRNAs.
@@ -147,26 +147,26 @@ importMapSplice <- function(pathToFile, gtf) {
     # the coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
@@ -306,26 +306,26 @@ importNCLscan <- function(pathToFile) {
     # the coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
@@ -469,26 +469,26 @@ importCircExplorer2 <- function(pathToFile) {
     # the coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
@@ -625,26 +625,26 @@ importKnife <- function(pathToFile) {
     # The "for" statment swithces the coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
@@ -836,26 +836,26 @@ importCircMarker <- function(pathToFile, gtf) {
     # coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
@@ -971,26 +971,26 @@ importUroborus <- function(pathToFile) {
     # coordinates.
     for (i in seq_along(adaptedPatientCircTable$strand)) {
         if (adaptedPatientCircTable$strand[i] == "-" &
-            adaptedPatientCircTable$startUpBSE[i] >
-            adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             # Do nothing, it is ok
 
         } else if (adaptedPatientCircTable$strand[i] == "-" &
-                   adaptedPatientCircTable$startUpBSE[i] <
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] <
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]
             adaptedPatientCircTable$endDownBSE[i] <- x
 
         } else if (adaptedPatientCircTable$strand[i] == "+" &
-                   adaptedPatientCircTable$startUpBSE[i] >
-                   adaptedPatientCircTable$endDownBSE[i]) {
+                adaptedPatientCircTable$startUpBSE[i] >
+                adaptedPatientCircTable$endDownBSE[i]) {
             x <- adaptedPatientCircTable$startUpBSE[i]
             adaptedPatientCircTable$startUpBSE[i] <-
                 adaptedPatientCircTable$endDownBSE[i]

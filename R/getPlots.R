@@ -56,10 +56,10 @@
 #' @export
 plotLenIntrons <-
     function(annotatedFBSJs,
-             annotatedBBSJs,
-             df1Name = "foreground",
-             df2Name = "background",
-             title = "") {
+        annotatedBBSJs,
+        df1Name = "foreground",
+        df2Name = "background",
+        title = "") {
         # Reshape the data frame
         reshForeground <- annotatedFBSJs %>%
             dplyr::mutate(circRNA = rep("foreground", nrow(annotatedFBSJs))) %>%
@@ -102,7 +102,7 @@ plotLenIntrons <-
             labs(title = title, x = "", y = "Log10 length (nt)") +
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
-                  axis.text.x = element_text(hjust = 0.5)) +
+                axis.text.x = element_text(hjust = 0.5)) +
             scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
 
         return(p)
@@ -167,10 +167,10 @@ plotLenIntrons <-
 #' @export
 plotLenBSEs <-
     function(annotatedFBSJs,
-             annotatedBBSJs,
-             df1Name = "foreground",
-             df2Name = "background",
-             title = "") {
+        annotatedBBSJs,
+        df1Name = "foreground",
+        df2Name = "background",
+        title = "") {
         # Reshape the data frame
         reshForeground <- annotatedFBSJs %>%
             dplyr::mutate(circRNA = rep("foreground", nrow(annotatedFBSJs))) %>%
@@ -213,7 +213,7 @@ plotLenBSEs <-
             labs(title = title, x = "", y = "Log10 length (nt)") +
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
-                  axis.text.x = element_text(hjust = 0.5)) +
+                axis.text.x = element_text(hjust = 0.5)) +
             scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
 
         return(p)
@@ -312,9 +312,9 @@ plotHostGenes <-
 #' @export
 plotExPosition <-
     function(annotatedBSJs,
-             title ="",
-             n = 0,
-             flip= FALSE) {
+        title ="",
+        n = 0,
+        flip= FALSE) {
 
         if (flip) {
             annotatedBSJs <- annotatedBSJs %>%
@@ -323,15 +323,15 @@ plotExPosition <-
                     exNumDownBSE = (.data$totExons - .data$exNumDownBSE) + 1
                 ) %>%
                 dplyr::select(.data$id,
-                              .data$gene,
-                              .data$exNumUpBSE,
-                              .data$exNumDownBSE)
+                    .data$gene,
+                    .data$exNumUpBSE,
+                    .data$exNumDownBSE)
         } else{
             annotatedBSJs <- annotatedBSJs %>%
                 dplyr::select(.data$id,
-                              .data$gene,
-                              .data$exNumUpBSE,
-                              .data$exNumDownBSE)
+                    .data$gene,
+                    .data$exNumUpBSE,
+                    .data$exNumDownBSE)
         }
 
         # Plot
@@ -350,7 +350,7 @@ plotExPosition <-
             labs(title = title, x = "Exon number", y = "Frequency") +
             theme_classic() +
             theme(axis.text.x = element_text(angle = 90, hjust = 1),
-                  plot.title = element_text(hjust = 0.5))
+                plot.title = element_text(hjust = 0.5))
 
 
 
@@ -400,10 +400,10 @@ plotExBetweenBSEs <-
             ggplot(aes(x = factor(.data$numOfExons), y = .data$n1)) +
             geom_bar(position = "dodge", stat = "identity") +
             labs(title = title, x = "No. of exons", y =
-                     "Frequency") +
+                    "Frequency") +
             theme_classic() +
             theme(axis.text.x = element_text(angle = 90, hjust = 1),
-                  plot.title = element_text(hjust = 0.5))
+                plot.title = element_text(hjust = 0.5))
 
         return(p)
 
@@ -457,10 +457,10 @@ plotTotExons <-
             ggplot(aes(x = factor(.data$totExons), y = .data$n1)) +
             geom_bar(position = "dodge", stat = "identity") +
             labs(title = title, x = "No. of exons", y =
-                     "Frequency") +
+                    "Frequency") +
             theme_classic() +
             theme(axis.text.x = element_text(angle = 90, hjust = 1),
-                  plot.title = element_text(hjust = 0.5))
+                plot.title = element_text(hjust = 0.5))
 
         return(p)
     }
@@ -538,18 +538,18 @@ plotTotExons <-
 #' @importFrom stats na.omit
 #' @export
 volcanoPlot <- function(res,
-                        log2FC = 1,
-                        padj = 0.05,
-                        title = "",
-                        gene = FALSE,
-                        setxLim = FALSE,
-                        xlim = c(-8 , 8),
-                        setyLim= FALSE,
-                        ylim = c(0, 5)) {
+    log2FC = 1,
+    padj = 0.05,
+    title = "",
+    gene = FALSE,
+    setxLim = FALSE,
+    xlim = c(-8 , 8),
+    setyLim= FALSE,
+    ylim = c(0, 5)) {
     res <- stats::na.omit(res)
     diffExpCirc <-
         stats::na.omit(res[abs(res$log2FC) >= log2FC &
-                               res$padj <= padj, ])
+                res$padj <= padj, ])
 
     if (setxLim) {
         xmin <- xlim[1]
@@ -571,8 +571,8 @@ volcanoPlot <- function(res,
 
     p <- ggplot(data = res, aes(x = log2FC, y = -log10(padj))) +
         geom_point(colour = "black",
-                   size = 3,
-                   na.rm = TRUE) +
+            size = 3,
+            na.rm = TRUE) +
         xlim(xmin, xmax) +
         ylim(ymin, ymax) +
         labs(title = title, x = "log2 FC", y = "-log10 padj") +
@@ -749,21 +749,21 @@ volcanoPlot <- function(res,
 #' @export
 plotMotifs <-
     function(mergedMotifsFTS,
-             mergedMotifsBTS,
-             log2FC = 1,
-             nf1 = 1,
-             nf2 =1 ,
-             df1Name = "foreground",
-             df2Name = "background") {
+        mergedMotifsBTS,
+        log2FC = 1,
+        nf1 = 1,
+        nf2 =1 ,
+        df1Name = "foreground",
+        df2Name = "background") {
 
         p <- list()
         mergedMotifsAll <-
             base::merge(mergedMotifsFTS,
-                        mergedMotifsBTS,
-                        by = "id",
-                        all = TRUE) %>%
+                mergedMotifsBTS,
+                by = "id",
+                all = TRUE) %>%
             dplyr::rename(foreground = .data$count.x,
-                          background = .data$count.y) %>%
+                background = .data$count.y) %>%
             dplyr::mutate(
                 foreground = ifelse(
                     is.na(.data$foreground), 0, .data$foreground),
@@ -796,7 +796,7 @@ plotMotifs <-
 
         p[[1]] <-  mergedMotifsAll %>%
             ggplot(aes(x = .data$id,
-                       y = .data$log2FC)) +
+                y = .data$log2FC)) +
             geom_bar(position = "dodge", stat = "identity") +
             labs(title = "", x = "id", y = "log2 FC") +
             coord_flip() +
@@ -907,10 +907,10 @@ plotMotifs <-
 #' @export
 plotMiR <-
     function(rearragedMiRres,
-             n = 40,
-             color = "blue",
-             miRid = FALSE,
-             id = 1
+        n = 40,
+        color = "blue",
+        miRid = FALSE,
+        id = 1
     ) {
         topMir <- rearragedMiRres[[id]][[2]] %>%
             dplyr::filter(.data$counts >= n) %>%

@@ -11,11 +11,11 @@
 #' @export
 getBasicColNames <- function() {
     basicColumns <- c("id",
-                      "gene",
-                      "strand",
-                      "chrom",
-                      "startUpBSE", # back-spliced junction
-                      "endDownBSE") # back-spliced junction
+        "gene",
+        "strand",
+        "chrom",
+        "startUpBSE", # back-spliced junction
+        "endDownBSE") # back-spliced junction
     return(basicColumns)
 
 }
@@ -62,8 +62,8 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
         missingNamesId <- which(!colnames(backSplicedJunctions) %in% colNames)
         stop("missing or wrong column names: ",
-             paste(colnames(backSplicedJunctions)[missingNamesId],
-                   collapse = " \t"))
+            paste(colnames(backSplicedJunctions)[missingNamesId],
+                collapse = " \t"))
     }
 
     for (i in seq_along(backSplicedJunctions$strand)) {
@@ -71,7 +71,7 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
         # acceptor site of an exon must be smaller than the coordinates of
         # the donor site
         if (backSplicedJunctions$strand[i] == "+" &
-            backSplicedJunctions$startUpBSE[i] > backSplicedJunctions$endDownBSE[i]) {
+                backSplicedJunctions$startUpBSE[i] > backSplicedJunctions$endDownBSE[i]) {
             stop(
                 "found startUpBSE > endDownBSE - for gene on the positive
                 strand the coordinates of an startUpBSE (acceptor site)
@@ -84,7 +84,7 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
         # acceptor site of an exon must be greater than the coordinates
         # of the donor site
         if (backSplicedJunctions$strand[i] == "-" &
-            backSplicedJunctions$startUpBSE[i] < backSplicedJunctions$endDownBSE[i]) {
+                backSplicedJunctions$startUpBSE[i] < backSplicedJunctions$endDownBSE[i]) {
             stop(
                 "found startUpBSE < endDownBSE - for gene on the negative
                 strand the coordinates of an startUpBSE (acceptor site)

@@ -58,10 +58,10 @@
 #' @export
 annotateRepeats <-
     function(targets,
-             annotationHubID = "AH5122",
-             complementary = TRUE) {
+        annotationHubID = "AH5122",
+        complementary = TRUE) {
         if (length(targets) == 2 &
-            names(targets)[[1]] == "upGR") {
+                names(targets)[[1]] == "upGR") {
             # Create an empty list of 2 elements
             repeats <- vector("list", 2)
             names(repeats)[1] <- "upGR"
@@ -122,7 +122,7 @@ annotateRepeats <-
             # Find Overlaps
             overlaps <-
                 suppressWarnings(GenomicRanges::findOverlaps(rm, genRanges, ignore.strand =
-                                                                 TRUE))
+                        TRUE))
             if (length(overlaps) == 0) {
                 # no genomic ranges in common
                 repeats[[i]]$repeats <-
@@ -136,7 +136,7 @@ annotateRepeats <-
 
                 repeats[[i]]$repeats <-
                     data.frame(genRanges[S4Vectors::subjectHits(overlaps)],
-                               rm[S4Vectors::queryHits(overlaps)])
+                        rm[S4Vectors::queryHits(overlaps)])
 
 
                 repeats[[i]]$repeats <- repeats[[i]]$repeats %>%
@@ -170,11 +170,11 @@ annotateRepeats <-
         if (complementary) {
             upGRs <-
                 base::cbind(repeats$upGR$repeats,
-                            rep("up", nrow(repeats$upGR$repeats)))
+                    rep("up", nrow(repeats$upGR$repeats)))
             colnames(upGRs)[9] <- "gr"
             downGRs <-
                 base::cbind(repeats$downGR$repeats,
-                            rep("down", nrow(repeats$downGR$repeats)))
+                    rep("down", nrow(repeats$downGR$repeats)))
             colnames(downGRs)[9] <- "gr"
 
 
@@ -185,7 +185,7 @@ annotateRepeats <-
                 S4Vectors::findMatches(upGRs$id, downGRs$id, select = "all")
             df <-
                 data.frame(upGRs[S4Vectors::queryHits(overlaps), ],
-                           downGRs[S4Vectors::subjectHits(overlaps), ])
+                    downGRs[S4Vectors::subjectHits(overlaps), ])
 
             matchingRepeats <- df %>%
                 dplyr::group_by(.data$id) %>%
@@ -200,7 +200,7 @@ annotateRepeats <-
             # if the repeats are found
             if (nrow(matchingRepeats) > 0) {
                 repeats$upGR$repeats <-
-                    matchingRepeats[, c(1:8)] %>%
+                    matchingRepeats[, c(1,2,4,5,6,7,8)] %>%
                     dplyr::arrange(.data$id)
 
                 repeats$upGR$targets <-
@@ -210,7 +210,7 @@ annotateRepeats <-
 
 
                 repeats$downGR$repeats <-
-                    matchingRepeats[, c(10:17)] %>%
+                    matchingRepeats[, c(10,11,12,13,14,15,16,17)] %>%
                     stats::setNames(gsub(".1", "", names(.))) %>%
                     dplyr::arrange(.data$id)
 
@@ -248,13 +248,13 @@ annotateRepeats <-
 #' @export
 getRepeatsColNames <- function() {
     repeatsColumns <- c("id",
-                        "name",
-                        "chrom",
-                        "start",
-                        "end",
-                        "width",
-                        "strand",
-                        "score")
+        "name",
+        "chrom",
+        "start",
+        "end",
+        "width",
+        "strand",
+        "score")
     return(repeatsColumns)
 
 }

@@ -24,7 +24,7 @@
 #' @export
 initCircRNAprofiler <-
     function(projectFolderName,
-             detectionTools) {
+        detectionTools) {
         tools <- getDetectionTools()
         if (!all(detectionTools %in% tools$name)) {
             stop(

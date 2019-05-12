@@ -4,7 +4,7 @@
 \alias{formatGTF}
 \title{Format annotation file}
 \usage{
-formatGTF(pathToGTF)
+formatGTF(pathToGTF = NULL)
 }
 \arguments{
 \item{pathToGTF}{A string containing the path to the the GTF file.
@@ -17,8 +17,6 @@ A data frame.
 The function formatGTF() formats the given annotation file.
 }
 \examples{
-\dontrun{
-gtf <- formatGTF(pathToGTF)
-}
+gtf <- formatGTF()
 
 }

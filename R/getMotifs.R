@@ -84,11 +84,11 @@
 #' @export
 getMotifs <-
     function(targets,
-             width = 6,
-             species  = "Hsapiens",
-             rbp = TRUE,
-             reverse = FALSE,
-             pathToMotifs = NULL) {
+        width = 6,
+        species  = "Hsapiens",
+        rbp = TRUE,
+        reverse = FALSE,
+        pathToMotifs = NULL) {
         # Compute all motifs of a given length (width) and keep the ones
         # present at least one time in the target sequences
 
@@ -114,7 +114,7 @@ getMotifs <-
                 # they are analyzed at the end with together with
                 # the BSJs (see getCircSeq() function)
                 ss <- base::substring(motifs[[i]]$targets$seq, 30,
-                                      ((motifs[[i]]$targets$length + 30) + (width - 1)))
+                    ((motifs[[i]]$targets$length + 30) + (width - 1)))
 
                 # Put the string NA so that the we do not get error when
                 # calling RNAStringSet
@@ -144,7 +144,7 @@ getMotifs <-
                 # patterns (?=pattern)
                 locations <-
                     stringi::stri_locate_all(rnaSS,
-                                             regex = paste("(?=", stringMotif, ")", sep = ""))
+                        regex = paste("(?=", stringMotif, ")", sep = ""))
 
                 if (names(motifs)[1] == "circ") {
                     motifs[[i]]$locations[stringMotif] <-
@@ -165,7 +165,7 @@ getMotifs <-
                 # Count occurences
                 motifs[[i]]$counts[stringMotif] <-
                     stringr::str_count(rnaSS,
-                                       paste("(?=", stringMotif, ")", sep = ""))
+                        paste("(?=", stringMotif, ")", sep = ""))
 
             }
 
@@ -250,7 +250,7 @@ computeMotifs <-
                 # they are analyzed at the end with together with
                 # the BSJs (see getCircSeq() function)
                 ss <- base::substring(targets[[i]]$seq, 30,
-                                      ((targets[[i]]$length + 30) + (width - 1)))
+                    ((targets[[i]]$length + 30) + (width - 1)))
 
                 # Put the string NA so that the we do not get error when
                 # calling RNAStringSet
@@ -275,7 +275,7 @@ computeMotifs <-
             computedMotifs <- c(
                 computedMotifs,
                 Biostrings::oligonucleotideFrequency(rnaSS, width, step = 1, simplify.as =
-                                                         "collapsed") %>%
+                        "collapsed") %>%
                     .[. > 0] %>%
                     names()
             ) %>%
@@ -329,8 +329,8 @@ computeMotifs <-
 #' @export
 getUserAttractMotifs <-
     function(species  = "Hsapiens",
-             reverse = FALSE,
-             pathToMotifs = NULL) {
+        reverse = FALSE,
+        pathToMotifs = NULL) {
         options(readr.num_columns = 0)
 
 
@@ -340,7 +340,7 @@ getUserAttractMotifs <-
         tf = tempfile(tmpdir=td, fileext="ATtRACT.zip")
         # download into the placeholder file
         utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
-                             tf)
+            tf)
         db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
 
 
@@ -375,9 +375,9 @@ getUserAttractMotifs <-
             attractRBPmotifs <- db %>%
                 dplyr::filter(.data$Organism == species) %>%
                 dplyr::select(.data$Gene_name,
-                              .data$Motif) %>%
+                    .data$Motif) %>%
                 dplyr::rename(id = .data$Gene_name,
-                              motif = .data$Motif)
+                    motif = .data$Motif)
         } else{
             cat(
                 paste(
@@ -389,9 +389,9 @@ getUserAttractMotifs <-
             attractRBPmotifs <- db %>%
                 dplyr::filter(.data$Organism == "Hsapiens") %>%
                 dplyr::select(.data$Gene_name,
-                              .data$Motif) %>%
+                    .data$Motif) %>%
                 dplyr::rename(id = .data$Gene_name,
-                              motif = .data$Motif)
+                    motif = .data$Motif)
         }
 
 
@@ -550,14 +550,14 @@ getUserAttractMotifs <-
 #' @export
 filterMotifs <-
     function(computedMotifs,
-             species  = "Hsapiens",
-             rbp = TRUE,
-             reverse = FALSE,
-             pathToMotifs = NULL) {
+        species  = "Hsapiens",
+        rbp = TRUE,
+        reverse = FALSE,
+        pathToMotifs = NULL) {
         # Identify motifs matching with RBPs
         filteredMotifs <-
             data.frame(matrix(nrow = length(computedMotifs),
-                              ncol = 2))
+                ncol = 2))
         colnames(filteredMotifs) <-  c("motif", "id")
         filteredMotifs$motif <- computedMotifs
 
@@ -580,7 +580,7 @@ filterMotifs <-
             grepedM <-
                 userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif), ] %>%
                 dplyr::mutate(motif = as.character(.data$motif),
-                              id = as.character(.data$id))
+                    id = as.character(.data$id))
 
             # str_extract works with pattern. In motifs.txt the user can reports
             # patterns.
@@ -594,7 +594,7 @@ filterMotifs <-
                 dplyr::select(.data$id, .data$motif) %>%
                 dplyr::filter(!is.na(.data$motif)) %>%
                 dplyr::mutate(motif = as.character(.data$motif),
-                              id = as.character(.data$id)) %>%
+                    id = as.character(.data$id)) %>%
                 dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
 
             joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
@@ -686,13 +686,13 @@ createMotifsList <-
             names(motifs)[2] <- "downGR"
 
         } else if (length(targets) == 1 &
-                   names(targets)[[1]] == "bsj") {
+                names(targets)[[1]] == "bsj") {
             # Create a enmpty list of 1 elements
             motifs <- vector("list", 1)
             names(motifs)[1] <- "bsj"
 
         } else if (length(targets) == 1 &
-                   names(targets)[[1]] == "circ") {
+                names(targets)[[1]] == "circ") {
             # Create a enmpty list of 1 elements
             motifs <- vector("list", 1)
             names(motifs)[1] <- "circ"

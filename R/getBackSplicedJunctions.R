@@ -96,8 +96,8 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                     # Read the file contaning the prediction one at the time
                     pathToFile <-
                         paste(detectionToolsUsed$name[j],
-                              experiment$fileName[i],
-                              sep = "/")
+                            experiment$fileName[i],
+                            sep = "/")
 
                     # A specific import function is called
                     adaptedPatientBSJunctions <-
@@ -151,7 +151,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                 # circRNA detection tools
                 backSplicedJunctions <-
                     dplyr::bind_rows(backSplicedJunctions,
-                                     backSplicedJunctionsTool)
+                        backSplicedJunctionsTool)
 
             }
 
@@ -261,15 +261,15 @@ getDetectionTools <- function() {
 #' @export
 mergeBSJunctions <-
     function(backSplicedJunctions,
-             gtf) {
+        gtf) {
         detectionTools <- getDetectionTools()
         # Find and merge commonly identified back-spliced junctions
         mergedBSJunctions <- backSplicedJunctions %>%
-            dplyr::mutate(mean = rowMeans(.[,-c(1:7)])) %>%  #experiment$label
+            dplyr::mutate(mean = rowMeans(.[,-c(1,2,3,4,5,6,7)])) %>%  #experiment$label
             dplyr::group_by(.data$strand,
-                            .data$chrom,
-                            .data$startUpBSE,
-                            .data$endDownBSE) %>%
+                .data$chrom,
+                .data$startUpBSE,
+                .data$endDownBSE) %>%
             dplyr::arrange(desc(mean)) %>%
             dplyr::mutate(mergedTools = paste(sort(.data$tool), collapse = ",")) %>%
             dplyr::filter(row_number() == 1) %>%

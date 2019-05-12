@@ -56,9 +56,9 @@
 #'
 #'@export
 filterCirc <- function(backSplicedJunctions,
-                       allSamples = FALSE,
-                       min = 3,
-                       pathToExperiment = NULL) {
+    allSamples = FALSE,
+    min = 3,
+    pathToExperiment = NULL) {
     if (is.null(pathToExperiment)) {
         pathToExperiment <- "experiment.txt"
     }

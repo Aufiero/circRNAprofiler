@@ -49,9 +49,9 @@
 #' @export
 annotateBSJs <-
     function(backSplicedJunctions,
-             gtf,
-             isRandom = FALSE,
-             pathToTranscripts = NULL) {
+        gtf,
+        isRandom = FALSE,
+        pathToTranscripts = NULL) {
         if (is.null(pathToTranscripts)) {
             pathToTranscripts <- "transcripts.txt"
         }
@@ -111,12 +111,12 @@ annotateBSJs <-
         for (i in seq_along(backSplicedJunctions$id)) {
             exJ1 <-
                 substr(backSplicedJunctions[i, "startUpBSE"],
-                       1,
-                       nchar(backSplicedJunctions[i, "startUpBSE"]) - 1)
+                    1,
+                    nchar(backSplicedJunctions[i, "startUpBSE"]) - 1)
             exJ2 <-
                 substr(backSplicedJunctions[i, "endDownBSE"],
-                       1,
-                       nchar(backSplicedJunctions[i, "endDownBSE"]) - 1)
+                    1,
+                    nchar(backSplicedJunctions[i, "endDownBSE"]) - 1)
             gene <- backSplicedJunctions$gene[i]
 
             annotatedBSJs$id[i] <- backSplicedJunctions$id[i]
@@ -140,7 +140,7 @@ annotateBSJs <-
 
 
                 if (nrow(transcriptsFromFile) > 0 &
-                    any(transcriptsFromFile$id %in% allTranscripts)) {
+                        any(transcriptsFromFile$id %in% allTranscripts)) {
                     # Analyze the transcript specified by the user in
                     # transcripts.txt
                     index <-
@@ -165,7 +165,7 @@ annotateBSJs <-
                 # TODO consider the exons to keep if this is known
                 transcriptToAnalyze <- gtf  %>%
                     dplyr::filter(.data$transcript_id ==
-                                      annotatedBSJs$transcript[i]) %>%
+                            annotatedBSJs$transcript[i]) %>%
                     dplyr::arrange(.data$exon_number)
 
                 annotatedBSJs$totExons[i] <-
@@ -224,7 +224,7 @@ annotateBSJs <-
 
                 # Retrieve the coordinates of the flanking introns
                 if (bsExons$exon_number[1] != 1 &
-                    bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
+                        bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
                     # If the back-spliced exons are not the first and last exon
                     # of the transcript
                     intronCoords <-
@@ -239,7 +239,7 @@ annotateBSJs <-
                         intronCoords$endDownIntron
 
                 } else if (bsExons$exon_number[1] == 1 &
-                           bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
+                        bsExons$exon_number[2] != nrow(transcriptToAnalyze)) {
                     # If one of the back-spliced exons is the first exon of the
                     # transcript
                     intronCoords <-
@@ -251,7 +251,7 @@ annotateBSJs <-
 
 
                 } else if (bsExons$exon_number[2] == nrow(transcriptToAnalyze) &
-                           bsExons$exon_number[1] != 1) {
+                        bsExons$exon_number[1] != 1) {
                     # If one of the back-spliced exons is the last exon of the
                     # transcript
                     intronCoords <-
@@ -325,10 +325,10 @@ getAnnotatedBSJsColNames <- function() {
             basicColumns[3],
             basicColumns[4],
             c("startUpIntron",
-              "endUpIntron"),
+                "endUpIntron"),
             basicColumns[5],
             c("endUpBSE",
-              "startDownBSE"),
+                "startDownBSE"),
             basicColumns[6],
             c(
                 "startDownIntron",
@@ -389,7 +389,7 @@ getAllTranscripts <- function(gtf, gene, exJ1, exJ2) {
     #  given in input
     start <- gtf %>%
         dplyr::filter(.data$gene_name == gene,
-                      .data$type == "exon") %>%
+            .data$type == "exon") %>%
         dplyr::group_by(.data$transcript_id) %>%
         dplyr::filter(
             stringr::str_detect(.data$start, exJ1) |
@@ -400,10 +400,10 @@ getAllTranscripts <- function(gtf, gene, exJ1, exJ2) {
     # given in input
     end <- gtf %>%
         dplyr::filter(.data$gene_name == gene,
-                      .data$type == "exon") %>%
+            .data$type == "exon") %>%
         dplyr::group_by(.data$transcript_id) %>%
         dplyr::filter(stringr::str_detect(.data$end, exJ1) |
-                          stringr::str_detect(.data$end, exJ2))
+                stringr::str_detect(.data$end, exJ2))
 
     # Check whether the end and the start coordinates are present and
     # if so take the the transcripts and sort by lenght. The first transcript
@@ -475,7 +475,7 @@ getFlankIntrons <- function(transcriptToAnalyze, bsExons) {
     # the back-spliced given in input.
     adiacentExons <- transcriptToAnalyze %>%
         dplyr::filter(.data$exon_number %in% c(bsExons$exon_number[1] - 1,
-                                               bsExons$exon_number[2] + 1))
+            bsExons$exon_number[2] + 1))
 
     # Retrive the intron coordinates flanking the back-spliced exons given in
     # input
@@ -541,7 +541,7 @@ getFlankIntronFirst <- function(transcriptToAnalyze, bsExons) {
     # the back-spliced exons given in input.
     adiacentExons <- transcriptToAnalyze %>%
         dplyr::filter(.data$exon_number ==
-                          bsExons$exon_number[2] + 1)
+                bsExons$exon_number[2] + 1)
 
     # Retrive the coordinates of the downstream intron.
     # Since one of the exon is the first exon of the transcritpt the upstream
@@ -607,7 +607,7 @@ getFlankIntronLast <- function(transcriptToAnalyze, bsExons) {
     # the back-spliced exons given in input.
     adiacentExons <- transcriptToAnalyze %>%
         dplyr::filter(.data$exon_number ==
-                          bsExons$exon_number[1] - 1)
+                bsExons$exon_number[1] - 1)
 
     # Retrive the coordinates of the upstream intron
     # Since one the exon is the last exon of the transcritpt the downstream

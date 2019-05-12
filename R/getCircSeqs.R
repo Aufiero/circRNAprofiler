@@ -51,9 +51,9 @@
 #' @export
 getCircSeqs <-
     function(annotatedBSJs,
-             gtf,
-             species = "Hsapiens",
-             genome = "hg19") {
+        gtf,
+        species = "Hsapiens",
+        genome = "hg19") {
         # Create a enmpty list of 1 elements
         targets <- vector("list", 1)
         names(targets)[1] <- "circ"
@@ -137,15 +137,15 @@ getCircSeqs <-
 
                     for (j in seq_along(transcript$exon_number)) {
                         exonSeqs[j] <- gsub("T",
-                                            "U",
-                                            as.character(
-                                                BSgenome::getSeq(
-                                                    genome,
-                                                    names = transcript$chrom[j],
-                                                    transcript$start[j],
-                                                    transcript$end[j]
-                                                )
-                                            ))
+                            "U",
+                            as.character(
+                                BSgenome::getSeq(
+                                    genome,
+                                    names = transcript$chrom[j],
+                                    transcript$start[j],
+                                    transcript$end[j]
+                                )
+                            ))
 
                     }
 
@@ -164,7 +164,7 @@ getCircSeqs <-
                             nchar(joinedExonSeqs) - 49,
                             nchar(joinedExonSeqs)
                         ),
-                        joinedExonSeqs)
+                            joinedExonSeqs)
 
 
                     targets[[1]]$seq[i] <-
@@ -180,15 +180,15 @@ getCircSeqs <-
                     # the DNA that is the genome reference.
                     for (j in seq_along(transcript$exon_number)) {
                         exonSeqs[j] <- gsub("T",
-                                            "U",
-                                            as.character(
-                                                BSgenome::getSeq(
-                                                    genome,
-                                                    names = transcript$chrom[j],
-                                                    transcript$start[j],
-                                                    transcript$end[j]
-                                                )
-                                            ))
+                            "U",
+                            as.character(
+                                BSgenome::getSeq(
+                                    genome,
+                                    names = transcript$chrom[j],
+                                    transcript$start[j],
+                                    transcript$end[j]
+                                )
+                            ))
                     }
 
                     joinedExonSeqs <- paste(exonSeqs, collapse = "")

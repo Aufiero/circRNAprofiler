@@ -50,7 +50,7 @@ pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #    pathToMiRs)
 
 # Rearrange miR results
-rearragedMiRres <- rearrangeMiRres(miRsites)
+#rearragedMiRres <- rearrangeMiRres(miRsites)
 
 
 }

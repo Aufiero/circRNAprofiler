@@ -93,13 +93,13 @@
 #' @import dplyr
 #' @export
 getMiRsites <- function(targets,
-                        species = "Hsapiens",
-                        genome = "hg19",
-                        miRspeciesCode = "hsa",
-                        miRBaseLatestRelease = TRUE,
-                        totalMatches = 7,
-                        maxNonCanonicalMatches = 1,
-                        pathToMiRs = NULL) {
+    species = "Hsapiens",
+    genome = "hg19",
+    miRspeciesCode = "hsa",
+    miRBaseLatestRelease = TRUE,
+    totalMatches = 7,
+    maxNonCanonicalMatches = 1,
+    pathToMiRs = NULL) {
     # 271 options are possible the argument miRspeciesCode
     miRspeciesCodes <- circRNAprofiler::miRspeciesCodes
     if (!miRspeciesCode %in% miRspeciesCodes$code) {
@@ -113,8 +113,8 @@ getMiRsites <- function(targets,
     # that must be named mature.fa
     microRNAs <-
         getMiRseqs(miRBaseLatestRelease,
-                   miRspeciesCode,
-                   pathToMiRs)
+            miRspeciesCode,
+            pathToMiRs)
 
     if (length(targets) == 1 & names(targets)[[1]] == "circ") {
         # Create list to store miR results
@@ -167,8 +167,8 @@ getMiRsites <- function(targets,
                 # and searched for the presence of the miR seed sequence.
 
                 while (indexTargetSeq <=
-                       (miRsites$targets$length[i] + (analysisStart -
-                                                      1))) {
+                        (miRsites$targets$length[i] + (analysisStart -
+                                1))) {
                     # Allow  asymmetric mismatches/ buldge in the sequences
 
                     # FIND MATCHES WITH THE SEED REGION
@@ -181,8 +181,8 @@ getMiRsites <- function(targets,
 
                     seedMatches <-
                         getMatches(circSeqForSeed,
-                                   seedSeq,
-                                   isSeed = TRUE)
+                            seedSeq,
+                            isSeed = TRUE)
 
                     # Filter based on the number fo non-canonical matches
                     # allowed and keep the max total matches found
@@ -208,8 +208,8 @@ getMiRsites <- function(targets,
                             if (seedMatches$maxContinuousMatches > 1) {
                                 cwcMatchesInSeed[k] <-
                                     paste(seedMatches$maxContinuousMatches,
-                                          "mer",
-                                          sep = "")
+                                        "mer",
+                                        sep = "")
                             } else{
                                 cwcMatchesInSeed[k] <-
                                     seedMatches$maxContinuousMatches
@@ -234,13 +234,13 @@ getMiRsites <- function(targets,
 
                             centralSeq <-
                                 base::substr(mirSeq,
-                                             nchar(mirSeq) - 11,
-                                             nchar(mirSeq) - 8)
+                                    nchar(mirSeq) - 11,
+                                    nchar(mirSeq) - 8)
 
                             centralMatches <-
                                 getMatches(circSeqForcentral,
-                                           centralSeq,
-                                           isSeed = FALSE)
+                                    centralSeq,
+                                    isSeed = FALSE)
 
                             # Filter based on the number of non-canonical
                             # matches allowed and keep the max total matches
@@ -274,13 +274,13 @@ getMiRsites <- function(targets,
 
                             compensatorySeq <-
                                 base::substr(mirSeq,
-                                             nchar(mirSeq) - 15,
-                                             nchar(mirSeq) - 12)
+                                    nchar(mirSeq) - 15,
+                                    nchar(mirSeq) - 12)
 
                             compensatoryMatches <-
                                 getMatches(circSeqForcompensatory,
-                                           compensatorySeq,
-                                           isSeed = FALSE)
+                                    compensatorySeq,
+                                    isSeed = FALSE)
 
 
                             # Filter based on the number fo non-canonical
@@ -327,7 +327,7 @@ getMiRsites <- function(targets,
                                         downstreamRegion
                                     )
                                 ),
-                                letters = "AU") / 20
+                                    letters = "AU") / 20
 
 
                             k <- k + 1
@@ -448,8 +448,8 @@ getMiRsites <- function(targets,
 #' @importFrom utils read.table
 #' @export
 getMiRseqs <- function(miRBaseLatestRelease = TRUE,
-                       miRspeciesCode = "hsa",
-                       pathToMiRs = NULL) {
+    miRspeciesCode = "hsa",
+    pathToMiRs = NULL) {
     # 271 options are possible the argument miRspeciesCode
     miRspeciesCodes <- circRNAprofiler::miRspeciesCodes
     if (!miRspeciesCode %in% miRspeciesCodes$code) {
@@ -468,7 +468,7 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
     if (miRBaseLatestRelease) {
         miRBase <-
             readr::read_tsv("ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz",
-                            col_names = FALSE)
+                col_names = FALSE)
     } else if (file.exists("mature.fa")) {
         miRBase <-
             utils::read.table(
@@ -510,8 +510,8 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
         # Read the user given miR sequences
         miRsFromFile <-
             utils::read.table(pathToMiRs,
-                              header = TRUE,
-                              stringsAsFactors = FALSE)
+                header = TRUE,
+                stringsAsFactors = FALSE)
 
         # colnames(miRsFromFile)[1] <- "id"
     } else{
@@ -541,7 +541,7 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
             notFound <-
                 miRsFromFile$id[!(miRsFromFile$id %in% microRNAids)]
             cat(paste("miRs not found:",
-                      paste(notFound, collapse = ", ")))
+                paste(notFound, collapse = ", ")))
 
         }
     } else{
@@ -948,12 +948,12 @@ compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
 
     for (i in seq_along(charsSeq1)) {
         if ((charsSeq1[i] == "A" &  charsSeq2[i] == "U") |
-            (charsSeq1[i] == "U" &  charsSeq2[i] == "A") |
-            (charsSeq1[i] == "C" &  charsSeq2[i] == "G") |
-            (charsSeq1[i] == "G" &  charsSeq2[i] == "C")) {
+                (charsSeq1[i] == "U" &  charsSeq2[i] == "A") |
+                (charsSeq1[i] == "C" &  charsSeq2[i] == "G") |
+                (charsSeq1[i] == "G" &  charsSeq2[i] == "C")) {
             newSeq[i] <- "w"
         } else if ((charsSeq1[i] == "G" &  charsSeq2[i] == "U")  |
-                   (charsSeq1[i] == "U" & charsSeq2[i] == "G")) {
+                (charsSeq1[i] == "U" & charsSeq2[i] == "G")) {
             newSeq[i] <- GU
         } else {
             newSeq[i] <- "m"
@@ -1010,7 +1010,7 @@ compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
 #' #    pathToMiRs)
 #'
 #' # Rearrange miR results
-#' rearragedMiRres <- rearrangeMiRres(miRsites)
+#' #rearragedMiRres <- rearrangeMiRres(miRsites)
 #'
 #'
 #' @import dplyr

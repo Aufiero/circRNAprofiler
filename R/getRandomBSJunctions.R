@@ -62,7 +62,7 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
         dplyr::filter(n() >= 3) %>%
         dplyr::ungroup() %>%
         dplyr::filter(.data$transcript_id %in%
-                          sample(unique(.data$transcript_id), n - c)) %>%
+                sample(unique(.data$transcript_id), n - c)) %>%
         dplyr::group_by(.data$transcript_id) %>%
         dplyr::sample_n(2) %>%
         dplyr::arrange(.data$exon_number)

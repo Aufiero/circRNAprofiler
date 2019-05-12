@@ -72,10 +72,10 @@
 #'@export
 getDeseqRes <-
     function(backSplicedJunctions,
-             condition,
-             pAdjustMethod = "BH",
-             pathToExperiment = NULL,
-             ...) {
+        condition,
+        pAdjustMethod = "BH",
+        pathToExperiment = NULL,
+        ...) {
         if (is.null(pathToExperiment)) {
             pathToExperiment <- "experiment.txt"
         }
@@ -127,7 +127,7 @@ getDeseqRes <-
                     id = .data$backSplicedJunctions.id
                 ) %>%
                 dplyr::mutate(id = as.character(.data$id),
-                              gene = as.character(.data$gene))
+                    gene = as.character(.data$gene))
 
 
         } else{

@@ -66,14 +66,14 @@ liftBSJCoords <-
         grStartUpBSE <- GenomicRanges::GRanges(
             seqnames = backSplicedJunctions$chrom,
             ranges = IRanges::IRanges(start = backSplicedJunctions$startUpBSE,
-                                      end = backSplicedJunctions$startUpBSE),
+                end = backSplicedJunctions$startUpBSE),
             strand = backSplicedJunctions$strand
         )
 
         grEndDownBSE <- GenomicRanges::GRanges(
             seqnames = backSplicedJunctions$chrom,
             ranges = IRanges::IRanges(start = backSplicedJunctions$endDownBSE,
-                                      end = backSplicedJunctions$endDownBSE),
+                end = backSplicedJunctions$endDownBSE),
             strand = backSplicedJunctions$strand
         )
 
@@ -86,10 +86,10 @@ liftBSJCoords <-
         options(warn = 0) # default
         mtStart <-
             match(rownames(backSplicedJunctions),
-                  liftedOverStartUpBSE$group)
+                liftedOverStartUpBSE$group)
         mtEnd <-
             match(rownames(backSplicedJunctions),
-                  liftedOverEndDownBSE$group)
+                liftedOverEndDownBSE$group)
 
         # if the species to convert to the coordinates is human the gene names
         # need to be all upper case
@@ -118,24 +118,24 @@ liftBSJCoords <-
         # (if necessary) the coordinates.
         for (i in seq_along(liftedBSJCoords$id)) {
             if (!is.na(liftedBSJCoords$strand[i])  &
-                !is.na(liftedBSJCoords$chrom[i]) &
-                !is.na(liftedBSJCoords$startUpBSE[i]) &
-                !is.na(liftedBSJCoords$endDownBSE[i]) &
-                liftedBSJCoords$strand[i] == "+" &
-                liftedBSJCoords$startUpBSE[i] >
-                liftedBSJCoords$endDownBSE[i]) {
+                    !is.na(liftedBSJCoords$chrom[i]) &
+                    !is.na(liftedBSJCoords$startUpBSE[i]) &
+                    !is.na(liftedBSJCoords$endDownBSE[i]) &
+                    liftedBSJCoords$strand[i] == "+" &
+                    liftedBSJCoords$startUpBSE[i] >
+                    liftedBSJCoords$endDownBSE[i]) {
                 x <- liftedBSJCoords$endDownBSE[i]
                 liftedBSJCoords$startUpBSE[i] <-
                     liftedBSJCoords$endDownBSE[i]
                 liftedBSJCoords$endDownBSE[i] <- x
 
             } else if (!is.na(liftedBSJCoords$strand[i]) &
-                       !is.na(liftedBSJCoords$chrom[i]) &
-                       !is.na(liftedBSJCoords$startUpBSE[i]) &
-                       !is.na(liftedBSJCoords$endDownBSE[i]) &
-                       liftedBSJCoords$strand[i] == "-" &
-                       liftedBSJCoords$startUpBSE[i] <
-                       liftedBSJCoords$endDownBSE[i]) {
+                    !is.na(liftedBSJCoords$chrom[i]) &
+                    !is.na(liftedBSJCoords$startUpBSE[i]) &
+                    !is.na(liftedBSJCoords$endDownBSE[i]) &
+                    liftedBSJCoords$strand[i] == "-" &
+                    liftedBSJCoords$startUpBSE[i] <
+                    liftedBSJCoords$endDownBSE[i]) {
                 x <- liftedBSJCoords$endDownBSE[i]
                 liftedBSJCoords$startUpBSE[i] <-
                     liftedBSJCoords$endDownBSE[i]

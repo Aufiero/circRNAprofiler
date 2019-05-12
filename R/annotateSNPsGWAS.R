@@ -62,7 +62,6 @@
 #' @importFrom S4Vectors subjectHits
 #' @importFrom S4Vectors queryHits
 #' @importFrom rlang .data
-#' @importFrom utils globalVariables
 #' @importFrom utils data
 #' @importFrom GenomeInfoDb seqlevelsStyle
 #' @export
@@ -70,7 +69,7 @@ annotateSNPsGWAS <-
     function(targets, genome = "hg19", pathToTraits = NULL) {
         options(readr.num_columns = 0)
         if (length(targets) == 2 &
-            names(targets)[[1]] == "upGR") {
+                names(targets)[[1]] == "upGR") {
             # Create an empty list of 2 elements
             snpsGWAS <- vector("list", 2)
             names(snpsGWAS)[1] <- "upGR"
@@ -224,7 +223,7 @@ annotateSNPsGWAS <-
 
                 snpsGWAS[[i]]$snps <-
                     data.frame(genRanges[S4Vectors::subjectHits(overlaps)],
-                               gwas[S4Vectors::queryHits(overlaps)])
+                        gwas[S4Vectors::queryHits(overlaps)])
 
 
                 snpsGWAS[[i]]$snps <- snpsGWAS[[i]]$snps %>%
