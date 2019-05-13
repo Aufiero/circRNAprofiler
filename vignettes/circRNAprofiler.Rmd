@@ -1,5 +1,5 @@
 ---
-title: 'circRNAprofiler: An R-based computational framework to study circRNA molecules'
+title: 'circRNAprofiler: An R-based computational framework for downstream analysis of circular RNAs'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
@@ -1207,9 +1207,7 @@ repeats <-
 
 We work hard to ensure that circRNAprofiler is a powerful tool empowering your
 research. However, no software is free of bugs and issues, therefore we would 
-love to get feedback from our users. We intend to add more modules in
-the future in order to provide a comprehensive R package and also encourage users
-to contribute modules to circRNAprofiler.
+love to get feedback from our users.
 
 ## Acknowledgement
 

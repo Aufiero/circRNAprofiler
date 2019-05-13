@@ -1,10 +1,14 @@
 Package: circRNAprofiler
 Type: Package
-Title: An R-Based Computational Framework to Explore Expression, Genomic Context, and Function of Circular RNAs
+Title: circRNAprofiler: An R-Based Computational Framework for Dowsntream Analysis of Circular RNAs
 Version: 0.1.1
 Author: Simona Aufiero
 Maintainer: The package maintainer <simo.aufiero@gmail.com>
-Description: R-based framework for downstream analysis of predicted circRNA molecules.
+Description: circRNAprofiler is an R-based computational framework for a 
+    comprehensive in silico analysis of circRNAs. It allows to combine circRNAs 
+    detected by multiple publicly available annotation-based circRNA detection 
+    tools and to analyze their expression, genomic context, evolutionary 
+    conservation, biogenesis and putative functions.
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
