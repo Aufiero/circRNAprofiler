@@ -20,6 +20,11 @@ knitr::include_graphics("./images/image1.png")
 library(circRNAprofiler)
 
 # Packages needed for the vignettes
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("ggpubr", "ggplot2", "gridExtra"))
+
+# Load packages
 library(ggpubr)
 library(ggplot2)
 library(gridExtra)

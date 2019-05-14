@@ -34,8 +34,9 @@ text-align: justify}
 
 circRNAprofiler, an R-based computational framework that runs after circRNAs 
 have been identified. It allows to combine circRNAs detected by multiple 
-publicly available circRNA detection tools and analyze their expression, 
-evolutionary conservation, biogenesis and putative functions.
+publicly available annotation-based circRNA detection tools and to analyze 
+their expression, genomic context, evolutionary conservation, biogenesis and 
+putative functions.
 
 ```{r, echo=FALSE, out.width='90%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. In the grey box are reported the modules with the corresponding main functions."}
 
@@ -67,9 +68,13 @@ The latest version of the circRNprofiler package is available on github and it
 can be installed with:
 
 ```{r, eval = FALSE }
-install.packages("devtools")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("devtools")
 library(devtools)
-install_github("Aufiero/circRNAprofiler")
+devtools::install_github("Aufiero/circRNAprofiler")
+
 ```
 
 ### Load the package
@@ -77,6 +82,10 @@ install_github("Aufiero/circRNAprofiler")
 library(circRNAprofiler)
 
 # Packages needed for the vignettes
+if (!requireNamespace(c("ggpubr", "ggplot2", "gridExtra"), quietly = TRUE))
+    BiocManager::install(c("ggpubr", "ggplot2", "gridExtra"))
+
+# Load packages
 library(ggpubr)
 library(ggplot2)
 library(gridExtra)

@@ -4,16 +4,16 @@ Title: circRNAprofiler: An R-Based Computational Framework for Dowsntream Analys
 Version: 0.1.1
 Author: Simona Aufiero
 Maintainer: The package maintainer <simo.aufiero@gmail.com>
-Description: circRNAprofiler is an R-based computational framework for a 
-    comprehensive in silico analysis of circRNAs. It allows to combine circRNAs 
-    detected by multiple publicly available annotation-based circRNA detection 
-    tools and to analyze their expression, genomic context, evolutionary 
-    conservation, biogenesis and putative functions.
+Description: R-based computational framework for a comprehensive in silico 
+    analysis of circRNAs. It allows to combine circRNAs detected by multiple 
+    publicly available annotation-based circRNA detection tools and to analyze
+    their expression, genomic context, evolutionary conservation, biogenesis 
+    and putative functions.
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
 biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, GenomeAssembly
-Depends: R(>= 3.6.0)
+Depends: R(>= 3.6.0), Homo.sapiens
 RoxygenNote: 6.1.1
 Suggests: testthat,
     knitr,

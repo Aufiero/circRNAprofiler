@@ -80,7 +80,7 @@ annotateSNPsGWAS <-
                 GRs are allowed.")
         }
 
-        base::library(gwascat)
+        #base::library(gwascat)
         if (genome == "hg19") {
 
             gwas <- suppressWarnings(tryCatch(

@@ -116,7 +116,7 @@ getMotifs <-
                 ss <- base::substring(motifs[[i]]$targets$seq, 30,
                     ((motifs[[i]]$targets$length + 30) + (width - 1)))
 
-                # Put the string NA so that the we do not get error when
+                # Put the string NA so that we do not get error when
                 # calling RNAStringSet
                 ss[is.na(ss)] <- "NA"
                 rnaSS <- Biostrings::RNAStringSet(ss)
@@ -252,7 +252,7 @@ computeMotifs <-
                 ss <- base::substring(targets[[i]]$seq, 30,
                     ((targets[[i]]$length + 30) + (width - 1)))
 
-                # Put the string NA so that the we do not get error when
+                # Put the string NA so that we do not get error when
                 # calling RNAStringSet
                 ss[is.na(ss)] <- "NA"
                 rnaSS <- Biostrings::RNAStringSet(ss)
