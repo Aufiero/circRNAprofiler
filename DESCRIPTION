@@ -13,7 +13,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
 biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, GenomeAssembly
-Depends: R(>= 3.6.0), Homo.sapiens
+Depends: R(>= 3.6.0)
 RoxygenNote: 6.1.1
 Suggests: testthat,
     knitr,
