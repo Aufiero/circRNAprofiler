@@ -630,11 +630,11 @@ The transcript reported in this column is used in the downstream analysis.
 
 - chrom: is the chromosome from which the circRNA is derived.
 
-- startUpIntron: is the 5' coordinate of the intron upstream the acceptor site 
-in the selected transcript.
+- startUpIntron: is the 5' coordinate of the intron immediately upstream the 
+acceptor site in the selected transcript.
 
-- endUpIntron: is the 3' coordinate of the intron upstream the acceptor site
-in the selected transcript.
+- endUpIntron: is the 3' coordinate of the intron immediately upstream the 
+acceptor site in the selected transcript.
 
 - startUpBSE: is the 5' coordinate of upstream back-spliced exon in the selected
 transcript. This corresponds with the upstream back-spliced junction / acceptor site.
@@ -648,11 +648,11 @@ transcript.
 - endDownBSE: is the 3' coordinate of downstream back-spliced exon in the selected
 transcript. This corresponds with the downstream back-spliced junction / donor site.
 
-- startDownIntron: is the 5' coordinate of the intron downstream the donor site
-in the selected transcript.
+- startDownIntron: is the 5' coordinate of the intron immediately downstream 
+the donor site in the selected transcript.
 
-- endDownIntron: is the 3' coordinate of the intron downstream the donor site
-in the selected transcript.
+- endDownIntron: is the 3' coordinate of the intron immediately downstream the
+donor site in the selected transcript.
 
 - exNumUpBSE: is the position of the upstream back-spliced exon in the selected
 transcript (e.g. if it is the 1st, the 2nd etc).
@@ -671,7 +671,7 @@ transcript.
 - lenDownBSE: is the length (nt) of the downstream back-spliced exon in the selected
 transcript.
 
-- lenDownIntron: is the length (nt) of the intron downstream the donor site 
+- lenDownIntron: is the length (nt) of the intron immediately downstream the donor site 
 in the selected transcript.
 
 - meanLengthBSEs: is the mean lenght (nt) of the back-spliced exons.

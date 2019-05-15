@@ -260,7 +260,7 @@ plotHostGenes <-
             dplyr::summarise(n2 = n()) %>%
             ggplot(aes(x = factor(.data$n1), y = factor(.data$n2))) +
             geom_bar(position = "dodge", stat = "identity") +
-            labs(title = title, x = "No. of circRNA", y = "No. of gene") +
+            labs(title = title, x = "No. of circRNAs", y = "No. of genes") +
             coord_flip() +
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5))
@@ -347,9 +347,9 @@ plotExPosition <-
             dplyr::filter(.data$n1 > n) %>%
             ggplot(aes(x = factor(.data$exNum), y = .data$n1)) +
             geom_bar(position = "dodge", stat = "identity") +
-            labs(title = title, x = "Exon number", y = "Frequency") +
+            labs(title = title, x = "Exon position", y = "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1),
+            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
                 plot.title = element_text(hjust = 0.5))
 
 
@@ -402,7 +402,7 @@ plotExBetweenBSEs <-
             labs(title = title, x = "No. of exons", y =
                     "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1),
+            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
                 plot.title = element_text(hjust = 0.5))
 
         return(p)
@@ -459,7 +459,7 @@ plotTotExons <-
             labs(title = title, x = "No. of exons", y =
                     "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1),
+            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
                 plot.title = element_text(hjust = 0.5))
 
         return(p)
