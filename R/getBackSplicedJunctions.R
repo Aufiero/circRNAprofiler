@@ -198,25 +198,25 @@ getDetectionTools <- function() {
     colnames(detectionTools) <- c("name", "code")
 
     detectionTools$name[1] <- "mapsplice"
-    detectionTools$code[1] <- "m"
+    detectionTools$code[1] <- "ms"
 
     detectionTools$name[2] <- "nclscan"
-    detectionTools$code[2] <- "n"
+    detectionTools$code[2] <- "ns"
 
     detectionTools$name[3] <- "circexplorer2"
     detectionTools$code[3] <- "ce"
 
     detectionTools$name[4] <- "knife"
-    detectionTools$code[4] <- "k"
+    detectionTools$code[4] <- "kn"
 
     detectionTools$name[5] <- "other"
-    detectionTools$code[5] <- "o"
+    detectionTools$code[5] <- "ot"
 
     detectionTools$name[6] <- "circmarker"
     detectionTools$code[6] <- "cm"
 
     detectionTools$name[7] <- "uroborus"
-    detectionTools$code[7] <- "u"
+    detectionTools$code[7] <- "ur"
 
     return(detectionTools)
 
@@ -241,6 +241,19 @@ getDetectionTools <- function() {
 #' @param gtf A data frame containing genome annotation information,
 #' generated with \code{\link{formatGTF}}.
 #'
+#' @param pathToExperiment A string containing the path to the experiment.txt
+#' file. The file experiment.txt contains the experiment design information.
+#' It must have at least 3 columns with headers:
+#' - label (1st column): unique names of the samples (short but informative).
+#' - fileName (2nd column): name of the input files - e.g. circRNAs_X.txt, where
+#' x can be can be 001, 002 etc.
+#' - group (3rd column): biological conditions - e.g. A or B; healthy or
+#' diseased if you have only 2 conditions.
+#'
+#' By default pathToExperiment i set to NULL and the file it is searched in
+#' the working directory. If experiment.txt is located in a different directory
+#' then the path needs to be specified.
+#'
 #' @return A data frame.
 #'
 #' @examples
@@ -250,9 +263,12 @@ getDetectionTools <- function() {
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Merge commonly identified circRNAs
-#' mergedBSJunctions <- mergeBSJunctions(backSplicedJunctions, gtf)
+#' pathToExperiment <- system.file("extdata", "experiment.txt",
+#'     package ="circRNAprofiler")
 #'
+#' # Merge commonly identified circRNAs
+#' mergedBSJunctions <- mergeBSJunctions(backSplicedJunctions, gtf,
+#'     pathToExperiment)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom utils read.table
@@ -261,61 +277,80 @@ getDetectionTools <- function() {
 #' @export
 mergeBSJunctions <-
     function(backSplicedJunctions,
-        gtf) {
-        detectionTools <- getDetectionTools()
-        # Find and merge commonly identified back-spliced junctions
-        mergedBSJunctions <- backSplicedJunctions %>%
-            dplyr::mutate(mean = rowMeans(.[,-c(1,2,3,4,5,6,7)])) %>%  #experiment$label
+        gtf,
+        pathToExperiment = NULL) {
+
+        if (is.null(pathToExperiment)) {
+            pathToExperiment <- "experiment.txt"
+        }
+
+        if (file.exists(pathToExperiment)) {
+            # Read from path given in input
+            experiment <-
+                utils::read.table(
+                    pathToExperiment,
+                    stringsAsFactors = FALSE,
+                    header = TRUE,
+                    sep = "\t"
+                )
+            detectionTools <- getDetectionTools()
+            # Find and merge commonly identified back-spliced junctions
+            mergedBSJunctions <- backSplicedJunctions %>%
+                dplyr::mutate(mean = rowMeans(.[,experiment$label]))%>%
             dplyr::group_by(.data$strand,
                 .data$chrom,
                 .data$startUpBSE,
                 .data$endDownBSE) %>%
-            dplyr::arrange(desc(mean)) %>%
-            dplyr::mutate(mergedTools = paste(sort(.data$tool), collapse = ",")) %>%
-            dplyr::filter(row_number() == 1) %>%
-            dplyr::ungroup() %>%
-            dplyr::select(-c(.data$tool, .data$mean)) %>%
-            dplyr::rename(tool = .data$mergedTools) %>%
-            dplyr::select(
-                .data$id,
-                .data$gene,
-                .data$strand,
-                .data$chrom,
-                .data$startUpBSE,
-                .data$endDownBSE,
-                .data$tool,
-                everything()
-            ) %>%
-            as.data.frame()
-        # dplyr::mutate(mergedTools = paste(sort(detectionTools$code[match(.data$tool, detectionTools$name)]), collapse = ","))
+                dplyr::arrange(desc(mean)) %>%
+                dplyr::mutate(mergedTools = paste(sort(.data$tool), collapse = ",")) %>%
+                dplyr::filter(row_number() == 1) %>%
+                dplyr::ungroup() %>%
+                dplyr::select(-c(.data$tool, .data$mean)) %>%
+                dplyr::rename(tool = .data$mergedTools) %>%
+                dplyr::select(
+                    .data$id,
+                    .data$gene,
+                    .data$strand,
+                    .data$chrom,
+                    .data$startUpBSE,
+                    .data$endDownBSE,
+                    .data$tool,
+                    everything()
+                ) %>%
+                as.data.frame()
+            # dplyr::mutate(mergedTools = paste(sort(detectionTools$code[match(.data$tool, detectionTools$name)]), collapse = ","))
 
-        # For some circRNAs the strand reported in prediction results is
-        # sometimes different from the strand reported in the gtf file.
-        shrinkedGTF <- gtf %>%
-            dplyr::select(.data$gene_name, .data$strand) %>%
-            dplyr::group_by(.data$gene_name) %>%
-            dplyr::filter(row_number() == 1)
+            # For some circRNAs the strand reported in prediction results is
+            # sometimes different from the strand reported in the gtf file.
+            shrinkedGTF <- gtf %>%
+                dplyr::select(.data$gene_name, .data$strand) %>%
+                dplyr::group_by(.data$gene_name) %>%
+                dplyr::filter(row_number() == 1)
 
-        mt <-
-            match(mergedBSJunctions$gene, shrinkedGTF$gene_name)
-        antisenseCircRNAs <-
-            dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt, ]) %>%
-            dplyr::filter(.data$strand != .data$strand1) %>%
-            dplyr::select(-c(.data$gene_name, .data$strand1))
+            mt <-
+                match(mergedBSJunctions$gene, shrinkedGTF$gene_name)
+            antisenseCircRNAs <-
+                dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt, ]) %>%
+                dplyr::filter(.data$strand != .data$strand1) %>%
+                dplyr::select(-c(.data$gene_name, .data$strand1))
 
-        write.table(
-            antisenseCircRNAs,
-            "antisenseCircRNAs.txt",
-            quote = FALSE,
-            row.names = FALSE,
-            col.names = TRUE,
-            sep = "\t"
-        )
+            write.table(
+                antisenseCircRNAs,
+                "antisenseCircRNAs.txt",
+                quote = FALSE,
+                row.names = FALSE,
+                col.names = TRUE,
+                sep = "\t"
+            )
 
-        # Remove from the dataframe the antisense circRNAs
-        mergedBSJunctionsClenead <- mergedBSJunctions %>%
-            dplyr::filter(!(mergedBSJunctions$id %in% antisenseCircRNAs$id))
+            # Remove from the dataframe the antisense circRNAs
+            mergedBSJunctionsClenead <- mergedBSJunctions %>%
+                dplyr::filter(!(mergedBSJunctions$id %in% antisenseCircRNAs$id))
 
+        }else{
+           mergedBSJunctionsClenead <- backSplicedJunctions
+           cat("experiment.txt not found, data frame can not be merged")
+        }
 
         return(mergedBSJunctionsClenead)
     }

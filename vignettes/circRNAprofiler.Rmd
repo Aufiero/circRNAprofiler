@@ -1,5 +1,5 @@
 ---
-title: 'circRNAprofiler: An R-based computational framework for downstream analysis of circular RNAs'
+title: 'circRNAprofiler: An R-based computational framework for downstream analysis of circRNA molecules'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
@@ -34,9 +34,8 @@ text-align: justify}
 
 circRNAprofiler, an R-based computational framework that runs after circRNAs 
 have been identified. It allows to combine circRNAs detected by multiple 
-publicly available annotation-based circRNA detection tools and to analyze 
-their expression, genomic context, evolutionary conservation, biogenesis and 
-putative functions.
+publicly available circRNA detection tools and analyze their expression, 
+evolutionary conservation, biogenesis and putative functions.
 
 ```{r, echo=FALSE, out.width='90%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. In the grey box are reported the modules with the corresponding main functions."}
 
@@ -71,10 +70,8 @@ can be installed with:
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("devtools")
 library(devtools)
-devtools::install_github("Aufiero/circRNAprofiler")
-
+install_github("Aufiero/circRNAprofiler")
 ```
 
 ### Load the package
@@ -82,12 +79,9 @@ devtools::install_github("Aufiero/circRNAprofiler")
 library(circRNAprofiler)
 
 # Packages needed for the vignettes
-if (!requireNamespace(c("ggpubr", "ggplot2", "gridExtra"), quietly = TRUE))
-    BiocManager::install(c("ggpubr", "ggplot2", "gridExtra"))
-
-# Load packages
 library(ggpubr)
 library(ggplot2)
+library(VennDiagram)
 library(gridExtra)
 ```
 
@@ -377,6 +371,8 @@ p <- ggplot(backSplicedJunctions, aes(x = tool)) +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
+# Run getDetectionTools() to get the code corresponding to the circRNA
+# detection tools.
 dt <- getDetectionTools() %>%
     dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
     gridExtra::tableGrob(rows=NULL)
@@ -416,13 +412,6 @@ p <- ggplot(mergedBSJunctions, aes(x = tool)) +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
-# Run getDetectionTools() to get the code corresponding to the circRNA 
-# detection tools.
-dt <-getDetectionTools() %>%
-    dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
-    gridExtra::tableGrob(rows=NULL)
-
-# Merge plots
 gridExtra::grid.arrange(p, dt, nrow=1)
 
 ```
@@ -451,20 +440,39 @@ filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5)
 Plot circRNAs after the filtering step.
 
 ```{r, fig.align="center", fig.width = 10, fig.height = 4}
-# Plot
+# Plot using histogram
 p <- ggplot(filteredCirc, aes(x = tool)) +
     geom_bar() +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
-# Run getDetectionTools() to get the code corresponding to the circRNA
-# detection tools.
-dt <-getDetectionTools() %>%
-    dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
-    gridExtra::tableGrob(rows=NULL)
-
-# Merge plots
 gridExtra::grid.arrange(p, dt, nrow=1)
+```
+
+Alternatively:
+
+```{r}
+# Plot using Vann diagram
+cm <- filteredCirc[base::grep("cm", filteredCirc$tool), ]
+ms <- filteredCirc[base::grep("ms", filteredCirc$tool), ]
+ns <- filteredCirc[base::grep("ns", filteredCirc$tool), ]
+
+p <- VennDiagram::draw.triple.venn(
+    area1 = length(cm$id),
+    area2 = length(ms$id),
+    area3 = length(ns$id),
+    n12 = length(intersect(cm$id, ms$id)),
+    n23 = length(intersect(ms$id, ns$id)),
+    n13 = length(intersect(cm$id, ns$id)),
+    n123 = length(Reduce(
+        intersect, list(cm$id, ms$id, ns$id)
+    )),
+    category = c("cm", "ms", "ns"),
+    lty = "blank",
+    fill = c("skyblue", "pink1", "mediumorchid")
+)
+
+#grid::grid.draw(p)
 ```
 
 ## Module 5
@@ -671,7 +679,7 @@ transcript.
 - lenDownBSE: is the length (nt) of the downstream back-spliced exon in the selected
 transcript.
 
-- lenDownIntron: is the length (nt) of the intron immediately downstream the donor site 
+- lenDownIntron: is the length (nt) of the intron downstream the donor site 
 in the selected transcript.
 
 - meanLengthBSEs: is the mean lenght (nt) of the back-spliced exons.
@@ -1216,7 +1224,9 @@ repeats <-
 
 We work hard to ensure that circRNAprofiler is a powerful tool empowering your
 research. However, no software is free of bugs and issues, therefore we would 
-love to get feedback from our users.
+love to get feedback from our users. We intend to add more modules in
+the future in order to provide a comprehensive R package and also encourage users
+to contribute modules to circRNAprofiler.
 
 ## Acknowledgement
 

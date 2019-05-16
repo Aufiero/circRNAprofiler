@@ -22,7 +22,9 @@ Suggests: testthat,
     citr,
     devtools,
     gridExtra,
-    ggpubr
+    grid,
+    ggpubr,
+    VennDiagram,
 Imports:
     dplyr,
     magrittr,

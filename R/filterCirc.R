@@ -82,7 +82,6 @@ filterCirc <- function(backSplicedJunctions,
             data.frame(matrix(nrow = 0, ncol = length(colNames)))
         colnames(filteredCirc) <- colNames
 
-        . <- NULL   # satisfy R CMD check
         # The filter is applied to all samples
         if (allSamples) {
             filteredCirc <- backSplicedJunctions %>%
@@ -104,7 +103,7 @@ filterCirc <- function(backSplicedJunctions,
             }
 
             filteredCirc <-
-                filteredCirc[!duplicated(filteredCirc$id), ]
+                filteredCirc[!duplicated(filteredCirc), ]
 
         }
     } else{

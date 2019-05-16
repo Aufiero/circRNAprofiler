@@ -1,6 +1,6 @@
 # Satisfy R CMD check
 if (getRversion() >= "3.1.0")
-    utils::globalVariables(c("ebicat38", "ebicat37", "gwascat", "."))
+    utils::globalVariables(c("ebicat38", "ebicat37", "gwascat", ".", NULL))
 
 
 #' @title Format annotation file
