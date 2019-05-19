@@ -37,3 +37,4 @@ importCircMarker(pathToFile, gtf)
 
 
 }
+\keyword{internal}

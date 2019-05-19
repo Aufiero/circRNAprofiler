@@ -47,3 +47,4 @@ getIECoords(annotatedBSJs, lIntron = 101, lExon = 10)
 
 
 }
+\keyword{internal}

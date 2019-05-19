@@ -35,3 +35,4 @@ importMapSplice(pathToFile, gtf)
 
 
 }
+\keyword{internal}

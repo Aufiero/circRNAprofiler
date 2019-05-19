@@ -12,7 +12,7 @@
 #' It can be generated with \code{\link{getSeqsFromGRs}}.
 #'
 #' @param genome A string specifying the human genome assembly the target
-#' regions came from. Possible options are hg38 or hg19.
+#' sequences came from. Possible options are hg38 or hg19.
 #' Current image for GWAS SNPS coordinates is hg38. If hg19 is specified
 #' SNPs coordinates are realtime liftOver to hg19 coordinates.
 #' Internally at first the function \code{\link[gwascat]{makeCurrentGwascat}}
@@ -53,7 +53,6 @@
 #' # Annotate GWAS SNPs
 #' snpsGWAS <- annotateSNPsGWAS(targets, genome = "hg19")
 #'
-#' @import gwascat
 #' @import dplyr
 #' @importFrom GenomicRanges makeGRangesFromDataFrame
 #' @importFrom GenomicRanges findOverlaps
@@ -64,6 +63,8 @@
 #' @importFrom rlang .data
 #' @importFrom utils data
 #' @importFrom GenomeInfoDb seqlevelsStyle
+#' @importFrom gwascat makeCurrentGwascat
+#' @importFrom gwascat subsetByTraits
 #' @export
 annotateSNPsGWAS <-
     function(targets, genome = "hg19", pathToTraits = NULL) {
@@ -80,11 +81,11 @@ annotateSNPsGWAS <-
                 GRs are allowed.")
         }
 
-        #base::library(gwascat)
+        #require(gwascat, quietly = TRUE)
         if (genome == "hg19") {
 
             gwas <- suppressWarnings(tryCatch(
-                makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh37"),
+                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh37"),
                 error = function(e) NULL
             ))
 
@@ -96,11 +97,12 @@ annotateSNPsGWAS <-
                 #Load lifted over image
                 utils::data(ebicat37)
                 gwas <- ebicat37
+                cat("Connection to the db failed, using data(ebicat37)")
             }
 
         } else if (genome == "hg38") {
             gwas <- suppressWarnings(tryCatch(
-                makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh38"),
+                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh38"),
                 error = function(e) NULL
             ))
 
@@ -111,6 +113,7 @@ annotateSNPsGWAS <-
                 # Load image dated 3 August 2015
                 utils::data(ebicat38)
                 gwas <- ebicat38
+                cat("Connection to the db failed, using data(ebicat38)")
             }
 
         } else {
@@ -140,7 +143,7 @@ annotateSNPsGWAS <-
 
         # Check if there there are traits
         if (nrow(traitsFromFile) > 0) {
-            gwas <- subsetByTraits(gwas, tr = traitsFromFile$id)
+            gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
 
         }else{
             cat("traits.txt is empty or absent. All

@@ -28,7 +28,7 @@ A data frame.
 }
 \description{
 The function getBackSplicedJunctions() reads the
-circRNAs_X.txt with the detected circRNAs, adapt the content and generate
+circRNAs_X.txt with the detected circRNAs, adapts the content and generates
 a unique data frame with all circRNAs identified by each circRNA detection
 tool and the occurrences found in each sample (named as reported in the
 column label in experiment.txt).

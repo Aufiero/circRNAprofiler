@@ -12,6 +12,8 @@
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
@@ -218,6 +220,8 @@ importMapSplice <- function(pathToFile, gtf) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Path to an example file containing circRNAs detected by NCLscan
 #' pathToFile <- system.file("extdata", "nclscan/circRNAs_001.txt",
@@ -368,6 +372,8 @@ importNCLscan <- function(pathToFile) {
 #' containing the detected circRNAs.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Path to an example file containing circRNAs detected by CIRCexplorer2
@@ -528,6 +534,8 @@ importCircExplorer2 <- function(pathToFile) {
 #' containing the detected circRNAs.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Path to an example file containing circRNAs detected by KNIFE
@@ -692,6 +700,8 @@ importKnife <- function(pathToFile) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Path to an example file containing circRNAs
 #' pathToFile <- system.file("extdata", "other/circRNAs_001.txt",
@@ -764,6 +774,8 @@ importOther <- function(pathToFile) {
 #' with \code{\link{formatGTF}}.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Load short version of the gencode v19 annotation file
@@ -903,6 +915,8 @@ importCircMarker <- function(pathToFile, gtf) {
 #'
 #' @param pathToFile A character string specifying the path to the file
 #' containing the detected circRNAs.
+#'
+#' @keywords internal
 #'
 #' @return A data frame.
 #'

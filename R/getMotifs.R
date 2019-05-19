@@ -196,6 +196,8 @@ getMotifs <-
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Load data frame containing detected back-spliced junctions
 #' data("mergedBSJunctions")
@@ -316,6 +318,8 @@ computeMotifs <-
 #' the motifs analysis.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function
@@ -508,6 +512,8 @@ getUserAttractMotifs <-
 #'
 #' @return A data frame
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Load data frame containing detected back-spliced junctions
 #' data("mergedBSJunctions")
@@ -631,6 +637,8 @@ filterMotifs <-
 #' It can be generated with \code{\link{filterMotifs}}.
 #'
 #' @return A list.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Load data frame containing detected back-spliced junctions

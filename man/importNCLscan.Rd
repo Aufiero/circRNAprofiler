@@ -30,3 +30,4 @@ importNCLscan(pathToFile)
 
 
 }
+\keyword{internal}

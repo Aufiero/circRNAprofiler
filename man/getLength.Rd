@@ -36,3 +36,4 @@ annotatedBSJs$endDownIntron <- 58496509
 getLength(annotatedBSJs)
 
 }
+\keyword{internal}

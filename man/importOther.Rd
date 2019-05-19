@@ -31,3 +31,4 @@ pathToFile <- system.file("extdata", "other/circRNAs_001.txt",
 importOther(pathToFile)
 
 }
+\keyword{internal}

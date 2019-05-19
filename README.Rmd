@@ -15,14 +15,14 @@ knitr::opts_chunk$set(
 
 [![HitCount](http://hits.dwyl.io/Aufiero/circRNAprofiler.svg)](http://hits.dwyl.io/Aufiero/circRNAprofiler) 
 
-# circRNAprofiler: an R-based computational framework to explore expression, genomic context, and function of circular RNAs 
+# circRNAprofiler: an R-based computational framework for downstream analysis of circular RNAs
 
 circRNAprofiler is an R-based framework that that only requires an R installation
 and offers 15 modules for a comprehensive in silico analysis of circRNAs. 
 This computational framework allows to combine and analyze circRNAs previously
 detected by multiple publicly available annotation-based circRNA detection tools.
 It covers different aspects of circRNAs analysis from differential expression
-analysis, evolutionary conservation, biogenesis to functional analysis.  
+analysis, back-spliced junction conservation, biogenesis to functional analysis.  
 The pipeline used by circRNAprofiler is highly automated and customizable,
 different species and genome assemblies can be used. Furthermore, circRNAprofiler
 includes additional plotting functions for the visualization of the data 

@@ -17,3 +17,4 @@ The function getTargetsColNames() returns the column names.
 getTargetsColNames()
 
 }
+\keyword{internal}

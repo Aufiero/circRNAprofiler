@@ -17,3 +17,4 @@ The function getRepeatsColNames() returns the column names.
 getRepeatsColNames()
 
 }
+\keyword{internal}

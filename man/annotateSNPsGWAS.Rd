@@ -11,7 +11,7 @@ annotateSNPsGWAS(targets, genome = "hg19", pathToTraits = NULL)
 It can be generated with \code{\link{getSeqsFromGRs}}.}
 
 \item{genome}{A string specifying the human genome assembly the target
-regions came from. Possible options are hg38 or hg19.
+sequences came from. Possible options are hg38 or hg19.
 Current image for GWAS SNPS coordinates is hg38. If hg19 is specified
 SNPs coordinates are realtime liftOver to hg19 coordinates.
 Internally at first the function \code{\link[gwascat]{makeCurrentGwascat}}

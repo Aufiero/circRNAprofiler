@@ -33,9 +33,9 @@ A data frame.
 The function mergeBSJunctions() shrinks the data frame by
 grouping back-spliced junctions commonly identified by multiple
 detection tools. The read counts of the samples reported in the final
-data frame will be the ones of the tool that detected the highest total mean.
-All the tools that detected the back-spliced junctions are then listed
-in the column tool of the final data frame.
+data frame will be the ones of the tool that detected the highest total mean
+across all samples. All the tools that detected the back-spliced junctions
+are then listed in the column "tool" of the final data frame.
 See \code{\link{getDetectionTools}}  for more detail about the code
 corresponding to each circRNA detection tool.
 }

@@ -75,9 +75,9 @@ getSeqsFromGRs <-
         match.arg(type, c("ie", "bse", "fi"))
 
         # Check if it a correct genome
-        if (is.element(requiredGenome, available.genomes())) {
+        if (is.element(requiredGenome, BSgenome::available.genomes())) {
             # It returns FALSE if the package does not exist
-            if (!is.element(requiredGenome, installed.packages()[, 1])) {
+            if (!requireNamespace(requiredGenome, quietly = TRUE)) {
                 BiocManager::install(requiredGenome)
             }
         } else{
@@ -213,6 +213,8 @@ getSeqsFromGRs <-
 #' must be positive.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Load data frame containing predicted back-spliced junctions
@@ -432,6 +434,8 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Load data frame containing predicted back-spliced junctions
 #' data("mergedBSJunctions")
@@ -508,6 +512,8 @@ getBSEcoords <- function(annotatedBSJs) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Load data frame containing predicted back-spliced junctions
 #' data("mergedBSJunctions")
@@ -579,6 +585,8 @@ getFIcoords <- function(annotatedBSJs) {
 #' The function getGRcolNames() returns the column names
 #'
 #' @return A character vector.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function

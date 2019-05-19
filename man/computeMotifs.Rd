@@ -52,3 +52,4 @@ computedMotifs <- computeMotifs(
 
 
 }
+\keyword{internal}

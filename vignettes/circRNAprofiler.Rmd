@@ -37,7 +37,7 @@ have been identified. It allows to combine circRNAs detected by multiple
 publicly available circRNA detection tools and analyze their expression, 
 evolutionary conservation, biogenesis and putative functions.
 
-```{r, echo=FALSE, out.width='90%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. In the grey box are reported the modules with the corresponding main functions."}
+```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules described in the text with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
 
 knitr::include_graphics("./images/image1.png")
 ```
@@ -102,7 +102,7 @@ knitr::include_graphics("./images/image2.png")
 The user has to create a project folder (e.g. circRNAprofiler) and then create 
 as many subfolders as the number of circRNA detection tools used. The following
 options are allowed: mapsplice, nclscan, knife, circexplorer2, uroborus, circmarker 
-and other. The following files are also needed: experiment.txt, motifs.txt, 
+and other. The following project files are also needed: experiment.txt, motifs.txt, 
 traits.txt, miRs.txt, transcripts.txt and the annotation file (*.gtf). They all
 must go under the project folder circRNAprofiler. These files should be filled 
 with the appropriate information (see files description below).
@@ -139,7 +139,7 @@ initCircRNAprofiler(
 
 Next, set project folder circRNAprofiler as your working directory.
 
-**_txt files descritpion_**
+**_project files descritpion_**
 
 The file **experiment.txt** contains the experiment design information.
 It must have at least 3 columns with headers:
@@ -173,9 +173,9 @@ knitr::kable(experiment)
 The file ***.gtf** contains the genome annotation. circRNAprofiler works well 
 and was tested with ensamble gencode, UCSC or NCBI based-genome annotations. 
 It is suggested to use the same annotation file used during the read mapping 
-procedure.
+procedure. 
 
-The file **motifs.txt** contains motifs/regular expressions specified by the user.
+The file **motifs.txt (optional)** contains motifs/regular expressions specified by the user.
 It must have 3 columns with headers:
 
 - id (1st column): name of the motif. - e.g. RBM20 or motif1.
@@ -198,7 +198,7 @@ motifs <-
 knitr::kable(motifs)
 ```
 
-The file **traits.txt** contains diseases/traits specified by the user. It must 
+The file **traits.txt (optional)** contains diseases/traits specified by the user. It must 
 have one column with header id. Type data("gwasTraits") to have an image (dated 
 on the 31st October 2018) of the traits reported in the GWAS catalog 
 [@MacArthur.etal2017]. The GWAS catalog is a curated collection of all
@@ -217,7 +217,7 @@ traits <-
 knitr::kable(head(traits))
 ```
 
-The file **miRs.txt** contains the microRNA ids from miRBase [@Griffiths-Jones.etal2006]
+The file **miRs.txt (optional)** contains the microRNA ids from miRBase [@Griffiths-Jones.etal2006]
 specified by the user. It must have one column with header id. The first row
 must contain the miR name starting with the ">", e.g >hsa-miR-1-3p. The 
 sequences of the miRs will be automatically retrieved from the mirBase latest 
@@ -236,7 +236,7 @@ miRs <-
 knitr::kable(head(miRs))
 ```
 
-The file **transcripts.txt** contains the transcript ids of the circRNA host 
+The file **transcripts.txt (optional)** contains the transcript ids of the circRNA host 
 genes. It must have one column with header id. If this file is empty 
 the longest transcript of the circRNA host genes whose exon coordinates overlap 
 with that of the detected back-spliced junctions are considered in the 
@@ -253,6 +253,8 @@ transcripts <-
 knitr::kable(transcripts)
 ```
 
+**_circRNA prediction reuslts_**
+
 The **circRNAs_X.txt** contains the detected circRNAs. Once the project folder 
 has been initialized the circRNAs_X.txt file/s must go in the corresponding 
 subfolders. There must be one .txt file per sample named circRNAs_X.txt, 
@@ -260,13 +262,17 @@ where X can be 001, 002 etc. If there are 6 samples, 6 .txt files named
 circRNAs_001.txt, circRNAs_002.txt, circRNAs_003.txt, circRNAs_004.txt, 
 circRNAs_005.txt, circRNAs_006.txt must be present in each 
 subfolder named with the name of the tool that has been used for the circRNA 
-detection. If the detection tool used is not among the possible options, first
-check that the tool used is an annotation-based circRNA detection tool,
-rename the file circRNAs_X.txt and put them in the subfolder "other". 
-Each circRNAs_X.txt file must have at least the following 6 columns with the
+detection. If the detection tool used is mapsplice, nclscan, knife, circexplorer2,
+uroborus or circmarker, the only thing to do after the detection is to rename 
+the files to circRNAs_X.txt and put them in the corresponding subfolder. 
+
+If the tools is not among the possible options, first check that the tool used 
+is an annotation-based circRNA detection tool, rename the file to circRNAs_X.txt
+and put them in the subfolder "other".  In this last case, you must ensure that 
+each circRNAs_X.txt file must have at least the following 6 columns with the 
 header (Figure 3):
 
-- gene: represents the gene from which the circRNA has arisen.
+- gene: represents the gene from which the circRNA arises.
 
 - strand: is the strand where the gene is transcribed.
 
@@ -346,11 +352,15 @@ head(gtf)
 
 The function getBackSplicedJunctions() reads the circRNAs_X.txt, adapts the 
 content and generates a unique data frame with the circRNAs detected by each 
-detection tool and the occurrences found in each sample. If antisense circRNAs
-are detected, they are removed from the data frame and stored in a file 
+detection tool and the occurrences found in each sample. CircRNA that derived 
+from the antisense strand are removed from the data frame and stored in a file 
 (antisenseCircRNAs.txt) for user consultation. A circRNA is defined antisense
 if the strand reported in the prediction results is different from the strand 
 reported in the genome annotation file. 
+
+NOTE:
+Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
+from the sense strand of the gene.
 
 
 ```{r, eval= FALSE}
@@ -423,11 +433,12 @@ gridExtra::grid.arrange(p, dt, nrow=1)
 The use of multiple detection tools leads to the identification of a higher number
 of circRNAs. To rule out false positive candidates a filtering step can be applied
 to the detected circRNAs.  The function filterCirc() filters circRNAs on
-different criteria: condition and read counts. In the example below
-by setting allSamples = FALSE the filter is applied to the samples of each condition
-separately meaning that a circRNA is kept if at least 5 read counts are present
-in all samples of one of the conditions (A or B or C). If allSamples = TRUE, the filter 
-is applied to all samples. We suggest to set allSamples = FALSE, since the presence
+different criteria: condition and read counts. The user can decide the 
+filtering criteria. In the example below by setting allSamples = FALSE the filter
+is applied to the samples of each condition separately meaning that a circRNA 
+is kept if at least 5 read counts are present in all samples of one of the 
+conditions (A or B or C). If allSamples = TRUE, the filter is applied to all 
+samples. We suggest to set allSamples = FALSE, since the presence
 of a disease/treatment can decrease the expression of subset of circRNAs
 thus by applying the filtering to all samples(allSamples = TRUE) those circRNAs 
 are discarded. 
@@ -451,7 +462,7 @@ gridExtra::grid.arrange(p, dt, nrow=1)
 
 Alternatively:
 
-```{r}
+```{r, fig.align="center", fig.width = 5, fig.height = 4}
 # Plot using Vann diagram
 cm <- filteredCirc[base::grep("cm", filteredCirc$tool), ]
 ms <- filteredCirc[base::grep("ms", filteredCirc$tool), ]
@@ -472,7 +483,6 @@ p <- VennDiagram::draw.triple.venn(
     fill = c("skyblue", "pink1", "mediumorchid")
 )
 
-#grid::grid.draw(p)
 ```
 
 ## Module 5
@@ -608,9 +618,10 @@ liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
 
 ### annotateBSJs()
 
-The function annotateBSJs() annotates back-splicing junctions with 
-the user provided gene annotation. We first define the circRNA parental transcript
-as a linear transcript whose exon coordinates overlap with that of the detected 
+The function annotateBSJs() annotates circRNAs internal structure and the 
+flanking introns. The genomic features are exracted from the user provided gene
+annotation. We first define the circRNA parental transcript as a linear 
+transcript whose exon coordinates overlap with that of the detected 
 back-spliced junctions and then the features are extracted from the selected
 transcript. Since the coordinates of the detected back-spliced junctions might
 not exactly correspond to annotated exonic coordinates, a gap of 10 nucleotides 
@@ -622,7 +633,7 @@ The output data frame will have the following columns:
 
 - id: unique identifier.
 
-- gene: represents the gene from which the circRNA has arisen.
+- gene: represents the gene from which the circRNA arises.
 
 - allTranscripts: are all transcripts of a circRNA's host gene which exon coordinates
 overlap with the detected back-spliced junction coordinates.
@@ -634,7 +645,7 @@ The transcript reported in this column is used in the downstream analysis.
 - totExons: total number of exons in the selected transcript (reported in the column 
 "transcript")
 
-- strand: is the strand where the gene is transcribed.
+- strand: is the strand from which the gene is transcribed.
 
 - chrom: is the chromosome from which the circRNA is derived.
 
@@ -726,7 +737,7 @@ background data set for structural and functional analysis.
 # First find frequency of single exon circRNAs
 f <-
     sum((annotatedBSJs$exNumUpBSE == 1 |
-             annotatedBSJs$exNumDownBSE == 1) ,
+            annotatedBSJs$exNumDownBSE == 1) ,
         na.rm = TRUE) / (nrow(annotatedBSJs) * 2)
 
 # Retrieve random back-spliced junctions
@@ -752,7 +763,7 @@ p1 <- plotLenIntrons(
     annotatedBSJs,
     annotatedRBSJs,
     title = "Length flanking introns",
-    df1Name = "detected",
+    df1Name = "predicted",
     df2Name = "random"
 )
 
@@ -761,13 +772,13 @@ p2 <- plotLenBSEs(
     annotatedBSJs,
     annotatedRBSJs,
     title = "Length back-splided exons",
-    df1Name = "detected",
+    df1Name = "predicted",
     df2Name = "random"
 )
 
 # No. of circRNAs produced from the host genes
 p3 <-
-    plotHostGenes(annotatedBSJs, title = "# CircRNAs produced from the host genes")
+    plotHostGenes(annotatedBSJs, title = "# CircRNAs produced from host genes")
 
 # No. of exons in between the back-spliced junctions
 p4 <-
@@ -776,30 +787,23 @@ p4 <-
 # Position of back-spliced exons within the host transcripts
 p5 <-
     plotExPosition(annotatedBSJs,
-                   flip = FALSE,
-                   n = 1,
-                   title = "Position back-spliced exons in the transcripts")
-
-# Additional plotting functions
-# Position of back-spliced exons within the flipped host transcripts
-p6 <-
-    plotExPosition(annotatedBSJs,
-                   flip = TRUE,
-                   n = 1,
-                   title = "Position back-spliced exons in the flipped transcripts")
+        flip = FALSE,
+        n = 1,
+        title = "Position back-spliced exons in the transcripts")
 
 # Total no. of exons within the host transcripts
-p7 <-
-    plotTotExons(annotatedBSJs, title = " Total number of exons in the transcripts")
+p6 <-
+    plotTotExons(annotatedBSJs, title = " Total number of exons in the host transcripts")
 
 # Combine plots
 ggarrange(p1,
-          p2,
-          p3,
-          p4,
-          p5,
-          ncol = 2,
-          nrow = 3)
+    p2,
+    p3,
+    p4,
+    p5,
+    p6,
+    ncol = 2,
+    nrow = 3)
 
 ```
 
@@ -809,7 +813,7 @@ knitr::include_graphics("./images/image3.png")
 ```
 
 
-Functional screenings can be perfomed on one or multiple circRNAs (e.g 
+Downstream screenings can be perfomed on one or multiple circRNAs (e.g 
 differentially expressed circRNAs or circRNAs arising from the same host genes).
 We selected ALPK2 circRNA for further functional screenings.
 
@@ -843,7 +847,7 @@ the back-spliced-junctions. The exon sequences are retrieved and then concatenat
 together to recreate the circRNA sequence. To recreate the back-spliced junction 
 sequence 50 nucleotides are taken from the 5' head and attached at the 3' tail 
 of each circRNA sequence. This makes the circRNA sequences reported in the output
-file longer than the actual length. 
+file longer than the predicted length. 
 
 ```{r,eval = FALSE}
 # Foreground target sequences
@@ -871,14 +875,14 @@ targetsFTS_bsj <-
 
 ### getSeqsFromGRs() 
 
-The function getSeqsFromGRs() includes 3 modules to retrieve the 3 types of sequences.
-Sequences of the introns flanking back-spliced junctions, sequences from a defined 
-genomic window surrounding the back-spliced junctions and sequences of the 
-back-spliced exons. If type = "ie" the sequences are retrieved from the genomic 
-ranges defined by using the values given in input to lIntron and lExon. If 
-type = "bse" the sequences of the back-spliced exons will be extracted.
-If type = "fi" the sequences of the introns flanking the back-spliced exons are
-retrieved.
+The function getSeqsFromGRs() includes 3 modules to retrieve the 3 types of sequences:
+i) sequences of the introns flanking back-spliced junctions, ii) sequences from a 
+user-defined genomic window surrounding the back-spliced junctions and 
+iii) sequences of the back-spliced exons. In detail, if type = "ie" the sequences are 
+retrieved from the genomic window defined by using the values given in input 
+to lIntron and lExon. If type = "bse" the sequences of the back-spliced exons 
+will be extracted. If type = "fi" the sequences of the introns flanking the 
+back-spliced exons are retrieved.
 
 ```{r, eval = FALSE}
 # Foreground target sequences
@@ -908,16 +912,15 @@ targetsBTS_gr <-
 
 ### getMotifs()
 
-The function getMotifs() scans the target sequences for the presence of recurrent
-motifs of a specific length defined in input. The sequences flanking the back-spliced
-junctions, circRNA sequences or the back-spliced junction sequences can be analyzed.
+The function getMotifs() scans the target sequences from module 9-11
+for the presence of recurrent motifs of a specific length defined in input. 
 Briefly, we first compute all possible motifs of a given length (defined by 
-the argument width of the function), and then the RNA target sequences is scanned
+the argument width of the function), and then the target sequences are scanned
 for the presence of those motifs. Also overlapping motifs are counted. 
 The identified motifs can subsequently be matched with motifs of known RNA Binding 
 Proteins (RBPs) deposited in the ATtRACT database. 
 There can be multiple consensus binding motifs for each RBP ranging from 4 to 12
-nucleotides. If the identified motifs matches with or they are contained 
+nucleotides. If the identified motifs matches with or they are part 
 (as substring) within any RBP motifs it is marked and named with the name of 
 the matching RBP. A motif can be shared by multiple RBPs, so in that case all 
 RBPs are reported. It is possible to specify whether to report only motifs 
@@ -989,20 +992,23 @@ head(p[[3]])
 ```
 
 The data frame contains the following columns:
-- foreground: number of motif found in the foreground target sequences.
+- foreground: number of motif found in the foreground target sequences 
+(e.g. predicted circRNA).
 
-- background: number of motifs found in the background target sequences.
+- background: number of motifs found in the background target sequences 
+(e.g. randomly generated circRNA).
 
 - foregroundNorm: number of motif found in the foreground target sequences and
 normalized for the number of sequences analyzed.
 
-- backgroundNorm: number of motifs found in foreground target sequences and
+- backgroundNorm: number of motifs found in background target sequences and
 normalized for the number of sequences analyzed.
 
 - log2FC: log2 fold change calculated in this way (foregroundNorm+1)/(backgroundNorm+1).
 
 - motif: motif of the corresponding RBP.
 
+NOTE:
 It is also possible to search for RBP motifs and unknown motifs in circRNA 
 sequences and back-spliced junction sequences. For this purpose the target sequences
 have to be retrieved and then the functions getMotifs() and mergeMotifs() have 
@@ -1013,26 +1019,26 @@ to be run, as described above.
 ### getMiRsites()
 
 The function getMirSites() searches miRNA binding sites within circRNA sequences.
-Briefly, circRNAprofiler queries  the miRBase database
+Briefly, circRNAprofiler queries the miRBase database
 and retrieves the miRNA sequences which are subsequently reversed (3'->5'). 
 Each circRNA sequence is then scanned using a sliding window of 1, for the 
 presence of putative matches with the miRNA seed sequence.  
 For each iteration, the number of total matches (canonical Watson-Crick (WC) + 
 non-canonical matches), continuous canonical WC matches and
-non-canonical matches between the 2 given sequences (seed region and target 
-sequence) are retrieved. A WC match occurs when adenosine (A) pairs with uracil 
-(U) and guanine (G) pairs with cytosine (C). A perfect seed match between the 
-miRNA and the target has no gaps in alignment within the WC matching. A non-canonical
-match occurs when a G matches with U. A mismatch occurs when there is a gap in
-one of the two sequences (asymmetric mismatch) or in the following cases 
-(symmetric mismatch): A-G or A-C or U-C. Only seed sites that meet specific 
-matching requirements are collected and reported in the final output. 
-Of those seed sites, additional features are also reported, 
-such as the number of matches found between the circRNA sequences and the 
-central and supplementary regions of the miRNA. Information about the 
-nucleotide at position 1 (t1), that is the nucleotide in the circRNA sequence 
-that matches with the nucleotide number 1 of the miRNA sequence.  Finally,
-the percentage of AU nucleotides around the seed site is reported. 
+non-canonical matches between the 2 given sequences (miRNA seed region and miRNA 
+miRNA seed region binding sites) are retrieved. A WC match occurs when 
+adenosine (A) pairs with uracil (U) and guanine (G) pairs with cytosine (C). 
+A perfect seed match has no gaps in alignment within the WC matching. A 
+non-canonical match occurs when a G matches with U. A mismatch occurs when there
+is a gap in one of the two sequences (asymmetric mismatch) or in the following 
+cases (symmetric mismatch): A-G or A-C or U-C. Only miRNA seed region binding sites
+that meet specific matching requirements are collected and reported in the final
+output. Of those binding sites, additional features are also reported. These 
+features are the number of matches found between the target sequences and the 
+central and supplementary regions of the miRNA. Information about the nucleotide
+at position 1 (t1), that is the nucleotide in the target sequence that matches 
+with the nucleotide number 1 of the miRNA sequence.  Finally, the percentage of
+AU nucleotides around the miRNA seed region binding sites is reported. 
 The output is a list of data frames where each data frame contains the 
 information relative to one circRNA. The following columns are present:
 
@@ -1040,52 +1046,54 @@ information relative to one circRNA. The following columns are present:
 e.g. 3'GAUUCGGUGGUACACUUUGGUC5'; GUGG: compensatory region (13-16); 
 UACA: central region (9-12); CUUUGGU: seed (8-2).
 
-- counts: is the number of times a miRNA seed region is found in the target sequence.
+- counts: is the number of times a miRNA seed region binding sites is found in 
+the target sequence.
 
 - totMatchesInSeed: is the number of total matches (canonical WC + non-canonical matches)
-found between the miRNA seed region and the seed site in the target sequence.
+found between the miRNA seed region and the miRNA seed region binding sites in 
+the target sequence.
 
 - cwcMatchesInSeed: is the number of continuous WC matches found between the miRNA
-seed region and the seed site in the target sequence.
+seed region and the miRNA seed region binding sites in the target sequence.
 
-- seedLocation: is the location of the seed site in the target sequence. 
-E.g. if the reported number is 20 it means that the nucleotide at position 20 in 
-the target sequence (1-index based) matches with the nucleotide number 8 of the
-miRNA. From 21 to 26 one can find the rest of the seed sequence. For the central 
-region one has to look from position 16 to 19 and for the compensatory region 
-from position 12 to 15 of the target sequence.
+- seedLocation: is the location of the miRNA seed region binding sites in the 
+target sequence. E.g. if the reported number is 20 it means that the nucleotide
+at position 20 in the target sequence (1-index based) matches with the nucleotide
+number 8 of the miRNA. From 21 to 26 one can find the rest of the seed sequence. 
+For the central region one has to look from position 16 to 19 and for the 
+compensatory region from position 12 to 15 of the target sequence.
 
 - t1: is the nucleotide in the target sequence that matches with nucleotide 
 number 1 (C5') of the miRNA sequence.
 
 - totMatchesInCentral: is the number of total matches (canonical WC + non-canonical matches)
-found between the miRNA central region and the region upstream the seed site in the
-target sequence (e.g. position 16 to 19).
+found between the miRNA central region and the sequence upstream the miRNA seed 
+region binding sites in the target sequence (e.g. position 16 to 19).
 
 - cwcMatchesInCentral: is the number of continuous WC matches found between the 
-miRNA central region and the region upstream the seed site in the target sequence 
-(e.g. position 16 to 19).
+miRNA central region and the sequence upstream the miRNA seed region binding sites
+in the target sequence (e.g. position 16 to 19).
 
 - totMatchesInCompensatory: is the number of total matches found between the miRNA
-compensatory region and the region upstream the seed site in the target sequence 
-(e.g. position 12 to 15).
+compensatory region and the sequence upstream the miRNA seed region binding sites
+in the target sequence (e.g. position 12 to 15).
 
 - cwcMatchesInCompensatory: is the number of continuous WC matches found between
-the miRNA compensatory region and the region upstream the seed site in the target
-sequence (e.g. position 12 to 15).
+the miRNA compensatory region and the region upstream the miRNA seed region 
+binding sites in the target sequence (e.g. position 12 to 15).
 
 - localAUcontent: is the percentage of AU nucleotides in the 10 nucleotides upstream
-and downstream the seed site in the target sequence.
+and downstream the miRNA seed region binding sites in the target sequence.
 
 
 How to interpret the results?
 The user can select stringency criteria for miRNA binding prediction. 
-For example by setting the function arguments (specific for the seed site) 
-totalMatches = 7 and maxNonCanonicalMatches = 1, one can retrieve only seed 
-sites with a number of total matches with the miRNA seed region equal to 7 of 
+For example by setting the function arguments totalMatches = 7 and 
+maxNonCanonicalMatches = 1, one can retrieve only miRNA seed region binding sites 
+with a number of total matches with the miRNA seed region equal to 7 of 
 which only 1 can be a non-canonical match. In this case after running the 
 analysis, totMatchesInSeed must be 7, if cwcMatchesInSeed is 4mer it means 
-that there are 7 matches between the seed site in the target 
+that there are 7 matches between the miRNA seed region binding sites in the target 
 sequence and the miRNA seed region, with 1 non-canonical match in the middle of 
 alignment, that is: there are 4 continuous WC matches (4mer), 1 non-canonical 
 match and 2 continuous WC matches, for a total of 7. 
@@ -1103,12 +1111,12 @@ cwcMatchesInCompensatory.
 
 The miRNA analysis starts at position 30 of the circRNA sequence to allow the 
 analysis of the complementary and 3' supplementary region of the miRNA that have
-to be aligned with the region located backwards the selected seed site.
-The 30 nucleotides skipped in the initial phase are analyzed in the final phase
-together with the back-spliced junction. The computational time increases with 
-the number of sequences and miRNAs to analyze. To reduce false positives and 
-computational time we suggest making a selection on miRNAs, e.g. use only miRNAs
-expressed in the tissues of interest.
+to be aligned with the region located backwards the selected miRNA seed region 
+binding sites. The 30 nucleotides skipped in the initial phase are analyzed in 
+the final phase together with the back-spliced junction. The computational time 
+increases with the number of sequences and miRNAs to analyze. To reduce false 
+positives and computational time we suggest making a selection on miRNAs, e.g. 
+use only miRNAs expressed in the tissues of interest.
 
 ```{r,eval = FALSE}
 miRsites <-
@@ -1190,7 +1198,8 @@ The function annotateSNPsGWAS() can be used to annotate the GWAS SNPs located
 in the region flanking the back-spliced junctions of each circRNA. SNPs information
 including the corresponding genomic coordinates are retrieved from the GWAs catalog
 database. The genomic coordinates of the GWAS SNPs are overlapped with the 
-genomic coordinates of the target sequences. This is possible only for human genome.
+genomic coordinates of the target sequences. This is possible only for the human
+genome.
 
 ```{r, eval = FALSE}
 snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, genome = "hg19")
@@ -1205,7 +1214,7 @@ The function annotateRepeats() annotates repetitive elements
 located in the region flanking the back-spliced junctions of each circRNA. 
 Briefly, the genomic coordinates of repetitive elements in the RepeatMasker 
 database are overlapped with the genomic coordinates of the target sequences.
-If compementary = TRUE, only back-spliced junctions of circRNAs which flanking 
+If compementary = TRUE, only back-spliced junctions of circRNAs of which flanking 
 introns contain complementary repeats (repeats belonging to a same 
 family but located on opposite strands) are reported in the final output.
 Repetitive elements are provided by AnnotationHub storage which

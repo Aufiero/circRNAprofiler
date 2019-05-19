@@ -19,3 +19,4 @@ a specific import function has been developed.
 getDetectionTools()
 
 }
+\keyword{internal}

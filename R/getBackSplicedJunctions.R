@@ -1,7 +1,7 @@
 #' @title Import detected circRNAs
 #'
 #' @description The function getBackSplicedJunctions() reads the
-#' circRNAs_X.txt with the detected circRNAs, adapt the content and generate
+#' circRNAs_X.txt with the detected circRNAs, adapts the content and generates
 #' a unique data frame with all circRNAs identified by each circRNA detection
 #' tool and the occurrences found in each sample (named as reported in the
 #' column label in experiment.txt).
@@ -144,7 +144,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                 # Repalce NA values with 0 (zero)
                 backSplicedJunctionsTool <-
                     backSplicedJunctionsTool %>%
-                    dplyr::mutate_at(experiment$label, funs(replace(., is.na(.), 0))) %>%
+                    dplyr::mutate_at(experiment$label, ~replace(., is.na(.), 0)) %>%
                     dplyr::mutate(tool = tool)
 
                 #bind the data frame containing circRNA prediction perfomed by the
@@ -186,6 +186,8 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
 #' a specific import function has been developed.
 #'
 #' @return A data frame
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function.
@@ -229,9 +231,9 @@ getDetectionTools <- function() {
 #' @description The function mergeBSJunctions() shrinks the data frame by
 #' grouping back-spliced junctions commonly identified by multiple
 #' detection tools. The read counts of the samples reported in the final
-#' data frame will be the ones of the tool that detected the highest total mean.
-#' All the tools that detected the back-spliced junctions are then listed
-#' in the column tool of the final data frame.
+#' data frame will be the ones of the tool that detected the highest total mean
+#' across all samples. All the tools that detected the back-spliced junctions
+#' are then listed in the column "tool" of the final data frame.
 #' See \code{\link{getDetectionTools}}  for more detail about the code
 #' corresponding to each circRNA detection tool.
 #'

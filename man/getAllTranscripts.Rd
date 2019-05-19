@@ -35,3 +35,4 @@ data("gtf")
 allTranscripts <- getAllTranscripts(gtf, "SYCP2", "58497514", "58497445")
 
 }
+\keyword{internal}

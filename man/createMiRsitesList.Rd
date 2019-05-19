@@ -47,3 +47,4 @@ miRsites <- createMiRsitesList(targets, microRNAs)
 
 
 }
+\keyword{internal}

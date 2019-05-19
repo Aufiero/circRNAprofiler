@@ -36,3 +36,4 @@ getBSEcoords(annotatedBSJs)
 
 
 }
+\keyword{internal}

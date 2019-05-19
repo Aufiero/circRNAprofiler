@@ -46,3 +46,4 @@ microRNAs <- getMiRseqs(miRBaseLatestRelease = TRUE,
     miRspeciesCode = "hsa")
 
 }
+\keyword{internal}

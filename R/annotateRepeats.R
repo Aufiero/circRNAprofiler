@@ -241,6 +241,8 @@ annotateRepeats <-
 #'
 #' @return A character vector.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function
 #' getRepeatsColNames()

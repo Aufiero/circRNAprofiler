@@ -437,6 +437,8 @@ getMiRsites <- function(targets,
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function
 #' microRNAs <- getMiRseqs(miRBaseLatestRelease = TRUE,
@@ -591,6 +593,8 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
 #' It can be generated with \code{\link{getMiRseqs}}.
 #'
 #' @return A list.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Load data frame containing predicted back-spliced junctions
@@ -780,6 +784,8 @@ createMiRsitesList <- function(targets, microRNAs) {
 #'
 #' @return A dataframe.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function.
 #' matches <- getMatches("AGGCGUU", "AGGCGUU", isSeed = TRUE)
@@ -925,6 +931,8 @@ getMatches <-  function(seq1, seq2, isSeed = TRUE) {
 #'  or as a mismatch. Default value is TRUE.
 #'
 #' @return A character string.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function.

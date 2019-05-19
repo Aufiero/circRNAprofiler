@@ -17,3 +17,4 @@ The function getBasicColNames() returns the basic column names.
 getBasicColNames()
 
 }
+\keyword{internal}

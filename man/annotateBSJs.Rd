@@ -37,7 +37,7 @@ A data frame.
 \description{
 The function annotateBSJs() annotates the circRNA structure
 and the introns flanking the corresponding back-spliced junctions.
-The features are extrated from the user provided gene annotation.
+The genomic features are extracted from the user provided gene annotation.
 }
 \examples{
 # Load a data frame containing detected back-spliced junctions

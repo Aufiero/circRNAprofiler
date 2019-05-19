@@ -28,3 +28,4 @@ package="circRNAprofiler")
 importCircExplorer2(pathToFile)
 
 }
+\keyword{internal}

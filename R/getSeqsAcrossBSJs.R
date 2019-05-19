@@ -93,9 +93,9 @@ getSeqsAcrossBSJs <-
             paste0("BSgenome.", species, ".", "UCSC", ".", genome)
 
         # Check if it a correct genome
-        if (is.element(requiredGenome, available.genomes())) {
+        if (is.element(requiredGenome, BSgenome::available.genomes())) {
             # It returns FALSE if the package does not exist
-            if (!is.element(requiredGenome, installed.packages()[, 1])) {
+            if (!requireNamespace(requiredGenome, quietly = TRUE)) {
                 BiocManager::install(requiredGenome)
             }
         } else{

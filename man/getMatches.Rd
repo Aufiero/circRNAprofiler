@@ -30,3 +30,4 @@ matches <- getMatches("AGGCGUU", "AGGCGUU", isSeed = TRUE)
 
 
 }
+\keyword{internal}

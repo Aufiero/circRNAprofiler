@@ -64,3 +64,4 @@ motifs <- createMotifsList(
 
 
 }
+\keyword{internal}

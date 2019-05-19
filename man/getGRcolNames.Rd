@@ -17,3 +17,4 @@ The function getGRcolNames() returns the column names
 getGRcolNames()
 
 }
+\keyword{internal}

@@ -18,3 +18,4 @@ names.
 getAnnotatedBSJsColNames()
 
 }
+\keyword{internal}

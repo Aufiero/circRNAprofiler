@@ -7,6 +7,8 @@
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function
 #' annotatedBSJs <- data.frame(

@@ -7,12 +7,14 @@ source("render_toc.R")
 ## ---- toc, echo = FALSE--------------------------------------------------
 render_toc("circRNAprofiler.Rmd")
 
-## ---- echo=FALSE, out.width='90%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. In the grey box are reported the modules with the corresponding main functions."----
+## ---- echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules described in the text with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."----
 
 knitr::include_graphics("./images/image1.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  install.packages("devtools")
+#  if (!requireNamespace("BiocManager", quietly = TRUE))
+#      install.packages("BiocManager")
+#  
 #  library(devtools)
 #  install_github("Aufiero/circRNAprofiler")
 
@@ -20,13 +22,9 @@ knitr::include_graphics("./images/image1.png")
 library(circRNAprofiler)
 
 # Packages needed for the vignettes
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install(c("ggpubr", "ggplot2", "gridExtra"))
-
-# Load packages
 library(ggpubr)
 library(ggplot2)
+library(VennDiagram)
 library(gridExtra)
 
 ## ---- echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Project folder structure"----
@@ -130,6 +128,8 @@ p <- ggplot(backSplicedJunctions, aes(x = tool)) +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
+# Run getDetectionTools() to get the code corresponding to the circRNA
+# detection tools.
 dt <- getDetectionTools() %>%
     dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
     gridExtra::tableGrob(rows=NULL)
@@ -153,13 +153,6 @@ p <- ggplot(mergedBSJunctions, aes(x = tool)) +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
-# Run getDetectionTools() to get the code corresponding to the circRNA 
-# detection tools.
-dt <-getDetectionTools() %>%
-    dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
-    gridExtra::tableGrob(rows=NULL)
-
-# Merge plots
 gridExtra::grid.arrange(p, dt, nrow=1)
 
 
@@ -168,20 +161,35 @@ filteredCirc <-
 filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5)
 
 ## ---- fig.align="center", fig.width = 10, fig.height = 4-----------------
-# Plot
+# Plot using histogram
 p <- ggplot(filteredCirc, aes(x = tool)) +
     geom_bar() +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
     theme_classic()
 
-# Run getDetectionTools() to get the code corresponding to the circRNA
-# detection tools.
-dt <-getDetectionTools() %>%
-    dplyr::filter( name %in% c("mapsplice","nclscan", "circmarker"))%>%
-    gridExtra::tableGrob(rows=NULL)
-
-# Merge plots
 gridExtra::grid.arrange(p, dt, nrow=1)
+
+## ---- fig.align="center", fig.width = 5, fig.height = 4------------------
+# Plot using Vann diagram
+cm <- filteredCirc[base::grep("cm", filteredCirc$tool), ]
+ms <- filteredCirc[base::grep("ms", filteredCirc$tool), ]
+ns <- filteredCirc[base::grep("ns", filteredCirc$tool), ]
+
+p <- VennDiagram::draw.triple.venn(
+    area1 = length(cm$id),
+    area2 = length(ms$id),
+    area3 = length(ns$id),
+    n12 = length(intersect(cm$id, ms$id)),
+    n23 = length(intersect(ms$id, ns$id)),
+    n13 = length(intersect(cm$id, ns$id)),
+    n123 = length(Reduce(
+        intersect, list(cm$id, ms$id, ns$id)
+    )),
+    category = c("cm", "ms", "ns"),
+    lty = "blank",
+    fill = c("skyblue", "pink1", "mediumorchid")
+)
+
 
 ## ------------------------------------------------------------------------
 # Compare condition B Vs A
@@ -274,7 +282,7 @@ head(annotatedBSJs)
 # First find frequency of single exon circRNAs
 f <-
     sum((annotatedBSJs$exNumUpBSE == 1 |
-             annotatedBSJs$exNumDownBSE == 1) ,
+            annotatedBSJs$exNumDownBSE == 1) ,
         na.rm = TRUE) / (nrow(annotatedBSJs) * 2)
 
 # Retrieve random back-spliced junctions
@@ -294,7 +302,7 @@ head(randomBSJunctions)
 #      annotatedBSJs,
 #      annotatedRBSJs,
 #      title = "Length flanking introns",
-#      df1Name = "detected",
+#      df1Name = "predicted",
 #      df2Name = "random"
 #  )
 #  
@@ -303,13 +311,13 @@ head(randomBSJunctions)
 #      annotatedBSJs,
 #      annotatedRBSJs,
 #      title = "Length back-splided exons",
-#      df1Name = "detected",
+#      df1Name = "predicted",
 #      df2Name = "random"
 #  )
 #  
 #  # No. of circRNAs produced from the host genes
 #  p3 <-
-#      plotHostGenes(annotatedBSJs, title = "# CircRNAs produced from the host genes")
+#      plotHostGenes(annotatedBSJs, title = "# CircRNAs produced from host genes")
 #  
 #  # No. of exons in between the back-spliced junctions
 #  p4 <-
@@ -318,30 +326,23 @@ head(randomBSJunctions)
 #  # Position of back-spliced exons within the host transcripts
 #  p5 <-
 #      plotExPosition(annotatedBSJs,
-#                     flip = FALSE,
-#                     n = 1,
-#                     title = "Position back-spliced exons in the transcripts")
-#  
-#  # Additional plotting functions
-#  # Position of back-spliced exons within the flipped host transcripts
-#  p6 <-
-#      plotExPosition(annotatedBSJs,
-#                     flip = TRUE,
-#                     n = 1,
-#                     title = "Position back-spliced exons in the flipped transcripts")
+#          flip = FALSE,
+#          n = 1,
+#          title = "Position back-spliced exons in the transcripts")
 #  
 #  # Total no. of exons within the host transcripts
-#  p7 <-
-#      plotTotExons(annotatedBSJs, title = " Total number of exons in the transcripts")
+#  p6 <-
+#      plotTotExons(annotatedBSJs, title = " Total number of exons in the host transcripts")
 #  
 #  # Combine plots
 #  ggarrange(p1,
-#            p2,
-#            p3,
-#            p4,
-#            p5,
-#            ncol = 2,
-#            nrow = 3)
+#      p2,
+#      p3,
+#      p4,
+#      p5,
+#      p6,
+#      ncol = 2,
+#      nrow = 3)
 #  
 
 ## ---- echo=FALSE, out.width='100%', fig.align="center", fig.cap="\\label{fig:figs} Comparison of structural features extracted from the subset of 1458 filtered  back-spliced junctions compared to an equal number of randomly generated back-spliced junctions."----

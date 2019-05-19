@@ -4,6 +4,8 @@
 #'
 #' @return A character vector
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function
 #' getBasicColNames()
@@ -37,6 +39,8 @@ getBasicColNames <- function() {
 #'
 #' @importFrom magrittr %>%
 #' @import dplyr
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Load short version of the gencode v19 annotation file
@@ -102,6 +106,8 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
 #' @description The function getTargetsColNames() returns the column names.
 #'
 #' @return A character vector.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function

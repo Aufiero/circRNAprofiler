@@ -2,7 +2,7 @@
 #'
 #' @description The function annotateBSJs() annotates the circRNA structure
 #' and the introns flanking the corresponding back-spliced junctions.
-#' The features are extrated from the user provided gene annotation.
+#' The genomic features are extracted from the user provided gene annotation.
 #'
 #' @param backSplicedJunctions A data frame containing the back-spliced junction
 #' coordinates (e.g. detected or randomly selected).
@@ -307,6 +307,8 @@ annotateBSJs <-
 #'
 #' @return A character vector.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function.
 #' getAnnotatedBSJsColNames()
@@ -369,6 +371,8 @@ getAnnotatedBSJsColNames <- function() {
 #' coordinates.
 #'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function.
@@ -448,6 +452,8 @@ getAllTranscripts <- function(gtf, gene, exJ1, exJ2) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function.
 #'
@@ -514,6 +520,8 @@ getFlankIntrons <- function(transcriptToAnalyze, bsExons) {
 #'
 #' @return A data frame.
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Inner function.
 #'
@@ -579,6 +587,8 @@ getFlankIntronFirst <- function(transcriptToAnalyze, bsExons) {
 #'
 #' @return A data frame in which each row contains the coordinates of
 #' back-spliced exons and the corresponding flanking introns.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Inner function.

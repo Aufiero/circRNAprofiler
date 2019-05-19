@@ -83,3 +83,4 @@ filteredMotifs <- filterMotifs(
    reverse = FALSE)
 
 }
+\keyword{internal}

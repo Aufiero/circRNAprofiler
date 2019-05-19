@@ -28,3 +28,4 @@ pathToFile <- system.file("extdata", "knife/circRNAs_001.txt",
 importKnife(pathToFile)
 
 }
+\keyword{internal}

@@ -305,7 +305,7 @@ checkProjectFolder <-
                 } else {
                     cat("(!): missing folders containing circRNA predictions\n")
                     cat(
-                        "Folders containing .txt files with circRNA prediction
+                        "Folders containing .txt files with circRNA predictions
                         must be present in the wd\n"
                     )
                     check <- check + 1

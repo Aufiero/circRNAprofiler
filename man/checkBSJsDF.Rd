@@ -38,3 +38,4 @@ backSplicedJunctions <- importMapSplice(pathToFile, gtf)
 checkBSJsDF(backSplicedJunctions, addColNames = "coverage")
 
 }
+\keyword{internal}

@@ -57,9 +57,13 @@ test_that("mergeBSJunctions() generates a data frame with the correct content", 
     expect_gt(mergedBSJunctions$startUpBSE[4],
               mergedBSJunctions$endDownBSE[1])
 
-    expect_identical(mergedBSJunctions[mergedBSJunctions$id == "Eps15l1:-:chr8:72380306:72367904", "tool"], "m,o")
-    expect_identical(mergedBSJunctions[mergedBSJunctions$id == "Arhgap5:+:chr12:52516079:52542636", "tool"], "o")
-    expect_identical(mergedBSJunctions[mergedBSJunctions$id == "Ndufv1:-:chr19:4009435:4008653", "tool"], "o")
-    expect_identical(mergedBSJunctions[mergedBSJunctions$id == "Raph1:-:chr1:60533406:60525592", "tool"], "m,o")
+    expect_identical(mergedBSJunctions[mergedBSJunctions$id ==
+            "Eps15l1:-:chr8:72380306:72367904", "tool"], "ms,ot")
+    expect_identical(mergedBSJunctions[mergedBSJunctions$id ==
+            "Arhgap5:+:chr12:52516079:52542636", "tool"], "ot")
+    expect_identical(mergedBSJunctions[mergedBSJunctions$id ==
+            "Ndufv1:-:chr19:4009435:4008653", "tool"], "ot")
+    expect_identical(mergedBSJunctions[mergedBSJunctions$id ==
+            "Raph1:-:chr1:60533406:60525592", "tool"], "ms,ot")
 
 })

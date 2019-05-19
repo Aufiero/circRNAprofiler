@@ -43,3 +43,4 @@ userAttractMotifs <- getUserAttractMotifs(species = "Hsapiens",
     reverse = FALSE)
 
 }
+\keyword{internal}

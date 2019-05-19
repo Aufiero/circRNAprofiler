@@ -29,3 +29,4 @@ isGUMatch argument.
 compareSequences("UGGCGUU", "AGGUUUG", isGUMatch = TRUE)
 
 }
+\keyword{internal}

@@ -35,3 +35,4 @@ bsExons <- transcriptToAnalyze[c(43,45),]
 intronCoords <- getFlankIntronLast(transcriptToAnalyze, bsExons)
 
 }
+\keyword{internal}
