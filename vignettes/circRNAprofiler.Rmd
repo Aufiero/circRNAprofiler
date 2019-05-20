@@ -46,8 +46,8 @@ This vignettes provides a guide of how to use the R package circRNAProfiler.
 
 As practical example the RNA-sequencing data from human left ventricle tissues
 previously analyzed by our group for the presence of circRNAs [@Khan.etal2016], 
-was here re-analyzed. Multiple detection tools (CircMarker(cm), MapSplice2 (m)
-and NCLscan (n)) were used this time for the detection of circRNAs and an additional 
+was here re-analyzed. Multiple detection tools (CircMarker(cm), MapSplice2 (ms)
+and NCLscan (ns)) were used this time for the detection of circRNAs and an additional 
 sample for each condition was included reaching a total of 9 samples: 3 control
 hearts, 3 hearts of patients with dilated cardiomyopathies (DCM) and 3 hearts with
 hypertrophic cardiomyopathies (HCM). After the detections we run through
@@ -89,35 +89,29 @@ library(gridExtra)
 ### initCircRNAprofiler()
 
 An important step of the analysis workflow is to initialize the project folder,
-which can be done manually or with the helper function initCircRNAprofiler ()
+which can be done with the helper function initCircRNAprofiler()
 available in the package. The project folder should be structured as in the
 example Figure 2 if seven detection tools are used to detect circRNAs in 
 6 samples.
 
-```{r, echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Project folder structure"}
+```{r, echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"}
 knitr::include_graphics("./images/image2.png")
 ```
 
-**_Manually_**
-
-The user has to create a project folder (e.g. circRNAprofiler) and then create 
-as many subfolders as the number of circRNA detection tools used. The following
-options are allowed: mapsplice, nclscan, knife, circexplorer2, uroborus, circmarker 
-and other. The following project files are also needed: experiment.txt, motifs.txt, 
-traits.txt, miRs.txt, transcripts.txt and the annotation file (*.gtf). They all
-must go under the project folder circRNAprofiler. These files should be filled 
-with the appropriate information (see files description below).
-
-Then set project folder circRNAprofiler as your working directory.
-
 **_Helper function_**
 
+Project folder contains project files and circRNA prediction results.
+In detail, project files include the genome-annotation file (.gtf), the file 
+containing information about the experimental design (experiment.txt) and 
+optional files (motifs.txt, miRs.txt, transcripts.txt, traits.txt) which contain
+user specifications that are used to customize the analysis to execute. 
 In order to initialize the project folder the helper function initCircRNAprofiler()
 can be used to streamline the process. To initialize the project folder run the 
-following command specifying the circRNA detection tools used. The following 
-options are allowed: mapsplice, nclscan, knife, circexplorer2, uroborus, circmarker
-and other. The function will automatically create the project folder with the
-corresponding subfolders named with the circRNA detection tools used, and the 
+following command specifying the tools used to predict circRNAs. The following 
+options are allowed: "mapsplice", "nclscan", "knife", "circexplorer2", 
+"uroborus", "circmarker", and "other" (see below when to use the option "other"). 
+The function will automatically create the project folder with the
+corresponding subfolders named as the circRNA detection tools used, and the 
 5 *.txt files templates with the corresponding headers. These files should be 
 filled with the appropriate information (see files description below).
 
@@ -140,7 +134,7 @@ initCircRNAprofiler(
 
 Next, set project folder circRNAprofiler as your working directory.
 
-**_project files descritpion_**
+**_project files description_**
 
 The file **experiment.txt** contains the experiment design information.
 It must have at least 3 columns with headers:
@@ -254,7 +248,7 @@ transcripts <-
 knitr::kable(transcripts)
 ```
 
-**_circRNA prediction reuslts_**
+**_circRNA prediction results_**
 
 The **circRNAs_X.txt** contains the detected circRNAs. Once the project folder 
 has been initialized the circRNAs_X.txt file/s must go in the corresponding 
@@ -262,16 +256,18 @@ subfolders. There must be one .txt file per sample named circRNAs_X.txt,
 where X can be 001, 002 etc. If there are 6 samples, 6 .txt files named 
 circRNAs_001.txt, circRNAs_002.txt, circRNAs_003.txt, circRNAs_004.txt, 
 circRNAs_005.txt, circRNAs_006.txt must be present in each 
-subfolder named with the name of the tool that has been used for the circRNA 
+subfolder named as the name of the tool that has been used for the circRNA 
 detection. If the detection tool used is mapsplice, nclscan, knife, circexplorer2,
 uroborus or circmarker, the only thing to do after the detection is to rename 
 the files to circRNAs_X.txt and put them in the corresponding subfolder. 
+A specific import function will be called internally to adapt and format the 
+content as reported below (Figure 3).
 
-If the tools is not among the possible options, first check that the tool used 
-is an annotation-based circRNA detection tool, rename the file to circRNAs_X.txt
-and put them in the subfolder "other".  In this last case, you must ensure that 
-each circRNAs_X.txt file must have at least the following 6 columns with the 
-header (Figure 3):
+If the tool is not mapsplice, nclscan, knife, circexplorer2, uroborus or 
+circmarker, first check that the tool used is an annotation-based circRNA 
+detection tool, then rename the files to circRNAs_X.txt and put them in the 
+subfolder "other".  In this last case, you must ensure that each circRNAs_X.txt
+file must have at least the following 6 columns with the header (Figure 3):
 
 - gene: represents the gene from which the circRNA arises.
 
@@ -296,11 +292,6 @@ If more columns are present they will be discared.
 The coordinates for startUpBSE and endDownBSE are relative to the reference 
 strand, i.e. if strand is positive startUpBSE < endDownBSE, if strand is 
 negative startUpBSE > endDownBSE.
-
-For all the other detection tools, a specific import function is called 
-internally to adapt and format the content as reported above. In this case you 
-just need to put the files containing the detected cicRNAs in the corresponding
-subfolder and change the names to circRNAs_X.txt.
 
 The circRNAprofiler package is designed to be extended in the future with
 further import functions specifically designed to import the output files of
@@ -397,11 +388,11 @@ column "tool" of the final table. Run getDetectionTools() to get the code
 correspoding to each circRNA detection tool.
 
 NOTE:
-CircRNA that derived from the antisense strand are removed from the data frame 
-and stored in a file (antisenseCircRNAs.txt) for user consultation. 
-A circRNA is defined antisense if the strand reported in the prediction results 
-is different from the strand reported in the genome annotation file. 
-
+In this module circRNAs that derived from the antisense strand are identified. 
+This subset of antisense circRNAs are removed from the data frame and stored 
+in a file (antisenseCircRNAs.txt) for user consultation. A circRNA is defined 
+antisense if the strand reported in the prediction results is different from
+the strand reported in the genome annotation file. 
 
 Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
 from the sense strand of the gene.
@@ -454,7 +445,7 @@ filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5)
 Plot circRNAs after the filtering step.
 
 ```{r, fig.align="center", fig.width = 10, fig.height = 4}
-# Plot using histogram
+# Plot
 p <- ggplot(filteredCirc, aes(x = tool)) +
     geom_bar() +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
@@ -466,7 +457,7 @@ gridExtra::grid.arrange(p, dt, nrow=1)
 Alternatively:
 
 ```{r, fig.align="center", fig.width = 5, fig.height = 4}
-# Plot using Vann diagram
+# Plot using Venn diagram
 cm <- filteredCirc[base::grep("cm", filteredCirc$tool), ]
 ms <- filteredCirc[base::grep("ms", filteredCirc$tool), ]
 ns <- filteredCirc[base::grep("ns", filteredCirc$tool), ]
@@ -605,7 +596,7 @@ head(edgerResCvsA)
 The function liftBSJCoords() converts back-spliced junction coordinates between
 different species and genome assemblies by using the liftOver utility from UCSC.
 Type data(ahChainFiles) to see all possibile options for annotationHubID 
-E.g. if AH14155 is specified, the hg19ToMm9.over.chain.gz will be used to 
+E.g. if "AH14155" is specified, the hg19ToMm9.over.chain.gz will be used to 
 convert the hg19 (Human GRCh37) coordinates to mm9 (Mouse GRCm37). 
 
 NOTE:
@@ -646,7 +637,7 @@ and whose exon coordinates overlap with the detected back-spliced junction coord
 The transcript reported in this column is used in the downstream analysis. 
 
 - totExons: total number of exons in the selected transcript (reported in the column 
-"transcript")
+transcript)
 
 - strand: is the strand from which the gene is transcribed.
 
@@ -659,7 +650,7 @@ acceptor site in the selected transcript.
 acceptor site in the selected transcript.
 
 - startUpBSE: is the 5' coordinate of upstream back-spliced exon in the selected
-transcript. This corresponds with the upstream back-spliced junction / acceptor site.
+transcript. This corresponds with the back-spliced junction / acceptor site.
 
 - endUpBSE: is the 3' coordinate of the upstream back-spliced exon in the selected
 transcript.
@@ -668,7 +659,7 @@ transcript.
 transcript.
 
 - endDownBSE: is the 3' coordinate of downstream back-spliced exon in the selected
-transcript. This corresponds with the downstream back-spliced junction / donor site.
+transcript. This corresponds with the back-spliced junction / donor site.
 
 - startDownIntron: is the 5' coordinate of the intron immediately downstream 
 the donor site in the selected transcript.
@@ -849,8 +840,12 @@ the circRNA sequences are the sequences of all the exons between
 the back-spliced-junctions. The exon sequences are retrieved and then concatenated
 together to recreate the circRNA sequence. To recreate the back-spliced junction 
 sequence 50 nucleotides are taken from the 5' head and attached at the 3' tail 
-of each circRNA sequence. This makes the circRNA sequences reported in the output
-file longer than the predicted length. 
+of each circRNA sequence. 
+
+NOTE:
+The circRNA sequences reported in the output file are longer than the predicted 
+length (reported in the column lenCircRNA), due to the 50 nucleotides attached 
+at the 3' tail to recreate the back-spliced junction.
 
 ```{r,eval = FALSE}
 # Foreground target sequences
@@ -995,11 +990,12 @@ head(p[[3]])
 ```
 
 The data frame contains the following columns:
+
 - foreground: number of motif found in the foreground target sequences 
-(e.g. predicted circRNA).
+(e.g. predicted circRNAs).
 
 - background: number of motifs found in the background target sequences 
-(e.g. randomly generated circRNA).
+(e.g. randomly generated circRNAs).
 
 - foregroundNorm: number of motif found in the foreground target sequences and
 normalized for the number of sequences analyzed.
@@ -1027,15 +1023,15 @@ and retrieves the miRNA sequences which are subsequently reversed (3'->5').
 Each circRNA sequence is then scanned using a sliding window of 1, for the 
 presence of putative matches with the miRNA seed sequence.  
 For each iteration, the number of total matches (canonical Watson-Crick (WC) + 
-non-canonical matches), continuous canonical WC matches and
-non-canonical matches between the 2 given sequences (miRNA seed region and miRNA 
-miRNA seed region binding sites) are retrieved. A WC match occurs when 
-adenosine (A) pairs with uracil (U) and guanine (G) pairs with cytosine (C). 
-A perfect seed match has no gaps in alignment within the WC matching. A 
-non-canonical match occurs when a G matches with U. A mismatch occurs when there
-is a gap in one of the two sequences (asymmetric mismatch) or in the following 
-cases (symmetric mismatch): A-G or A-C or U-C. Only miRNA seed region binding sites
-that meet specific matching requirements are collected and reported in the final
+non-canonical matches), continuous canonical WC matches and non-canonical matches
+between the 2 given sequences (miRNA seed region and  miRNA seed region binding
+sites) are retrieved. A WC match occurs when adenosine (A) pairs with uracil (U) 
+and guanine (G) pairs with cytosine (C). A perfect seed match has no gaps in 
+alignment within the WC matching. A non-canonical match occurs when a G matches
+with U. A mismatch occurs when there is a gap in one of the two sequences 
+(asymmetric mismatch) or in the following cases (symmetric mismatch): 
+A-G or A-C or U-C. Only miRNA seed region binding sites that meet specific 
+matching requirements are collected and reported in the final
 output. Of those binding sites, additional features are also reported. These 
 features are the number of matches found between the target sequences and the 
 central and supplementary regions of the miRNA. Information about the nucleotide
@@ -1049,17 +1045,17 @@ information relative to one circRNA. The following columns are present:
 e.g. 3'GAUUCGGUGGUACACUUUGGUC5'; GUGG: compensatory region (13-16); 
 UACA: central region (9-12); CUUUGGU: seed (8-2).
 
-- counts: is the number of times a miRNA seed region binding sites is found in 
+- counts: is the number of miRNA seed region binding sites found in 
 the target sequence.
 
 - totMatchesInSeed: is the number of total matches (canonical WC + non-canonical matches)
-found between the miRNA seed region and the miRNA seed region binding sites in 
+found between the miRNA seed region and the miRNA seed region binding site in 
 the target sequence.
 
 - cwcMatchesInSeed: is the number of continuous WC matches found between the miRNA
-seed region and the miRNA seed region binding sites in the target sequence.
+seed region and the miRNA seed region binding site in the target sequence.
 
-- seedLocation: is the location of the miRNA seed region binding sites in the 
+- seedLocation: is the location of the miRNA seed region binding site in the 
 target sequence. E.g. if the reported number is 20 it means that the nucleotide
 at position 20 in the target sequence (1-index based) matches with the nucleotide
 number 8 of the miRNA. From 21 to 26 one can find the rest of the seed sequence. 
@@ -1071,22 +1067,22 @@ number 1 (C5') of the miRNA sequence.
 
 - totMatchesInCentral: is the number of total matches (canonical WC + non-canonical matches)
 found between the miRNA central region and the sequence upstream the miRNA seed 
-region binding sites in the target sequence (e.g. position 16 to 19).
+region binding site in the target sequence (e.g. position 16 to 19).
 
 - cwcMatchesInCentral: is the number of continuous WC matches found between the 
-miRNA central region and the sequence upstream the miRNA seed region binding sites
+miRNA central region and the sequence upstream the miRNA seed region binding site
 in the target sequence (e.g. position 16 to 19).
 
 - totMatchesInCompensatory: is the number of total matches found between the miRNA
-compensatory region and the sequence upstream the miRNA seed region binding sites
+compensatory region and the sequence upstream the miRNA seed region binding site
 in the target sequence (e.g. position 12 to 15).
 
 - cwcMatchesInCompensatory: is the number of continuous WC matches found between
 the miRNA compensatory region and the region upstream the miRNA seed region 
-binding sites in the target sequence (e.g. position 12 to 15).
+binding site in the target sequence (e.g. position 12 to 15).
 
 - localAUcontent: is the percentage of AU nucleotides in the 10 nucleotides upstream
-and downstream the miRNA seed region binding sites in the target sequence.
+and downstream the miRNA seed region binding site in the target sequence.
 
 
 How to interpret the results?
@@ -1096,7 +1092,7 @@ maxNonCanonicalMatches = 1, one can retrieve only miRNA seed region binding site
 with a number of total matches with the miRNA seed region equal to 7 of 
 which only 1 can be a non-canonical match. In this case after running the 
 analysis, totMatchesInSeed must be 7, if cwcMatchesInSeed is 4mer it means 
-that there are 7 matches between the miRNA seed region binding sites in the target 
+that there are 7 matches between the miRNA seed region binding site in the target 
 sequence and the miRNA seed region, with 1 non-canonical match in the middle of 
 alignment, that is: there are 4 continuous WC matches (4mer), 1 non-canonical 
 match and 2 continuous WC matches, for a total of 7. 
@@ -1115,7 +1111,7 @@ cwcMatchesInCompensatory.
 The miRNA analysis starts at position 30 of the circRNA sequence to allow the 
 analysis of the complementary and 3' supplementary region of the miRNA that have
 to be aligned with the region located backwards the selected miRNA seed region 
-binding sites. The 30 nucleotides skipped in the initial phase are analyzed in 
+binding site. The 30 nucleotides skipped in the initial phase are analyzed in 
 the final phase together with the back-spliced junction. The computational time 
 increases with the number of sequences and miRNAs to analyze. To reduce false 
 positives and computational time we suggest making a selection on miRNAs, e.g. 
@@ -1162,14 +1158,14 @@ j <- 1
 while (i <= (length(rearragedMiRres))) {
     write.xlsx2(
         rearragedMiRres[[i]][[1]],
-        "miRsites_TM7_NCM0.xlsx",
+        "miRsites_TM6_NCM1.xlsx",
         paste("sheet", j, sep = ""),
         append = TRUE
     )
     j <- j + 1
     write.xlsx2(
         rearragedMiRres[[i]][[2]],
-        "miRsites_TM7_NCM0.xlsx",
+        "miRsites_TM6_NCM1.xlsx",
         paste("sheet", j, sep = ""),
         append = TRUE
     )
@@ -1198,7 +1194,7 @@ p
 ### annotateSNPsGWAS()
 
 The function annotateSNPsGWAS() can be used to annotate the GWAS SNPs located 
-in the region flanking the back-spliced junctions of each circRNA. SNPs information
+in the regions flanking the back-spliced junctions of each circRNA. SNPs information
 including the corresponding genomic coordinates are retrieved from the GWAs catalog
 database. The genomic coordinates of the GWAS SNPs are overlapped with the 
 genomic coordinates of the target sequences. This is possible only for the human

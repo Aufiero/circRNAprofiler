@@ -7,10 +7,12 @@
 #' project folder.
 #'
 #' @param detectionTools A character vector specifying the tools
-#' used for circRNA detection. The following options are allowed: mapsplice,
-#' nclscan, knife, circexplorer2, circmarker, uroborus and other. The user can
-#' choose 1 or multiple tools. Subfolders named with the tools specified will
-#' be generated under the project folder.
+#' used to predict circRNAs. The following options are allowed: mapsplice,
+#' nclscan, knife, circexplorer2, circmarker and uroborus. If the tool is
+#' not mapsplice, nclscan, knife, circexplorer2, uroborus or circmarker
+#' then use the option other. The user can choose 1 or multiple tools.
+#' Subfolders named as the specified tools will be generated under
+#' the working directory.
 #'
 #' @return A NULL object
 #'
