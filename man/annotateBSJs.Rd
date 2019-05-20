@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotateBSJs.R
 \name{annotateBSJs}
 \alias{annotateBSJs}
-\title{Annotate circRNA features}
+\title{Annotate circRNA features.}
 \usage{
 annotateBSJs(backSplicedJunctions, gtf, isRandom = FALSE,
   pathToTranscripts = NULL)
@@ -13,7 +13,7 @@ coordinates (e.g. detected or randomly selected).
 For detected back-spliced junctions see \code{\link{getBackSplicedJunctions}}
 and \code{\link{mergeBSJunctions}} (to group circRNAs detected by multiple
 detection tools). For randomly selected back-spliced junctions see
-\code{\link{getRandomBSJunctions}}}
+\code{\link{getRandomBSJunctions}}.}
 
 \item{gtf}{A data frame containing genome annotation information. It can be
 generated with \code{\link{formatGTF}}.}

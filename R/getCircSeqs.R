@@ -168,9 +168,7 @@ getCircSeqs <-
 
 
                     targets[[1]]$seq[i] <-
-                        as.character(
-                            reverseComplement(
-                                RNAString(joinedExonSeqsWithBSJ)))
+                        as.character(reverseComplement(RNAString(joinedExonSeqsWithBSJ)))
 
                 } else if (transcript$strand[1] == "+") {
                     transcript <- transcript  %>%
@@ -209,4 +207,4 @@ getCircSeqs <-
 
         return(targets)
 
-    }
+        }

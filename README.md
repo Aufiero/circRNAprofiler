@@ -5,8 +5,7 @@
 circRNAprofiler: an R-based computational framework for downstream analysis of circular RNAs
 ============================================================================================
 
-circRNAprofiler is an R-based framework that that only requires an R installation and offers 15 modules for a comprehensive in silico analysis of circRNAs. This computational framework allows to combine and analyze circRNAs previously detected by multiple publicly available annotation-based circRNA detection tools. It covers different aspects of circRNAs analysis from differential expression analysis, back-spliced junction conservation, biogenesis to functional analysis.
-The pipeline used by circRNAprofiler is highly automated and customizable, different species and genome assemblies can be used. Furthermore, circRNAprofiler includes additional plotting functions for the visualization of the data which facilitate the interpretation of the results.
+circRNAprofiler is an R-based framework that only requires an R installation and offers 15 modules for a comprehensive in silico analysis of circRNAs. This computational framework allows to combine and analyze circRNAs previously detected by multiple publicly available annotation-based circRNA detection tools. It covers different aspects of circRNAs analysis from differential expression analysis, evolutionary conservation, biogenesis to functional analysis. The pipeline used by circRNAprofiler is highly automated and customizable. Furthermore, circRNAprofiler includes additional functions for data visualization which facilitate the interpretation of the results.
 
 Installation
 ------------
@@ -14,9 +13,12 @@ Installation
 You can install the released version of circRNAprofiler using the devtools package. To do so:
 
 ``` r
-install.packages("devtools")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("devtools")
 library(devtools)
-install_github("Aufiero/circRNAprofiler")
+devtools::install_github("Aufiero/circRNAprofiler")
 ```
 
 Documentation

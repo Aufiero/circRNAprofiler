@@ -64,7 +64,8 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
     colNames <- c(getBasicColNames(), addColNames)
 
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
-        missingNamesId <- which(!colnames(backSplicedJunctions) %in% colNames)
+        missingNamesId <-
+            which(!colnames(backSplicedJunctions) %in% colNames)
         stop("missing or wrong column names: ",
             paste(colnames(backSplicedJunctions)[missingNamesId],
                 collapse = " \t"))
@@ -96,9 +97,9 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
                 of the endDownBSE (donor site)"
             )
         }
-    }
+        }
     return(backSplicedJunctions)
-}
+        }
 
 
 #' @title Return column names

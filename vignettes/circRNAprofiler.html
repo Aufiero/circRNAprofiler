@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2019-05-19" />
+<meta name="date" content="2019-05-20" />
 
 <title>circRNAprofiler: An R-based computational framework for downstream analysis of circRNA molecules</title>
 
@@ -192,7 +192,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for downstream analysis of circRNA molecules</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2019-05-19</h4>
+<h4 class="date">2019-05-20</h4>
 
 </div>
 
@@ -300,8 +300,9 @@ text-align: justify}
 <pre class="r"><code>if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))
     install.packages(&quot;BiocManager&quot;)
 
+BiocManager::install(&quot;devtools&quot;)
 library(devtools)
-install_github(&quot;Aufiero/circRNAprofiler&quot;)</code></pre>
+devtools::install_github(&quot;Aufiero/circRNAprofiler&quot;)</code></pre>
 </div>
 <div id="load-the-package" class="section level3">
 <h3>Load the package</h3>
@@ -579,8 +580,7 @@ head(gtf)
 </div>
 <div id="getbacksplicedjunctions" class="section level3">
 <h3>getBackSplicedJunctions()</h3>
-<p>The function getBackSplicedJunctions() reads the circRNAs_X.txt, adapts the content and generates a unique data frame with the circRNAs detected by each detection tool and the occurrences found in each sample. CircRNA that derived from the antisense strand are removed from the data frame and stored in a file (antisenseCircRNAs.txt) for user consultation. A circRNA is defined antisense if the strand reported in the prediction results is different from the strand reported in the genome annotation file.</p>
-<p>NOTE: Modules in circRNAprofiler are specific for the analysis of circRNAs that derive from the sense strand of the gene.</p>
+<p>The function getBackSplicedJunctions() reads the circRNAs_X.txt, adapts the content and generates a unique data frame with the circRNAs detected by each detection tool and the occurrences found in each sample.</p>
 <pre class="r"><code># Load the object containing the detected circRNAs
 data(&quot;backSplicedJunctions&quot;)
 head(backSplicedJunctions)
@@ -610,6 +610,8 @@ gridExtra::grid.arrange(p, dt, nrow=1)</code></pre>
 <div id="mergedbsjunctions" class="section level3">
 <h3>mergedBSJunctions()</h3>
 <p>The function mergeBSJunctions() is called to shrink the data frame by grouping back-spliced junction coordinates commonly identified by multiple detection tools. For the grouped back-spliced junction coordinates, the counts of the tool which detected the highest total mean across all analyzed samples will be taken. All the tools that detected the back-spliced junction are then listed in the column “tool” of the final table. Run getDetectionTools() to get the code correspoding to each circRNA detection tool.</p>
+<p>NOTE: CircRNA that derived from the antisense strand are removed from the data frame and stored in a file (antisenseCircRNAs.txt) for user consultation. A circRNA is defined antisense if the strand reported in the prediction results is different from the strand reported in the genome annotation file.</p>
+<p>Modules in circRNAprofiler are specific for the analysis of circRNAs that derive from the sense strand of the gene.</p>
 <pre class="r"><code># Load object containing the merged back-spliced junctions
 data(&quot;mergedBSJunctions&quot;)
 head(mergedBSJunctions)
@@ -913,20 +915,20 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                  id     gene strand chrom startUpBSE
-## 1   ZNF91:-:chr19:23578248:23557440    ZNF91      - chr19   23578248
-## 2    TTN:-:chr2:179695529:179667014      TTN      -  chr2  179695529
-## 3    LGMN:-:chr14:93214972:93198994     LGMN      - chr14   93214972
-## 4   ZNF91:-:chr19:23493375:23491726    ZNF91      - chr19   23493375
-## 5 N4BP2L2:-:chr13:33054774:33052024  N4BP2L2      - chr13   33054774
-## 6 MLIP-AS1:-:chr6:53908225:53893976 MLIP-AS1      -  chr6   53908225
+##                                  id    gene strand chrom startUpBSE
+## 1    TTN:-:chr2:179516243:179515970     TTN      -  chr2  179516243
+## 2 N4BP2L2:-:chr13:33092057:33054727 N4BP2L2      - chr13   33092057
+## 3 N4BP2L2:-:chr13:33110006:33096319 N4BP2L2      - chr13   33110006
+## 4   EXOC6B:-:chr2:72490566:72411204  EXOC6B      -  chr2   72490566
+## 5  INO80C:-:chr18:33077613:33058246  INO80C      - chr18   33077613
+## 6    LGMN:-:chr14:93199160:93180721    LGMN      - chr14   93199160
 ##   endDownBSE
-## 1   23557440
-## 2  179667014
-## 3   93198994
-## 4   23491726
-## 5   33052024
-## 6   53893976</code></pre>
+## 1  179515970
+## 2   33054727
+## 3   33096319
+## 4   72411204
+## 5   33058246
+## 6   93180721</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>

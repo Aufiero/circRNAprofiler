@@ -30,7 +30,7 @@
 #'
 #' # Annotate the first 10 back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#'      isRandom = FALSE)
+#' isRandom = FALSE)
 #'
 #' # Retrieve targets
 #' targets <- getSeqsFromGRs(
@@ -92,8 +92,8 @@ annotateRepeats <-
                     !is.na(targets[[2]]$endGR)
             )
 
-        targets[[1]] <- targets[[1]][intersect(index1, index2), ]
-        targets[[2]] <- targets[[2]][intersect(index1, index2), ]
+        targets[[1]] <- targets[[1]][intersect(index1, index2),]
+        targets[[2]] <- targets[[2]][intersect(index1, index2),]
 
         for (i in seq_along(repeats)) {
             # Create an empty list of 2 elements to store the extracted
@@ -121,17 +121,19 @@ annotateRepeats <-
 
             # Find Overlaps
             overlaps <-
-                suppressWarnings(GenomicRanges::findOverlaps(rm, genRanges, ignore.strand =
+                suppressWarnings(
+                    GenomicRanges::findOverlaps(rm, genRanges, ignore.strand =
                         TRUE))
             if (length(overlaps) == 0) {
                 # no genomic ranges in common
                 repeats[[i]]$repeats <-
                     data.frame(matrix(nrow = 0, ncol = 8))
-                colnames(repeats[[i]]$repeats) <- getRepeatsColNames()
+                colnames(repeats[[i]]$repeats) <-
+                    getRepeatsColNames()
             } else{
                 # # Keep only targets where a hit is found
                 repeats[[i]]$targets <-
-                    repeats[[i]]$targets[S4Vectors::subjectHits(overlaps), ] %>%
+                    repeats[[i]]$targets[S4Vectors::subjectHits(overlaps),] %>%
                     dplyr::filter(!duplicated(.))
 
                 repeats[[i]]$repeats <-
@@ -160,7 +162,7 @@ annotateRepeats <-
                     )
 
                 repeats[[i]]$repeats <-
-                    repeats[[i]]$repeats[!duplicated(repeats[[i]]$repeats), ]
+                    repeats[[i]]$repeats[!duplicated(repeats[[i]]$repeats),]
             }
         }
 
@@ -184,8 +186,8 @@ annotateRepeats <-
             overlaps <-
                 S4Vectors::findMatches(upGRs$id, downGRs$id, select = "all")
             df <-
-                data.frame(upGRs[S4Vectors::queryHits(overlaps), ],
-                    downGRs[S4Vectors::subjectHits(overlaps), ])
+                data.frame(upGRs[S4Vectors::queryHits(overlaps),],
+                    downGRs[S4Vectors::subjectHits(overlaps),])
 
             matchingRepeats <- df %>%
                 dplyr::group_by(.data$id) %>%
@@ -200,7 +202,7 @@ annotateRepeats <-
             # if the repeats are found
             if (nrow(matchingRepeats) > 0) {
                 repeats$upGR$repeats <-
-                    matchingRepeats[, c(1,2,4,5,6,7,8)] %>%
+                    matchingRepeats[, c(1, 2, 4, 5, 6, 7, 8)] %>%
                     dplyr::arrange(.data$id)
 
                 repeats$upGR$targets <-
@@ -210,7 +212,7 @@ annotateRepeats <-
 
 
                 repeats$downGR$repeats <-
-                    matchingRepeats[, c(10,11,12,13,14,15,16,17)] %>%
+                    matchingRepeats[, c(10, 11, 12, 13, 14, 15, 16, 17)] %>%
                     stats::setNames(gsub(".1", "", names(.))) %>%
                     dplyr::arrange(.data$id)
 
@@ -223,15 +225,17 @@ annotateRepeats <-
             } else {
                 repeats[[1]]$repeats <-
                     data.frame(matrix(nrow = 0, ncol = 8))
-                colnames(repeats[[1]]$repeats) <- getRepeatsColNames()
+                colnames(repeats[[1]]$repeats) <-
+                    getRepeatsColNames()
 
                 repeats[[2]]$repeats <-
                     data.frame(matrix(nrow = 0, ncol = 8))
-                colnames(repeats[[2]]$repeats) <- getRepeatsColNames()
+                colnames(repeats[[2]]$repeats) <-
+                    getRepeatsColNames()
             }
         }
         return(repeats)
-    }
+        }
 
 
 

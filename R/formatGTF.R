@@ -23,9 +23,7 @@ if (getRversion() >= "3.1.0")
 #'
 #' @export
 formatGTF <- function(pathToGTF = NULL) {
-
-
-    if(!is.null(pathToGTF)){
+    if (!is.null(pathToGTF)) {
         # suppress warning for closing unused connection
         gtf <- suppressWarnings(rtracklayer::import(pathToGTF)) %>%
             as.data.frame()
@@ -41,14 +39,16 @@ formatGTF <- function(pathToGTF = NULL) {
 
 
         needColumns <-
-            c("chrom",
+            c(
+                "chrom",
                 "start",
                 "end",
                 "width",
                 "strand",
                 "type",
                 "gene_name",
-                "transcript_id")
+                "transcript_id"
+            )
 
 
         # For UCSC and Ncbi the exon_number column needs to be added
@@ -85,7 +85,7 @@ formatGTF <- function(pathToGTF = NULL) {
             formattedGTF$chrom <- paste0("chr", formattedGTF$chrom)
 
         }
-    }else{
+    } else{
         formattedGTF <- data.frame()
         cat("Specify path to GTF file.")
     }

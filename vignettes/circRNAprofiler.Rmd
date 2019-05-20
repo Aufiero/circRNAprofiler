@@ -70,8 +70,9 @@ can be installed with:
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
+BiocManager::install("devtools")
 library(devtools)
-install_github("Aufiero/circRNAprofiler")
+devtools::install_github("Aufiero/circRNAprofiler")
 ```
 
 ### Load the package
@@ -352,15 +353,7 @@ head(gtf)
 
 The function getBackSplicedJunctions() reads the circRNAs_X.txt, adapts the 
 content and generates a unique data frame with the circRNAs detected by each 
-detection tool and the occurrences found in each sample. CircRNA that derived 
-from the antisense strand are removed from the data frame and stored in a file 
-(antisenseCircRNAs.txt) for user consultation. A circRNA is defined antisense
-if the strand reported in the prediction results is different from the strand 
-reported in the genome annotation file. 
-
-NOTE:
-Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
-from the sense strand of the gene.
+detection tool and the occurrences found in each sample. 
 
 
 ```{r, eval= FALSE}
@@ -402,6 +395,16 @@ detected the highest total mean across all analyzed samples will be taken.
 All the tools that detected the back-spliced junction are then listed in the 
 column "tool" of the final table. Run getDetectionTools() to get the code
 correspoding to each circRNA detection tool.
+
+NOTE:
+CircRNA that derived from the antisense strand are removed from the data frame 
+and stored in a file (antisenseCircRNAs.txt) for user consultation. 
+A circRNA is defined antisense if the strand reported in the prediction results 
+is different from the strand reported in the genome annotation file. 
+
+
+Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
+from the sense strand of the gene.
 
 ```{r}
 # Load object containing the merged back-spliced junctions

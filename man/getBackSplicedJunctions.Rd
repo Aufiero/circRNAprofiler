@@ -41,8 +41,7 @@ if(check == 0){
 gtf <- formatGTF(pathToGTF)
 
 # Read and adapt detected circRNAs
-backSplicedJunctions<- getBackSplicedJunctions(gtf)
-}
+backSplicedJunctions<- getBackSplicedJunctions(gtf)}
 
 }
 \seealso{

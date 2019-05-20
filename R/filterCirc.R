@@ -103,7 +103,7 @@ filterCirc <- function(backSplicedJunctions,
             }
 
             filteredCirc <-
-                filteredCirc[!duplicated(filteredCirc), ]
+                filteredCirc[!duplicated(filteredCirc),]
 
         }
     } else{

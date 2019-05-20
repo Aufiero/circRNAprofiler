@@ -15,8 +15,9 @@ knitr::include_graphics("./images/image1.png")
 #  if (!requireNamespace("BiocManager", quietly = TRUE))
 #      install.packages("BiocManager")
 #  
+#  BiocManager::install("devtools")
 #  library(devtools)
-#  install_github("Aufiero/circRNAprofiler")
+#  devtools::install_github("Aufiero/circRNAprofiler")
 
 ## ------------------------------------------------------------------------
 library(circRNAprofiler)

@@ -54,8 +54,7 @@ getSeqsAcrossBSJs <-
     function(annotatedBSJs,
         gtf,
         species = "Hsapiens",
-        genome = "hg19"
-    ) {
+        genome = "hg19") {
         # Create a enmpty list of 1 elements
         targets <- vector("list", 1)
         names(targets)[1] <- "bsj"
@@ -99,8 +98,10 @@ getSeqsAcrossBSJs <-
                 BiocManager::install(requiredGenome)
             }
         } else{
-            stop("species name or genome is not correct:
-                 see available.genomes() from BSgenome package")
+            stop(
+                "species name or genome is not correct:
+                see available.genomes() from BSgenome package"
+            )
         }
 
         genome <- BSgenome::getBSgenome(requiredGenome)
@@ -169,8 +170,7 @@ getSeqsAcrossBSJs <-
 
                     targets[[1]]$length[i] <- nchar(bsjSeq)
                     targets[[1]]$seq[i] <-
-                        as.character(Biostrings::reverseComplement(
-                            Biostrings::RNAString(bsjSeq)))
+                        as.character(Biostrings::reverseComplement(Biostrings::RNAString(bsjSeq)))
 
 
                 } else if (transcript$strand[1] == "+") {
@@ -217,4 +217,4 @@ getSeqsAcrossBSJs <-
 
         return(targets)
 
-    }
+        }

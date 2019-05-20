@@ -40,7 +40,7 @@ data("gtf")
 
 # Annotate the first 10 back-spliced junctions
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-     isRandom = FALSE)
+isRandom = FALSE)
 
 # Retrieve targets
 targets <- getSeqsFromGRs(

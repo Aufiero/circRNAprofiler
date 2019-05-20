@@ -1,4 +1,4 @@
-#' @title Annotate circRNA features
+#' @title Annotate circRNA features.
 #'
 #' @description The function annotateBSJs() annotates the circRNA structure
 #' and the introns flanking the corresponding back-spliced junctions.
@@ -9,7 +9,7 @@
 #' For detected back-spliced junctions see \code{\link{getBackSplicedJunctions}}
 #' and \code{\link{mergeBSJunctions}} (to group circRNAs detected by multiple
 #' detection tools). For randomly selected back-spliced junctions see
-#' \code{\link{getRandomBSJunctions}}
+#' \code{\link{getRandomBSJunctions}}.
 #'
 #' @param gtf A data frame containing genome annotation information. It can be
 #' generated with \code{\link{formatGTF}}.
@@ -267,7 +267,8 @@ annotateBSJs <-
                 # exons in between the back-spliced junctions
                 lenCircRNA <-
                     transcriptToAnalyze %>%
-                    dplyr::filter(.data$exon_number %in% c(bsExons$exon_number[1]:bsExons$exon_number[2])) %>%
+                    dplyr::filter(.data$exon_number %in%
+                            c(bsExons$exon_number[1]:bsExons$exon_number[2])) %>%
                     dplyr::summarise(lenCircRNA = sum(.data$width))
 
                 annotatedBSJs$lenCircRNA[i] <- lenCircRNA[[1]]

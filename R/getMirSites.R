@@ -397,12 +397,12 @@ getMiRsites <- function(targets,
 
     } else{
         stop("target sequences not valid, only circRNA sequences
-             are allowed.")
+            are allowed.")
     }
 
     return(miRsites)
 
-}
+    }
 
 
 #' @title Retrive miRNA sequences
@@ -533,7 +533,7 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
         firstChar <- base::substr(miRsFromFile$id[1], 1, 1)
         if (firstChar != ">") {
             stop("The microRNA ids in miRs.txt must start with " > ".
-                 E.g. >miRid")
+                E.g. >miRid")
         }
 
         microRNAids <-
@@ -546,11 +546,11 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
                 paste(notFound, collapse = ", ")))
 
         }
-    } else{
-        microRNAids <-
-            miRBaseCleaned[grep(miRspeciesCode, miRBaseCleaned)]
+        } else{
+            microRNAids <-
+                miRBaseCleaned[grep(miRspeciesCode, miRBaseCleaned)]
 
-    }
+        }
 
     # Fill the microRNAids data frame in the miRsites list
     microRNAs  <-
@@ -580,7 +580,7 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
             nchar(microRNAs$seq[i])
     }
     return(microRNAs)
-}
+    }
 
 
 
@@ -758,12 +758,12 @@ createMiRsitesList <- function(targets, microRNAs) {
         miRsites$localAUcontent$id <- miRsites$targets$id
     } else{
         stop("target sequences not valid, only circRNA sequences
-             are allowed.")
+            are allowed.")
     }
 
     return(miRsites)
 
-}
+    }
 
 
 
@@ -1039,7 +1039,7 @@ rearrangeMiRres <- function(miRsites) {
             ))
         colnames(rearragedMiRres[[i]][[1]]) <-
             colnames(miRsites$targets)
-        rearragedMiRres[[i]][[1]] <- miRsites$targets[i, ]
+        rearragedMiRres[[i]][[1]] <- miRsites$targets[i,]
 
         # Second dataframe is filled with the results
         rearragedMiRres[[i]][[2]] <-

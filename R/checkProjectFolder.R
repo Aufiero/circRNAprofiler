@@ -118,13 +118,13 @@ checkProjectFolder <-
             }
 
 
-        } else{
-            cat(
-                "Missing motifs.txt file.
+            } else{
+                cat(
+                    "Missing motifs.txt file.
                     Optional file. If absent only
                     ATtRACT motifs will be analyzed\n"
-            )
-        }
+                )
+            }
 
         # check traits.txt
         if (is.null(pathToTraits)) {
@@ -154,13 +154,13 @@ checkProjectFolder <-
             }
 
 
-        } else {
-            cat(
-                "Missing traits.txt file.
+            } else {
+                cat(
+                    "Missing traits.txt file.
                     Optional file. If absent all
                     traits in the GWAS catalog will be analyzed\n"
-            )
-        }
+                )
+            }
 
         # check miRs.txt
         if (is.null(pathToMiRs)) {
@@ -190,13 +190,13 @@ checkProjectFolder <-
             }
 
 
-        } else{
-            cat(
-                "Missing miRs.txt file.
+            } else{
+                cat(
+                    "Missing miRs.txt file.
                     Optional file. If absent all miRNAs of the
                     specified species will be analyzed\n"
-            )
-        }
+                )
+            }
 
         # check transcripts.txt
         if (is.null(pathToTranscripts)) {
@@ -227,13 +227,13 @@ checkProjectFolder <-
             }
 
 
-        } else{
-            cat(
-                "Missing transcripts.txt.
+            } else{
+                cat(
+                    "Missing transcripts.txt.
                     Optional file. If absent the longest
                     transcripts for all circRNAs will be analyzed\n"
-            )
-        }
+                )
+            }
 
 
         # Check mandatory files
@@ -281,7 +281,7 @@ checkProjectFolder <-
 
                 if (sum(predictionToolsAll$name  %in% fileNames) >= 1) {
                     pt <-
-                        predictionToolsAll$name[which(predictionToolsAll$name  %in% fileNames)]
+                        predictionToolsAll$name[which(predictionToolsAll$name %in% fileNames)]
 
                     for (i in seq_along(pt)) {
                         if (!all(experiment$fileName %in% list.files(pt[i]))) {
@@ -320,11 +320,11 @@ checkProjectFolder <-
                 check <- check + 1
             }
 
-        } else{
-            cat("(!): missing experiment.txt file\n")
-            check <- check + 1
-        }
+            } else{
+                cat("(!): missing experiment.txt file\n")
+                check <- check + 1
+            }
 
 
         return(check)
-    }
+        }

@@ -588,26 +588,19 @@ importKnife <- function(pathToFile) {
         temp$chr[i] <-
             base::strsplit(importedPatientCircTable$junction[i], "\\|")[[1]][1]
         temp$gene1_symbol[i] <-
-            base::strsplit(
-                base::strsplit(
-                    importedPatientCircTable$junction[i], "\\|")[[1]][2],
+            base::strsplit(base::strsplit(importedPatientCircTable$junction[i], "\\|")[[1]][2],
                 ":")[[1]][1]
         temp$splice_position1[i] <-
-            base::strsplit(
-                base::strsplit(
-                    importedPatientCircTable$junction[i], "\\|")[[1]][2],
+            base::strsplit(base::strsplit(importedPatientCircTable$junction[i], "\\|")[[1]][2],
                 ":")[[1]][2]
         temp$splice_position2[i] <-
-            base::strsplit(
-                base::strsplit(
-                    importedPatientCircTable$junction[i], "\\|")[[1]][3],
+            base::strsplit(base::strsplit(importedPatientCircTable$junction[i], "\\|")[[1]][3],
                 ":")[[1]][2]
         temp$strand[i] <-
-            base::strsplit(
-                base::strsplit(
-                    importedPatientCircTable$junction[i], "\\|")[[1]][5],
+            base::strsplit(base::strsplit(importedPatientCircTable$junction[i], "\\|")[[1]][5],
                 ":")[[1]]
-        temp$readNumber[i] <- importedPatientCircTable$total_reads[i]
+        temp$readNumber[i] <-
+            importedPatientCircTable$total_reads[i]
 
     }
 

@@ -34,7 +34,7 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
     colnames(randomBSJunctions) <- basicColumns
 
     # calculate the percentage of back-spliced junctions from sigle exons
-    c <- round( (n / 100) * f, 0)
+    c <- round((n / 100) * f, 0)
 
     # Select one random exon from n randomly selected transcript
     bsExons1 <- gtf %>%
@@ -42,8 +42,7 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
         dplyr::group_by(.data$transcript_id) %>%
         dplyr::filter(n() >= 3) %>%
         dplyr::ungroup() %>%
-        dplyr::filter(.data$transcript_id %in% sample(
-            unique(.data$transcript_id), c)) %>%
+        dplyr::filter(.data$transcript_id %in% sample(unique(.data$transcript_id), c)) %>%
         dplyr::group_by(.data$transcript_id) %>%
         dplyr::sample_n(1) %>%
         dplyr::arrange(.data$exon_number)
@@ -72,14 +71,14 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
 
     # Align duplicates on the same row
     indexDup <- which(duplicated(bsExons12$transcript_id))
-    duplicates <- bsExons12[indexDup, ]
-    cleanedDF <- bsExons12[-indexDup, ]
+    duplicates <- bsExons12[indexDup,]
+    cleanedDF <- bsExons12[-indexDup,]
     mt <- match(cleanedDF$transcript_id, duplicates$transcript_id)
 
-    allBSEs <- dplyr::bind_cols(cleanedDF, duplicates[mt, ])
+    allBSEs <- dplyr::bind_cols(cleanedDF, duplicates[mt,])
 
     # For negative strand
-    allBSEsNeg <- allBSEs[allBSEs$strand == "-", ]
+    allBSEsNeg <- allBSEs[allBSEs$strand == "-",]
     if (nrow(allBSEsNeg) > 0) {
         randomBSJunctions$gene[seq_along(allBSEsNeg$exon_number)] <-
             allBSEsNeg$gene_name
@@ -94,7 +93,7 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
     }
 
     # For positive strand
-    allBSEsPos <- allBSEs[allBSEs$strand == "+", ]
+    allBSEsPos <- allBSEs[allBSEs$strand == "+",]
     if (nrow(allBSEsPos) > 0) {
         randomBSJunctions$gene[(nrow(allBSEsNeg) + 1):n] <-
             allBSEsPos$gene_name

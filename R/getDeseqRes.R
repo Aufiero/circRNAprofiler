@@ -92,7 +92,7 @@ getDeseqRes <-
 
             cond <- strsplit(condition, "-")[[1]]
             experiment <-
-                experiment[experiment$condition %in% cond, ]
+                experiment[experiment$condition %in% cond,]
             experiment$condition <-
                 as.factor(experiment$condition)
 
@@ -101,7 +101,7 @@ getDeseqRes <-
                 DESeqDataSetFromMatrix(
                     countData = backSplicedJunctions[, experiment$label],
                     colData =
-                        experiment[, -which(names(experiment) %in% "fileName")],
+                        experiment[,-which(names(experiment) %in% "fileName")],
                     design = ~ condition
                 )
 
@@ -132,12 +132,10 @@ getDeseqRes <-
 
         } else{
             deseqRes <- data.frame()
-            cat(
-                "experiment.txt not found. Differential expression analysis can
-                not be run."
-            )
+            cat("experiment.txt not found. Differential expression analysis can
+                not be run.")
         }
 
         return(deseqRes)
 
-    }
+        }

@@ -76,11 +76,10 @@
 #' @export
 getEdgerRes <-
     function(backSplicedJunctions,
-             condition,
-             normMethod = "TMM",
-             pAdjustMethod = "BH",
-             pathToExperiment = NULL) {
-
+        condition,
+        normMethod = "TMM",
+        pAdjustMethod = "BH",
+        pathToExperiment = NULL) {
         if (is.null(pathToExperiment)) {
             pathToExperiment <- "experiment.txt"
         }
@@ -102,12 +101,12 @@ getEdgerRes <-
             cond <- strsplit(condition, "-")[[1]]
 
             experiment <-
-                experiment[experiment$condition %in% cond, ]
+                experiment[experiment$condition %in% cond,]
 
             # Creates a DGEList object
             dge <-
                 DGEList(counts = backSplicedJunctions[, experiment$label],
-                        group = experiment$condition)
+                    group = experiment$condition)
 
             # Calculate normalization factors to scale the raw library sizes
             dge <-
@@ -147,16 +146,14 @@ getEdgerRes <-
                     id = .data$backSplicedJunctions.id
                 ) %>%
                 dplyr::mutate(id = as.character(.data$id),
-                              gene = as.character(.data$gene))
+                    gene = as.character(.data$gene))
 
         } else{
             edgerRes <- data.frame()
-            cat(
-                "experiment.txt not found. Differential expression analysis can
-                not be run."
-            )
+            cat("experiment.txt not found. Differential expression analysis can
+                not be run.")
         }
 
         return(edgerRes)
 
-    }
+        }

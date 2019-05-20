@@ -40,7 +40,9 @@
 #'
 #' @export
 liftBSJCoords <-
-    function(backSplicedJunctions, map= "hg19ToMm9", annotationHubID = "AH14155") {
+    function(backSplicedJunctions,
+        map = "hg19ToMm9",
+        annotationHubID = "AH14155") {
         species1 <- base::strsplit(map, "To")[[1]][1]
         species2 <- base::strsplit(map, "To")[[1]][2]
 
@@ -106,7 +108,8 @@ liftBSJCoords <-
             unlist(as.character(liftedOverStartUpBSE$seqnames[mtStart]))
         liftedBSJCoords$startUpBSE <-
             liftedOverStartUpBSE$start[mtStart]
-        liftedBSJCoords$endDownBSE <- liftedOverEndDownBSE$end[mtEnd]
+        liftedBSJCoords$endDownBSE <-
+            liftedOverEndDownBSE$end[mtEnd]
 
 
         liftedBSJCoords[, paste(basicColumns[1], species1, sep = "_")] <-

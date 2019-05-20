@@ -60,8 +60,7 @@ getLength <- function(annotatedBSJs) {
             lenUpBSE = abs(.data$endUpBSE - .data$startUpBSE),
             lenDownBSE = abs(.data$endDownBSE - .data$startDownBSE),
             lenDownIntron = abs(.data$endDownIntron - .data$startDownIntron),
-            meanLengthBSEs = base::rowMeans(
-                base::cbind(.data$lenUpBSE, .data$lenDownBSE), na.rm =
+            meanLengthBSEs = base::rowMeans(base::cbind(.data$lenUpBSE, .data$lenDownBSE), na.rm =
                     TRUE),
             meanLengthIntrons = base::rowMeans(
                 base::cbind(.data$lenUpIntron, .data$lenDownIntron),

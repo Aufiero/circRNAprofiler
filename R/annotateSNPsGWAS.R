@@ -67,7 +67,9 @@
 #' @importFrom gwascat subsetByTraits
 #' @export
 annotateSNPsGWAS <-
-    function(targets, genome = "hg19", pathToTraits = NULL) {
+    function(targets,
+        genome = "hg19",
+        pathToTraits = NULL) {
         options(readr.num_columns = 0)
         if (length(targets) == 2 &
                 names(targets)[[1]] == "upGR") {
@@ -83,17 +85,18 @@ annotateSNPsGWAS <-
 
         #require(gwascat, quietly = TRUE)
         if (genome == "hg19") {
-
             gwas <- suppressWarnings(tryCatch(
-                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh37"),
-                error = function(e) NULL
+                gwascat::makeCurrentGwascat(
+                    fixNonASCII = FALSE, genome = "GRCh37"),
+                error = function(e)
+                    NULL
             ))
 
             if (!is.null(gwas)) {
                 GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
 
 
-            }else{
+            } else{
                 #Load lifted over image
                 utils::data(ebicat37)
                 gwas <- ebicat37
@@ -102,14 +105,16 @@ annotateSNPsGWAS <-
 
         } else if (genome == "hg38") {
             gwas <- suppressWarnings(tryCatch(
-                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh38"),
-                error = function(e) NULL
+                gwascat::makeCurrentGwascat(
+                    fixNonASCII = FALSE, genome = "GRCh38"),
+                error = function(e)
+                    NULL
             ))
 
             if (!is.null(gwas)) {
                 GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
 
-            }else{
+            } else{
                 # Load image dated 3 August 2015
                 utils::data(ebicat38)
                 gwas <- ebicat38
@@ -145,9 +150,9 @@ annotateSNPsGWAS <-
         if (nrow(traitsFromFile) > 0) {
             gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
 
-        }else{
+        } else{
             cat("traits.txt is empty or absent. All
-                   traits in the GWAS catalog will be analyzed")
+                traits in the GWAS catalog will be analyzed")
         }
 
         # Clean targets dataframe by removing the rows with NA values to avoid
@@ -196,7 +201,9 @@ annotateSNPsGWAS <-
             # Find the overlapping gwas snps
             #we can get some wornings if there are no sequence levels in common
             overlaps <-
-                suppressWarnings(GenomicRanges::findOverlaps(gwas, genRanges, ignore.strand=TRUE))
+                suppressWarnings(
+                    GenomicRanges::findOverlaps(
+                        gwas, genRanges, ignore.strand = TRUE))
             if (length(overlaps) == 0) {
                 # no genomic ranges in common
                 snpsGWAS[[i]]$snps <-
@@ -217,11 +224,10 @@ annotateSNPsGWAS <-
 
 
             } else{
-
                 # Keep only targets where a hit is found
                 snpsGWAS[[i]]$targets <-
-                    snpsGWAS[[i]]$targets[S4Vectors::subjectHits(overlaps),]%>%
-                    dplyr::filter(!duplicated(.))%>%
+                    snpsGWAS[[i]]$targets[S4Vectors::subjectHits(overlaps),] %>%
+                    dplyr::filter(!duplicated(.)) %>%
                     dplyr::arrange(.data$id)
 
                 snpsGWAS[[i]]$snps <-
@@ -255,7 +261,7 @@ annotateSNPsGWAS <-
                             .data$STRONGEST.SNP.RISK.ALLELE,
                         pubmedID = .data$PUBMEDID,
                         study = .data$STUDY
-                    )%>%
+                    ) %>%
                     dplyr::arrange(.data$id)
 
 
@@ -263,4 +269,4 @@ annotateSNPsGWAS <-
         }
 
         return(snpsGWAS)
-    }
+        }

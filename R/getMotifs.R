@@ -341,7 +341,7 @@ getUserAttractMotifs <-
         # Create a temporary directory
         td = tempdir()
         # Create the placeholder file
-        tf = tempfile(tmpdir=td, fileext="ATtRACT.zip")
+        tf = tempfile(tmpdir = td, fileext = "ATtRACT.zip")
         # download into the placeholder file
         utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
             tf)
@@ -460,7 +460,7 @@ getUserAttractMotifs <-
             newAttractRBPmotifs <-
                 dplyr::bind_rows(attractRBPmotifs, reverseAttractRBPmotifs)
             newAttractRBPmotifs <-
-                newAttractRBPmotifs[!duplicated(newAttractRBPmotifs),]
+                newAttractRBPmotifs[!duplicated(newAttractRBPmotifs), ]
         } else{
             newAttractRBPmotifs <- attractRBPmotifs
         }
@@ -470,7 +470,7 @@ getUserAttractMotifs <-
 
 
         return(userAttractMotifs)
-    }
+        }
 
 
 
@@ -584,7 +584,7 @@ filterMotifs <-
             # 2 strings or the first string it is contained as substring within
             # the second
             grepedM <-
-                userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif), ] %>%
+                userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif),] %>%
                 dplyr::mutate(motif = as.character(.data$motif),
                     id = as.character(.data$id))
 
@@ -839,12 +839,12 @@ mergeMotifs <- function(motifs) {
         # motifs[[1]]$motif and motifs[[2]]$motif are the same,
         # so we use the motifs reported in motifs[[1]]$motif.
         toSplit <-
-            motifs[[1]]$motifs[base::grep(",", motifs[[1]]$motif$id), ]
+            motifs[[1]]$motifs[base::grep(",", motifs[[1]]$motif$id),]
 
         if (nrow(toSplit) >= 1) {
             # Remove motifs shared by multiple RBPs
             cleanedMotifs <-
-                motifs[[1]]$motif[-base::grep(",", motifs[[1]]$motif$id), ]
+                motifs[[1]]$motif[-base::grep(",", motifs[[1]]$motif$id),]
 
             # Ducplicate motifs
             rbpsWithSharedMotifs <-

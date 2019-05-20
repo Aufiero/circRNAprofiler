@@ -32,8 +32,7 @@
 #' gtf <- formatGTF(pathToGTF)
 #'
 #' # Read and adapt detected circRNAs
-#' backSplicedJunctions<- getBackSplicedJunctions(gtf)
-#' }
+#' backSplicedJunctions<- getBackSplicedJunctions(gtf)}
 #'
 #' @seealso
 #' \code{\link{backSplicedJunctions}} for a description of the data frame
@@ -144,7 +143,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                 # Repalce NA values with 0 (zero)
                 backSplicedJunctionsTool <-
                     backSplicedJunctionsTool %>%
-                    dplyr::mutate_at(experiment$label, ~replace(., is.na(.), 0)) %>%
+                    dplyr::mutate_at(experiment$label, ~ replace(., is.na(.), 0)) %>%
                     dplyr::mutate(tool = tool)
 
                 #bind the data frame containing circRNA prediction perfomed by the
@@ -168,14 +167,14 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
         }
 
 
-    } else{
-        backSplicedJunctions <- data.frame()
-        cat("experiment.txt not found. The analysis can not start.")
-    }
+        } else{
+            backSplicedJunctions <- data.frame()
+            cat("experiment.txt not found. The analysis can not start.")
+        }
 
 
     return(backSplicedJunctions)
-}
+    }
 
 
 
@@ -256,6 +255,12 @@ getDetectionTools <- function() {
 #' the working directory. If experiment.txt is located in a different directory
 #' then the path needs to be specified.
 #'
+#' @param antisense A logical specifying whether to export the identified antisense
+#' circRNAs in a file named antisenseCircRNAs.txt. Default value is FALSE.
+#' A circRNA is defined antisense if the strand reported in the prediction
+#' results is different from the strand reported in the genome annotation file.
+#' The antisense circRNAs are removed from the returned data frame.
+#'
 #' @return A data frame.
 #'
 #' @examples
@@ -274,14 +279,15 @@ getDetectionTools <- function() {
 #'
 #' @importFrom magrittr %>%
 #' @importFrom utils read.table
+#' @importFrom utils write.table
 #' @importFrom rlang .data
 #' @import dplyr
 #' @export
 mergeBSJunctions <-
     function(backSplicedJunctions,
         gtf,
-        pathToExperiment = NULL) {
-
+        pathToExperiment = NULL,
+        antisense = FALSE) {
         if (is.null(pathToExperiment)) {
             pathToExperiment <- "experiment.txt"
         }
@@ -298,11 +304,11 @@ mergeBSJunctions <-
             detectionTools <- getDetectionTools()
             # Find and merge commonly identified back-spliced junctions
             mergedBSJunctions <- backSplicedJunctions %>%
-                dplyr::mutate(mean = rowMeans(.[,experiment$label]))%>%
-            dplyr::group_by(.data$strand,
-                .data$chrom,
-                .data$startUpBSE,
-                .data$endDownBSE) %>%
+                dplyr::mutate(mean = rowMeans(.[, experiment$label])) %>%
+                dplyr::group_by(.data$strand,
+                    .data$chrom,
+                    .data$startUpBSE,
+                    .data$endDownBSE) %>%
                 dplyr::arrange(desc(mean)) %>%
                 dplyr::mutate(mergedTools = paste(sort(.data$tool), collapse = ",")) %>%
                 dplyr::filter(row_number() == 1) %>%
@@ -336,22 +342,25 @@ mergeBSJunctions <-
                 dplyr::filter(.data$strand != .data$strand1) %>%
                 dplyr::select(-c(.data$gene_name, .data$strand1))
 
-            write.table(
-                antisenseCircRNAs,
-                "antisenseCircRNAs.txt",
-                quote = FALSE,
-                row.names = FALSE,
-                col.names = TRUE,
-                sep = "\t"
-            )
+            if(antisense){
+                utils::write.table(
+                    antisenseCircRNAs,
+                    "antisenseCircRNAs.txt",
+                    quote = FALSE,
+                    row.names = FALSE,
+                    col.names = TRUE,
+                    sep = "\t"
+                )
+            }
+
 
             # Remove from the dataframe the antisense circRNAs
             mergedBSJunctionsClenead <- mergedBSJunctions %>%
                 dplyr::filter(!(mergedBSJunctions$id %in% antisenseCircRNAs$id))
 
-        }else{
-           mergedBSJunctionsClenead <- backSplicedJunctions
-           cat("experiment.txt not found, data frame can not be merged")
+        } else{
+            mergedBSJunctionsClenead <- backSplicedJunctions
+            cat("experiment.txt not found, data frame can not be merged")
         }
 
         return(mergedBSJunctionsClenead)

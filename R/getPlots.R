@@ -312,10 +312,9 @@ plotHostGenes <-
 #' @export
 plotExPosition <-
     function(annotatedBSJs,
-        title ="",
+        title = "",
         n = 0,
-        flip= FALSE) {
-
+        flip = FALSE) {
         if (flip) {
             annotatedBSJs <- annotatedBSJs %>%
                 dplyr::mutate(
@@ -349,8 +348,14 @@ plotExPosition <-
             geom_bar(position = "dodge", stat = "identity") +
             labs(title = title, x = "Exon position", y = "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
-                plot.title = element_text(hjust = 0.5))
+            theme(
+                axis.text.x = element_text(
+                    angle = 90,
+                    hjust = 0.5,
+                    vjust = 0.5
+                ),
+                plot.title = element_text(hjust = 0.5)
+            )
 
 
 
@@ -402,8 +407,14 @@ plotExBetweenBSEs <-
             labs(title = title, x = "No. of exons", y =
                     "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
-                plot.title = element_text(hjust = 0.5))
+            theme(
+                axis.text.x = element_text(
+                    angle = 90,
+                    hjust = 0.5,
+                    vjust = 0.5
+                ),
+                plot.title = element_text(hjust = 0.5)
+            )
 
         return(p)
 
@@ -447,7 +458,7 @@ plotTotExons <-
     function(annotatedBSJs, title = "") {
         # Keep unique transcript
         annotatedBSJsNoDup <-
-            annotatedBSJs[!duplicated(annotatedBSJs$transcript), ]
+            annotatedBSJs[!duplicated(annotatedBSJs$transcript),]
 
         p <- annotatedBSJsNoDup %>%
             dplyr::select(.data$totExons) %>%
@@ -459,8 +470,14 @@ plotTotExons <-
             labs(title = title, x = "No. of exons", y =
                     "Frequency") +
             theme_classic() +
-            theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
-                plot.title = element_text(hjust = 0.5))
+            theme(
+                axis.text.x = element_text(
+                    angle = 90,
+                    hjust = 0.5,
+                    vjust = 0.5
+                ),
+                plot.title = element_text(hjust = 0.5)
+            )
 
         return(p)
     }
@@ -544,12 +561,12 @@ volcanoPlot <- function(res,
     gene = FALSE,
     setxLim = FALSE,
     xlim = c(-8 , 8),
-    setyLim= FALSE,
+    setyLim = FALSE,
     ylim = c(0, 5)) {
     res <- stats::na.omit(res)
     diffExpCirc <-
         stats::na.omit(res[abs(res$log2FC) >= log2FC &
-                res$padj <= padj, ])
+                res$padj <= padj,])
 
     if (setxLim) {
         xmin <- xlim[1]
@@ -752,10 +769,9 @@ plotMotifs <-
         mergedMotifsBTS,
         log2FC = 1,
         nf1 = 1,
-        nf2 =1 ,
+        nf2 = 1 ,
         df1Name = "foreground",
         df2Name = "background") {
-
         p <- list()
         mergedMotifsAll <-
             base::merge(mergedMotifsFTS,
@@ -765,23 +781,19 @@ plotMotifs <-
             dplyr::rename(foreground = .data$count.x,
                 background = .data$count.y) %>%
             dplyr::mutate(
-                foreground = ifelse(
-                    is.na(.data$foreground), 0, .data$foreground),
-                background = ifelse(
-                    is.na(.data$background), 0, .data$background)
+                foreground = ifelse(is.na(.data$foreground), 0, .data$foreground),
+                background = ifelse(is.na(.data$background), 0, .data$background)
             ) %>%
             dplyr::mutate(
                 foregroundNorm = .data$foreground / nf1,
                 backgroundNorm = .data$background / nf2
             ) %>%
-            dplyr::mutate(log2fc = log2(
-                (.data$foregroundNorm + 1) / (.data$backgroundNorm + 1))) %>%
+            dplyr::mutate(log2fc = log2((.data$foregroundNorm + 1) / (.data$backgroundNorm + 1))) %>%
             dplyr::filter(abs(.data$log2fc) >= log2FC) %>%
             dplyr::arrange(.data$log2fc) %>%
             dplyr::rename(log2FC = .data$log2fc) %>%
             dplyr::mutate(id = factor(.data$id, levels = .data$id)) %>%
-            dplyr::mutate(motif.x = ifelse(
-                is.na(.data$motif.x), .data$motif.y, .data$motif.x)) %>%
+            dplyr::mutate(motif.x = ifelse(is.na(.data$motif.x), .data$motif.y, .data$motif.x)) %>%
             dplyr::rename(motif = .data$motif.x) %>%
             dplyr::select(
                 .data$id,
@@ -910,16 +922,13 @@ plotMiR <-
         n = 40,
         color = "blue",
         miRid = FALSE,
-        id = 1
-    ) {
+        id = 1) {
         topMir <- rearragedMiRres[[id]][[2]] %>%
             dplyr::filter(.data$counts >= n) %>%
-            dplyr::mutate(miRid = stringr::str_replace(
-                .data$miRid, ">", ""))
+            dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", ""))
 
         p <-  rearragedMiRres[[id]][[2]] %>%
-            dplyr::mutate(miRid = stringr::str_replace(
-                .data$miRid, ">", "")) %>%
+            dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", "")) %>%
             dplyr::filter(!is.na(.data$counts)) %>%
             dplyr::arrange(counts) %>%
             ggplot(aes(x = .data$miRid, y = .data$counts)) +

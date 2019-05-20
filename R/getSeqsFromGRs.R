@@ -81,8 +81,10 @@ getSeqsFromGRs <-
                 BiocManager::install(requiredGenome)
             }
         } else{
-            stop("species name or genome is not correct:
-                see available.genomes() from BSgenome package")
+            stop(
+                "species name or genome is not correct:
+                see available.genomes() from BSgenome package"
+            )
         }
 
 
@@ -163,7 +165,8 @@ getSeqsFromGRs <-
                                     )
                                 )
                             ))
-                    targets[[i]]$length[j] <- nchar(targets[[i]]$seq[j])
+                    targets[[i]]$length[j] <-
+                        nchar(targets[[i]]$seq[j])
 
 
                 } else if (targets[[i]]$strand[j] == "+" &
@@ -172,15 +175,17 @@ getSeqsFromGRs <-
                     # For the positive strand no modification is needed because
                     # the sense strand corresponds to the posiive strand that
                     # is the genome reference.
-                    targets[[i]]$seq[j] <- gsub("T", "U", as.character(
-                        BSgenome::getSeq(
-                            genome,
-                            targets[[i]]$chrom[j],
-                            targets[[i]]$startGR[j],
-                            targets[[i]]$endGR[j]
-                        )
-                    ))
-                    targets[[i]]$length[j] <- nchar(targets[[i]]$seq[j])
+                    targets[[i]]$seq[j] <-
+                        gsub("T", "U", as.character(
+                            BSgenome::getSeq(
+                                genome,
+                                targets[[i]]$chrom[j],
+                                targets[[i]]$startGR[j],
+                                targets[[i]]$endGR[j]
+                            )
+                        ))
+                    targets[[i]]$length[j] <-
+                        nchar(targets[[i]]$seq[j])
                 } else{
 
                 }
@@ -190,7 +195,7 @@ getSeqsFromGRs <-
 
         return(targets)
 
-    }
+        }
 
 
 #' @title Retrive coordinates of genomic ranges surrounding back-spliced
@@ -482,7 +487,8 @@ getBSEcoords <- function(annotatedBSJs) {
                 grCoords$startUpGR[i] <- annotatedBSJs$startUpBSE[i]
                 grCoords$endUpGR[i] <- annotatedBSJs$endUpBSE[i]
                 # For the downstream genomic range
-                grCoords$startDownGR[i] <- annotatedBSJs$startDownBSE[i]
+                grCoords$startDownGR[i] <-
+                    annotatedBSJs$startDownBSE[i]
                 grCoords$endDownGR[i] <- annotatedBSJs$endDownBSE[i]
 
                 # NEGATIVE STRAND
@@ -491,8 +497,10 @@ getBSEcoords <- function(annotatedBSJs) {
                 grCoords$startUpGR[i] <- annotatedBSJs$endUpBSE[i]
                 grCoords$endUpGR[i] <- annotatedBSJs$startUpBSE[i]
                 # For the downstream genomic range
-                grCoords$startDownGR[i] <- annotatedBSJs$endDownBSE[i]
-                grCoords$endDownGR[i] <- annotatedBSJs$startDownBSE[i]
+                grCoords$startDownGR[i] <-
+                    annotatedBSJs$endDownBSE[i]
+                grCoords$endDownGR[i] <-
+                    annotatedBSJs$startDownBSE[i]
 
             }
         }
@@ -557,22 +565,29 @@ getFIcoords <- function(annotatedBSJs) {
             # POSITIVE STRAND
             if (annotatedBSJs$strand[i] == "+") {
                 # For the upstream genomic range
-                grCoords$startUpGR[i] <- annotatedBSJs$startUpIntron[i]
+                grCoords$startUpGR[i] <-
+                    annotatedBSJs$startUpIntron[i]
                 grCoords$endUpGR[i] <- annotatedBSJs$endUpIntron[i]
 
                 # For the downstream genomic range
-                grCoords$startDownGR[i] <- annotatedBSJs$startDownIntron[i]
-                grCoords$endDownGR[i] <- annotatedBSJs$endDownIntron[i]
+                grCoords$startDownGR[i] <-
+                    annotatedBSJs$startDownIntron[i]
+                grCoords$endDownGR[i] <-
+                    annotatedBSJs$endDownIntron[i]
 
                 # For NEGATIVE strand
             } else if (annotatedBSJs$strand[i] == "-") {
                 # For the upstream genomic range
-                grCoords$startUpGR[i] <- annotatedBSJs$endUpIntron[i]
-                grCoords$endUpGR[i] <- annotatedBSJs$startUpIntron[i]
+                grCoords$startUpGR[i] <-
+                    annotatedBSJs$endUpIntron[i]
+                grCoords$endUpGR[i] <-
+                    annotatedBSJs$startUpIntron[i]
 
                 # For the downstream genomic range
-                grCoords$startDownGR[i] <- annotatedBSJs$endDownIntron[i]
-                grCoords$endDownGR[i] <-  annotatedBSJs$startDownIntron[i]
+                grCoords$startDownGR[i] <-
+                    annotatedBSJs$endDownIntron[i]
+                grCoords$endDownGR[i] <-
+                    annotatedBSJs$startDownIntron[i]
             }
 
         }

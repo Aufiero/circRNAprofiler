@@ -27,13 +27,11 @@ initCircRNAprofiler <-
         detectionTools) {
         tools <- getDetectionTools()
         if (!all(detectionTools %in% tools$name)) {
-            stop(
-                paste(
-                    detectionTools[detectionTools %in% tools$name == FALSE],
-                    "not supported. Supported prediction tools:",
-                    paste(tools$name, collapse = ", ")
-                )
-            )
+            stop(paste(
+                detectionTools[detectionTools %in% tools$name == FALSE],
+                "not supported. Supported prediction tools:",
+                paste(tools$name, collapse = ", ")
+            ))
 
         }
 
