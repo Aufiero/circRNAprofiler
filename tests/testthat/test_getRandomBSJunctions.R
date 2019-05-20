@@ -62,3 +62,4 @@ test_that("getRandomBSJunctions() generate a data frame with the correct
     }
 
 })
+
