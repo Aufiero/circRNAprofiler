@@ -10,15 +10,9 @@
 #' @param gtf A data frame containing genome annotation information. It can be
 #' generated with \code{\link{formatGTF}}.
 #'
-#' @param species A string specifying the species from which to retrieve the
-#' sequences. For Example: Mmusculus or Hsapiens.
-#' See available.genomes() from BSgenome package to see all the species.
-#' Default value is "Hsapiens".
-#'
-#' @param genome A string specifying the genome assembly from which to retrieve
-#' the sequences. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-#' See available.genomes() from BSgenome package to see all genomes.
-#' Default value is "hg19".
+#' @param bsGenome A BSgenome object from which to retrieve the sequences.
+#' It can be generated with \code{\link[BSgenome]{getBSgenome}}.
+#' See available.genomes() to see the BSgenome package currently available.
 #'
 #' @return A list.
 #'
@@ -32,28 +26,25 @@
 #' # Annotate the first 10 back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ],gtf)
 #'
+#' # Load BSgenome object
+#' bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences
 #' targets <- getCircSeqs(
 #'     annotatedBSJs,
 #'     gtf,
-#'     species = "Hsapiens",
-#'     genome = "hg19" )
+#'     bsGenome)
 #'
-#'
-#' @importFrom BSgenome getBSgenome
 #' @importFrom BSgenome getSeq
-#' @importFrom BSgenome available.genomes
-#' @importFrom BiocManager install
-#' @importFrom utils installed.packages
+#' @importFrom Biostrings reverseComplement
+#' @importFrom Biostrings RNAString
 #' @importFrom rlang .data
 #' @import dplyr
-#'
 #' @export
 getCircSeqs <-
     function(annotatedBSJs,
         gtf,
-        species = "Hsapiens",
-        genome = "hg19") {
+        bsGenome) {
         # Create a enmpty list of 1 elements
         targets <- vector("list", 1)
         names(targets)[1] <- "circ"
@@ -84,25 +75,6 @@ getCircSeqs <-
                 targets[[1]]$endGR[k] <- annotatedBSJs$startUpBSE[k]
             }
         }
-
-        # Load required genome from which to retrieve the target sequences
-        requiredGenome <-
-            paste0("BSgenome.", species, ".", "UCSC", ".", genome)
-
-        # Check if it a correct genome
-        if (is.element(requiredGenome, BSgenome::available.genomes())) {
-            # It returns FALSE if the package does not exist
-            if (!requireNamespace(requiredGenome, quietly = TRUE)) {
-                BiocManager::install(requiredGenome)
-            }
-        } else{
-            stop(
-                "species name or genome is not correct: see
-                available.genomes() from BSgenome package"
-            )
-        }
-
-        genome <- BSgenome::getBSgenome(requiredGenome)
 
         # Retrieve the sequences
         for (i in seq_along(annotatedBSJs$id)) {
@@ -140,7 +112,7 @@ getCircSeqs <-
                             "U",
                             as.character(
                                 BSgenome::getSeq(
-                                    genome,
+                                    bsGenome,
                                     names = transcript$chrom[j],
                                     transcript$start[j],
                                     transcript$end[j]
@@ -168,7 +140,7 @@ getCircSeqs <-
 
 
                     targets[[1]]$seq[i] <-
-                        as.character(reverseComplement(RNAString(joinedExonSeqsWithBSJ)))
+                        as.character(reverseComplement(Biostrings::RNAString(joinedExonSeqsWithBSJ)))
 
                 } else if (transcript$strand[1] == "+") {
                     transcript <- transcript  %>%
@@ -181,7 +153,7 @@ getCircSeqs <-
                             "U",
                             as.character(
                                 BSgenome::getSeq(
-                                    genome,
+                                    bsGenome,
                                     names = transcript$chrom[j],
                                     transcript$start[j],
                                     transcript$end[j]

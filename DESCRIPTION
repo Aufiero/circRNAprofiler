@@ -50,5 +50,9 @@ Imports:
     stats,
     AnnotationHub,
     GenomeInfoDb,
+    BSgenome.Hsapiens.UCSC.hg19,
+    BSgenome.Hsapiens.UCSC.hg38,
+    BSgenome.Mmusculus.UCSC.mm10,
+    BSgenome.Mmusculus.UCSC.mm9,
 VignetteBuilder: 
     knitr

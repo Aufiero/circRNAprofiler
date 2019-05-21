@@ -23,15 +23,9 @@
 #' the sequences of the introns flanking the back-spliced exons are retrieved.
 #' Default value is "ie".
 #'
-#' @param species A string specifying the species from which to retrieve the
-#' sequences. For Example: Mmusculus or Hsapiens.
-#' See available.genomes() from BSgenome package to see all the species.
-#' Default value is "Hsapiens".
-#'
-#' @param genome A string specifying the genome assembly from which to retrieve
-#' the sequences. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-#' See available.genomes() from BSgenome package to see all genomes.
-#' Default value is "hg19".
+#' @param bsGenome A BSgenome object from which to retrieve the sequences.
+#' It can be generated with \code{\link[BSgenome]{getBSgenome}}.
+#' See available.genomes() to see the BSgenome package currently available.
 #'
 #' @return A list.
 #'
@@ -45,48 +39,29 @@
 #' # Annotate the first 10 back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
+#' # Load BSgenome object
+#' bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences
 #' targets <- getSeqsFromGRs(
 #'     annotatedBSJs,
 #'     lIntron = 200,
 #'     lExon = 10,
 #'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
-#'
+#'     bsGenome)
 #'
 #' @importFrom Biostrings reverseComplement
-#' @importFrom BSgenome getBSgenome
 #' @importFrom BSgenome getSeq
-#' @importFrom BiocManager install
-#'
 #' @export
 getSeqsFromGRs <-
     function(annotatedBSJs,
         lIntron = 100,
         lExon = 10,
         type = "ie",
-        species = "Hsapiens",
-        genome = "hg19") {
-        requiredGenome <-
-            paste0("BSgenome.", species, ".", "UCSC", ".", genome)
+        bsGenome) {
 
         # only 3 options are possible for the argument type
         match.arg(type, c("ie", "bse", "fi"))
-
-        # Check if it a correct genome
-        if (is.element(requiredGenome, BSgenome::available.genomes())) {
-            # It returns FALSE if the package does not exist
-            if (!requireNamespace(requiredGenome, quietly = TRUE)) {
-                BiocManager::install(requiredGenome)
-            }
-        } else{
-            stop(
-                "species name or genome is not correct:
-                see available.genomes() from BSgenome package"
-            )
-        }
-
 
         # Retrieve the coordinates from whcih to extract the sequences.
         grCoords <- switch(
@@ -101,7 +76,6 @@ getSeqsFromGRs <-
         targets <- vector("list", 2)
         names(targets)[1] <- "upGR"
         names(targets)[2] <- "downGR"
-
 
         for (i in seq_along(targets)) {
             # Create an empty list of 9 data frames
@@ -133,8 +107,6 @@ getSeqsFromGRs <-
             targets[[i]]$endGR <- grCoords[, indexEnd]
             targets[[i]]$type <- rep(type, nrow(targets[[i]]))
 
-            # Retrieve the sequences from the defined genomic range coordinates
-            genome <- BSgenome::getBSgenome(requiredGenome)
 
             for (j in seq_along(targets[[1]]$id)) {
                 # Here check the coordinates instead of the trancript becaseu

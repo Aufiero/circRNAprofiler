@@ -322,7 +322,7 @@ check
 
 If the project folder is set up correctly, check should be equal to 0.
 
-## Module 2
+## Module 2 - Import predicted circRNAs
 
 ### formatGTF()
 
@@ -375,9 +375,9 @@ dt <- getDetectionTools() %>%
 gridExtra::grid.arrange(p, dt, nrow=1)
 ```
 
-## Module 3
+## Module 3 - Merge commonly identified circRNAs
 
-### mergedBSJunctions()
+### mergeBSJunctions()
 
 The function mergeBSJunctions() is called to shrink the data frame by grouping 
 back-spliced junction coordinates commonly identified by multiple detection tools.
@@ -388,14 +388,19 @@ column "tool" of the final table. Run getDetectionTools() to get the code
 correspoding to each circRNA detection tool.
 
 NOTE:
-In this module circRNAs that derived from the antisense strand are identified. 
-This subset of antisense circRNAs are removed from the data frame and stored 
-in a file (antisenseCircRNAs.txt) for user consultation. A circRNA is defined 
-antisense if the strand reported in the prediction results is different from
-the strand reported in the genome annotation file. 
-
+In this module circRNAs that derived from the antisense strand of the reported
+gene are identified. In detail, in our pipeline a circRNA is defined 
+antisense if the strand from which the circRNA arises (i.e. reported in the 
+prediction results) is different from the strand where the gene is transcribed 
+(i.e. reported in the genome annotation file). This might be explained by 
+technical artifacts or by the presence of a gene transcribed from the opposite 
+strand that is not yet annotated and which exon coordinates overlap with the 
+exon coordinates of the gene on the opposite strand. Due to the ambiguous nature
+of these predictions the antisense circRNAs (if any) are removed from the 
+dataset and if specified by the user they can be exported in a file 
+(i.e. antisenseCircRNAs.txt) for user consultation. 
 Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
-from the sense strand of the gene.
+from the sense strand of the corresponding gene.
 
 ```{r}
 # Load object containing the merged back-spliced junctions
@@ -420,7 +425,7 @@ gridExtra::grid.arrange(p, dt, nrow=1)
 
 ```
 
-## Module 4
+## Module 4 - Filter circRNAs 
 
 ### filterCirc()
 
@@ -479,7 +484,7 @@ p <- VennDiagram::draw.triple.venn(
 
 ```
 
-## Module 5
+## Module 5 - Find differentially expressed circRNAs
 
 ### getDeseqRes()
 
@@ -553,12 +558,12 @@ ggarrange(p1,
           nrow = 2)
 ```
 
-### getEdgerRes()
+### edgerRes()
 
-The helper functions edgerRes() identifies differentially expressed 
-circRNAs. The latter uses the R Bioconductor packages EdgeR which
-implement a beta-binomial model to model changes in circRNA expression. The 
-differential expression analysis is perfomed by comparing the condition positioned
+Alternatively, the helper functions edgerRes() can also be used to identifies
+differentially expressed circRNAs. The latter uses the R Bioconductor packages 
+EdgeR which implement a beta-binomial model to model changes in circRNA expression.
+The differential expression analysis is perfomed by comparing the condition positioned
 forward against the condition positioned backward in the alphabet (values in the
 column condition of experiment.txt). E.g. if there are 2 conditions A and B then
 a negative log2FC means that in the conditions B there is a downregulation of 
@@ -589,7 +594,8 @@ edgerResCvsA <-
 head(edgerResCvsA)
 ```
 
-## Module 6
+## Module 6 - Map BSJ coordinates between species and genome assemblies
+
 
 ### liftBSJCoords()
 
@@ -608,7 +614,7 @@ liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
                                  annotationHubID = "AH14155")
 ```
 
-## Module 7
+## Module 7 - Annotate circRNAs internal structure and the flanking introns   
 
 ### annotateBSJs()
 
@@ -715,9 +721,9 @@ annotatedBSJs <- annotateBSJs(filteredCirc[1:30,], gtf)
 head(annotatedBSJs)
 ```
 
-## Module 8
-
-### getRandomBSJunctions()
+## Module 8 - Generate random BSJs
+ 
+### getRandomBSJunctions() 
 
 The function getRandomBSJunctions() retrieves random back-spliced junctions 
 from the user genome annotation.  Two random back-spliced exons are selected 
@@ -806,6 +812,7 @@ ggarrange(p1,
 knitr::include_graphics("./images/image3.png")
 ```
 
+## Downstream screenings
 
 Downstream screenings can be perfomed on one or multiple circRNAs (e.g 
 differentially expressed circRNAs or circRNAs arising from the same host genes).
@@ -831,7 +838,18 @@ reversed since the reference direction is 5'->3'. Sequences are only retrieved f
 back-spliced junctions that overlap with exon boundaries of at least one 
 transcript (see annotateBSJs()).  
 
-## Module 9
+
+```{r}
+# Load the BSgenome.
+# All the sequences will be retrieved from the BSgenome package which contains 
+# the serquences of the genome of interest
+if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE))
+    install.packages("BSgenome.Hsapiens.UCSC.hg19")
+
+bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+```
+
+## Module 9 - Retrieve internal circRNA sequences
 
 ### getCircSeqs()
 
@@ -850,11 +868,11 @@ at the 3' tail to recreate the back-spliced junction.
 ```{r,eval = FALSE}
 # Foreground target sequences
 targetsFTS_circ <-
-    getCircSeqs(annotatedCirc, gtf, species = "Hsapiens", genome = "hg19")
+getCircSeqs(annotatedCirc, gtf, bsGenome)
 
 ```
 
-## Module 10
+## Module 10 - Retrieve BSJ sequences
 
 ### getSeqsAcrossBSJs()
 
@@ -865,13 +883,13 @@ back-spliced junction are taken and concatenated together.
 ```{r, eval = FALSE}
 # Foreground target sequences
 targetsFTS_bsj <-
-    getSeqsAcrossBSJs(annotatedCirc, gtf, species = "Hsapiens", genome = "hg19")
+    getSeqsAcrossBSJs(annotatedCirc, gtf, bsGenome)
 
 ```
 
-## Module 11
+## Module 11 - Retrieve intronic sequences flanking the BSJs
 
-### getSeqsFromGRs() 
+### getSeqsFromGRs()
 
 The function getSeqsFromGRs() includes 3 modules to retrieve the 3 types of sequences:
 i) sequences of the introns flanking back-spliced junctions, ii) sequences from a 
@@ -890,9 +908,7 @@ targetsFTS_gr <-
         lIntron = 200,
         lExon = 9,
         type = "ie",
-        species = "Hsapiens",
-        genome = "hg19"
-    )
+        bsGenome)
 # Background target sequences.
 targetsBTS_gr <-
     getSeqsFromGRs(
@@ -900,13 +916,11 @@ targetsBTS_gr <-
         lIntron = 200,
         lExon = 9,
         type = "ie",
-        species = "Hsapiens",
-        genome = "hg19"
-    )
+        bsGenome)
 ```
 
 
-## Module 12
+## Module 12 - Screen target sequences for RBP/de Novo motifs
 
 ### getMotifs()
 
@@ -1013,7 +1027,7 @@ sequences and back-spliced junction sequences. For this purpose the target seque
 have to be retrieved and then the functions getMotifs() and mergeMotifs() have 
 to be run, as described above.
     
-## Module 13
+## Module 13 - Screen circRNA sequences for miRNA binding sites
 
 ### getMiRsites()
 
@@ -1189,7 +1203,7 @@ p
 ```
 
 
-## Module 14
+## Module 14 - Annotate repetitive elements
 
 ### annotateSNPsGWAS()
 
@@ -1205,7 +1219,7 @@ snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, genome = "hg19")
 
 ```
 
-## Module 15
+## Module 15 - Annotate GWAS SNPs
 
 ### annotateRepeats() 
 
