@@ -59,9 +59,7 @@ PRJNA533243.
 
 <!-- The data used in this tutorial has been published in... -->
 
-## Module 1
-
-### Install the package.
+## Install the package
 
 The latest version of the circRNprofiler package is available on github and it 
 can be installed with:
@@ -75,7 +73,7 @@ library(devtools)
 devtools::install_github("Aufiero/circRNAprofiler")
 ```
 
-### Load the package
+## Load the package
 ```{r}
 library(circRNAprofiler)
 
@@ -85,6 +83,8 @@ library(ggplot2)
 library(VennDiagram)
 library(gridExtra)
 ```
+
+## Module 1 - set up project folder
 
 ### initCircRNAprofiler()
 
