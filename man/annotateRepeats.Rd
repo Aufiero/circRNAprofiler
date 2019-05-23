@@ -42,18 +42,20 @@ data("gtf")
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
 isRandom = FALSE)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve targets
 targets <- getSeqsFromGRs(
     annotatedBSJs,
+    genome,
     lIntron = 200,
     lExon = 10,
-    type = "ie",
-    species = "Hsapiens",
-    genome = "hg19")
+    type = "ie"
+    )
 
 # Annotate repeats
 repeats <-
 annotateRepeats(targets, annotationHubID  = "AH5122", complementary = TRUE)
-
 
 }

@@ -8,6 +8,11 @@
 #' @param annotatedBSJs A data frame with the annotated back-spliced junctions.
 #' This data frame can be generated with \code{\link{annotateBSJs}}.
 #'
+#' @param genome A BSgenome object containing the genome sequences.
+#' It can be generated with in \code{\link{getBSgenome}}.
+#' See \code{\link[BSgenome]{available.genomes}} to see the BSgenome package
+#' currently available
+#'
 #' @param lIntron An integer indicating how many nucleotides are taken from
 #' the introns flanking the back-spliced junctions. This number must be
 #' positive. Default value is 100.
@@ -23,10 +28,6 @@
 #' the sequences of the introns flanking the back-spliced exons are retrieved.
 #' Default value is "ie".
 #'
-#' @param bsGenome A BSgenome object from which to retrieve the sequences.
-#' It can be generated with \code{\link[BSgenome]{getBSgenome}}.
-#' See available.genomes() to see the BSgenome package currently available.
-#'
 #' @return A list.
 #'
 #' @examples
@@ -39,26 +40,28 @@
 #' # Annotate the first 10 back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
-#' # Load BSgenome object
-#' bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve target sequences
 #' targets <- getSeqsFromGRs(
 #'     annotatedBSJs,
+#'     genome,
 #'     lIntron = 200,
 #'     lExon = 10,
-#'     type = "ie",
-#'     bsGenome)
+#'     type = "ie"
+#'     )
 #'
 #' @importFrom Biostrings reverseComplement
 #' @importFrom BSgenome getSeq
+#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @export
 getSeqsFromGRs <-
     function(annotatedBSJs,
+        genome,
         lIntron = 100,
         lExon = 10,
-        type = "ie",
-        bsGenome) {
+        type = "ie") {
 
         # only 3 options are possible for the argument type
         match.arg(type, c("ie", "bse", "fi"))

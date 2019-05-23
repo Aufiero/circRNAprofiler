@@ -11,16 +11,20 @@ test_that("getSeqsFromGRs() generates the correct data structure",
               # Annonate BSJs
               annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+              if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+                  install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+              # Get BSgenome object
+              genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
               # type = "ie"
               targets <-
                   getSeqsFromGRs(
                       annotatedBSJs,
+                      genome,
                       lIntron = 100,
                       lExon = 9,
-                      type = "ie",
-                      species = "Mmusculus",
-                      genome = "mm10"
-                  )
+                      type = "ie")
 
               expect_is(targets, "list")
               expect_equal(
@@ -45,11 +49,10 @@ test_that("getSeqsFromGRs() generates the correct data structure",
               targets <-
                   getSeqsFromGRs(
                       annotatedBSJs,
+                      genome,
                       lIntron = 100,
                       lExon = 9,
-                      type = "bse",
-                      species = "Mmusculus",
-                      genome = "mm10"
+                      type = "bse"
                   )
 
               expect_is(targets, "list")
@@ -74,11 +77,10 @@ test_that("getSeqsFromGRs() generates the correct data structure",
               targets <-
                   getSeqsFromGRs(
                       annotatedBSJs,
+                      genome,
                       lIntron = 100,
                       lExon = 9,
-                      type = "fi",
-                      species = "Mmusculus",
-                      genome = "mm10"
+                      type = "fi"
                   )
 
               expect_is(targets, "list")
@@ -112,13 +114,18 @@ test_that("getSeqFromGRs() retrieves the correct genomic ranges when
               # Annonate BSJs
               annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+              if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+                  install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+              # Get BSgenome object
+              genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
               targets <- getSeqsFromGRs(
                   annotatedBSJs,
+                  genome,
                   lIntron = 100,
                   lExon = 9,
-                  type = "ie",
-                  species = "Mmusculus",
-                  genome = "mm10"
+                  type = "ie"
               )
 
               # Check Raph1:-:chr1:60533406:60525592
@@ -181,11 +188,16 @@ test_that("getSeqsFromGRs() extracts BSJ coordinates when type = bse", {
     # Annonate BSJs
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     targets <- getSeqsFromGRs(
         annotatedBSJs,
-        type = "bse",
-        species = "Mmusculus",
-        genome = "mm10"
+        genome,
+        type = "bse"
     )
 
     expect_lt(targets$upGR$startGR[4], targets$upGR$endGR[4])
@@ -226,11 +238,17 @@ test_that("getSeqsFromGRs() extracts the coordinates of the flanking introns
 
     # Annonate BSJs
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
+
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     targets <- getSeqsFromGRs(
         annotatedBSJs,
-        type = "fi",
-        species = "Mmusculus",
-        genome = "mm10"
+        genome,
+        type = "fi"
     )
 
 

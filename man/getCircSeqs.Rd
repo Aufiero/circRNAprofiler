@@ -4,7 +4,7 @@
 \alias{getCircSeqs}
 \title{Retrieve circRNA sequences}
 \usage{
-getCircSeqs(annotatedBSJs, gtf, species = "Hsapiens", genome = "hg19")
+getCircSeqs(annotatedBSJs, gtf, genome)
 }
 \arguments{
 \item{annotatedBSJs}{A data frame with the annotated back-spliced junctions.
@@ -13,15 +13,10 @@ It can be generated with \code{\link{annotateBSJs}}.}
 \item{gtf}{A data frame containing genome annotation information. It can be
 generated with \code{\link{formatGTF}}.}
 
-\item{species}{A string specifying the species from which to retrieve the
-sequences. For Example: Mmusculus or Hsapiens.
-See available.genomes() from BSgenome package to see all the species.
-Default value is "Hsapiens".}
-
-\item{genome}{A string specifying the genome assembly from which to retrieve
-the sequences. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-See available.genomes() from BSgenome package to see all genomes.
-Default value is "hg19".}
+\item{genome}{A BSgenome object containing the genome sequences.
+It can be generated with \code{\link{getBSgenome}}.
+See \code{\link[BSgenome]{available.genomes}} to see the BSgenome package
+currently available}
 }
 \value{
 A list.
@@ -41,12 +36,13 @@ data("gtf")
 # Annotate the first 10 back-spliced junctions
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ],gtf)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve target sequences
 targets <- getCircSeqs(
     annotatedBSJs,
     gtf,
-    species = "Hsapiens",
-    genome = "hg19" )
-
+    genome)
 
 }

@@ -9,15 +9,6 @@
 #' @param targets A list containing the target sequences to analyze.
 #' This data frame can be generated with \code{\link{getCircSeqs}}.
 #'
-#' @param species A string specifying the species the target sequences came
-#' from. For Example: Mmusculus or Hsapiens. See available.genomes() from
-#' BSgenome package to see all possible species. Default values is "Hsapiens".
-#'
-#' @param genome A string specifying the genome assembly the target sequences
-#' came from. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-#' See available.genomes() from BSgenome package to see all genomes.
-#' Default value is "hg19".
-#'
 #' @param miRspeciesCode A string specifying the species code (3 letters) as
 #' reported in miRBase db. E.g. to analyze the mouse microRNAs specify "mmu",
 #' to analyze the human microRNAs specify "hsa". Type data(miRspeciesCode)
@@ -67,21 +58,20 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
 #'     isRandom = FALSE)
 #'
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences.
 #' targets <- getCircSeqs(
 #'     annotatedBSJs,
 #'     gtf,
-#'     species = "Hsapiens",
-#'     genome = "hg19")
-#'
+#'     genome)
 #'
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #'
 #' #miRsites <- getMiRsites(
 #' #    targets,
-#' #    species = "Hsapiens",
-#' #    genome = "hg19",
 #' #    miRspeciesCode = "hsa",
 #' #    miRBaseLatestRelease = TRUE,
 #' #    totalMatches = 6,
@@ -90,11 +80,11 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom seqinr swap
+#' @importFrom stringr str_count
 #' @import dplyr
 #' @export
 getMiRsites <- function(targets,
-    species = "Hsapiens",
-    genome = "hg19",
     miRspeciesCode = "hsa",
     miRBaseLatestRelease = TRUE,
     totalMatches = 7,
@@ -108,7 +98,6 @@ getMiRsites <- function(targets,
             the available codes and the corresponding species."
         )
     }
-
     # Retrieve miR sequences from miRBase or read from a given file
     # that must be named mature.fa
     microRNAs <-
@@ -137,14 +126,12 @@ getMiRsites <- function(targets,
                 seedSeq <-
                     base::substr(mirSeq, nchar(mirSeq) - 7, nchar(mirSeq) - 1)
 
-
                 # The seed region of the miR sequences is searched starting
                 # from position 30 of the target sequence. This is done because
                 # a stretch of nucleotides needs to be left to search for AU
                 # content upstream the seed site and for possible matches with
                 # the central and compensatoy regions of the miR sequence.
                 # Initialize the variables
-
 
                 indexTargetSeq <- analysisStart
                 counts <- 0
@@ -167,17 +154,14 @@ getMiRsites <- function(targets,
                 # and searched for the presence of the miR seed sequence.
 
                 while (indexTargetSeq <=
-                        (miRsites$targets$length[i] + (analysisStart -
-                                1))) {
+                        (miRsites$targets$length[i] + (analysisStart -  1))) {
                     # Allow  asymmetric mismatches/ buldge in the sequences
 
                     # FIND MATCHES WITH THE SEED REGION
                     circSeqForSeed <-
-                        base::substr(
-                            miRsites$targets$seq[i],
+                        base::substr(miRsites$targets$seq[i],
                             indexTargetSeq,
-                            indexTargetSeq + nchar(seedSeq)
-                        )
+                            indexTargetSeq + nchar(seedSeq))
 
                     seedMatches <-
                         getMatches(circSeqForSeed,
@@ -192,45 +176,38 @@ getMiRsites <- function(targets,
                         dplyr::slice(1) %>%
                         dplyr::rename(
                             maxTotalMatches = .data$tm,
-                            maxContinuousMatches = .data$cwcm
-                        )
+                            maxContinuousMatches = .data$cwcm)
 
                     # Check seed type
                     # If there are at least totalMatches then retrive all
                     # the other info.
                     if (nrow(seedMatches) != 0) {
                         if (seedMatches$maxTotalMatches >= totalMatches) {
-                            totMatchesInSeed[k] <-
-                                seedMatches$maxTotalMatches
+                            totMatchesInSeed[k] <- seedMatches$maxTotalMatches
 
                             # Write mer if there are at least 2 continuous
                             # wc matches
                             if (seedMatches$maxContinuousMatches > 1) {
                                 cwcMatchesInSeed[k] <-
                                     paste(seedMatches$maxContinuousMatches,
-                                        "mer",
-                                        sep = "")
+                                        "mer", sep = "")
                             } else{
                                 cwcMatchesInSeed[k] <-
                                     seedMatches$maxContinuousMatches
                             }
 
                             t1[k] <-
-                                base::substr(
-                                    circSeqForSeed,
+                                base::substr(circSeqForSeed,
                                     nchar(circSeqForSeed),
-                                    nchar(circSeqForSeed)
-                                )
+                                    nchar(circSeqForSeed))
 
                             seedLocation[k] <- indexTargetSeq
 
                             # FIND MATCHES WITH THE CENTRAL REGION
                             circSeqForcentral <-
-                                base::substr(
-                                    miRsites$targets$seq[i],
+                                base::substr(miRsites$targets$seq[i],
                                     indexTargetSeq - 4,
-                                    indexTargetSeq - 1
-                                )
+                                    indexTargetSeq - 1)
 
                             centralSeq <-
                                 base::substr(mirSeq,
@@ -263,7 +240,6 @@ getMiRsites <- function(targets,
                                 cwcMatchesInCentral[k] <- 0
                             }
 
-
                             # FIND MATCHES WITH THE COMPENSATORY REGION
                             circSeqForcompensatory <-
                                 base::substr(
@@ -282,7 +258,6 @@ getMiRsites <- function(targets,
                                     compensatorySeq,
                                     isSeed = FALSE)
 
-
                             # Filter based on the number fo non-canonical
                             # matches allowed and keep the max total matches
                             # found
@@ -292,9 +267,7 @@ getMiRsites <- function(targets,
                                 dplyr::slice(1) %>%
                                 dplyr::rename(
                                     maxTotalMatches = .data$tm,
-                                    maxContinuousMatches = .data$cwcm
-                                )
-
+                                    maxContinuousMatches = .data$cwcm)
 
                             if (nrow(compensatoryMatches) != 0) {
                                 totMatchesInCompensatory[k] <-
@@ -311,24 +284,17 @@ getMiRsites <- function(targets,
                                 base::substr(
                                     miRsites$targets$seq[i],
                                     indexTargetSeq - 10,
-                                    indexTargetSeq - 1
-                                )
+                                    indexTargetSeq - 1)
                             upstreamRegion <-
                                 base::substr(
                                     miRsites$targets$seq[i],
                                     indexTargetSeq + nchar(seedSeq[1]),
-                                    indexTargetSeq + nchar(seedSeq[1]) + 9
-                                )
+                                    indexTargetSeq + nchar(seedSeq[1]) + 9)
 
                             localAUcontent[k] <-
                                 Biostrings::letterFrequency(Biostrings::RNAStringSet(
-                                    paste0(
-                                        upstreamRegion,
-                                        downstreamRegion
-                                    )
-                                ),
+                                    paste0(upstreamRegion, downstreamRegion)),
                                     letters = "AU") / 20
-
 
                             k <- k + 1
 
@@ -337,10 +303,8 @@ getMiRsites <- function(targets,
                         }
                     }
 
-
                     # Sliding window - increase 1 nucleotide at a time
                     indexTargetSeq <- indexTargetSeq + 1
-
                 }
 
                 # The target sequence was analyzed for the presence of all
@@ -371,8 +335,7 @@ getMiRsites <- function(targets,
                     miRsites$totMatchesInCentral[i, miRsites$microRNAs$id[j]] <-
                         paste(totMatchesInCentral, collapse = ",")
                     # Number of continuous WC matches found with the central
-                    # region of
-                    # the miR
+                    # region of the miR
                     miRsites$cwcMatchesInCentral[i, miRsites$microRNAs$id[j]] <-
                         paste(cwcMatchesInCentral, collapse = ",")
                     # Number of total matches found with compensatory region
@@ -393,15 +356,12 @@ getMiRsites <- function(targets,
             }
         }
 
-
-
     } else{
         stop("target sequences not valid, only circRNA sequences
             are allowed.")
     }
 
     return(miRsites)
-
     }
 
 
@@ -584,46 +544,7 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
 
 
 
-#' @title Create list to store miR results
-#'
-#' @param targets A list containing the target sequences to analyze.
-#' It can be generated with \code{\link{getCircSeqs}}.
-#'
-#' @param microRNAs A data frame containing microRNA sequences to analyze.
-#' It can be generated with \code{\link{getMiRseqs}}.
-#'
-#' @return A list.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing predicted back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Annotate the first 3 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-#' isRandom = FALSE)
-#'
-#' # Retrieve target sequences
-#' targets <- getCircSeqs(
-#'     annotatedBSJs,
-#'     gtf,
-#'     species = "Hsapiens",
-#'     genome = "hg19")
-#'
-#' # Inner functions
-#' # Retrieve microRNA sequences
-#' microRNAs <- getMiRseqs(miRBaseLatestRelease = TRUE,
-#'     miRspeciesCode = "hsa")
-#'
-#' # Create list
-#' miRsites <- createMiRsitesList(targets, microRNAs)
-#'
-#'
-#' @export
+# Create list to store miR results
 createMiRsitesList <- function(targets, microRNAs) {
     if (length(targets) == 1 & names(targets)[[1]] == "circ") {
         miRsites <- vector("list", 12)
@@ -767,33 +688,11 @@ createMiRsitesList <- function(targets, microRNAs) {
 
 
 
-#' @title Retrieve sequence matches
-#'
-#' @description The function getMatches() retrives the number of total matches,
-#' continuous canonical Watson and Crick matches and a non-canonical matches
-#' (G:U) between 2 given sequences of the same length. The analysis is
-#' performed by comparing the 2 sequences without gap and by introducing a
-#' gap in each position of one of the 2 sequences at the time.
-#'
-#' @param seq1 A character string from the circRNA sequence.
-#'
-#' @param seq2 A character string from the miR sequence.
-#'
-#' @param isSeed A logical indicating whether the analysis is perfomed on the
-#' seed region. Default value is TRUE.
-#'
-#' @return A dataframe.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function.
-#' matches <- getMatches("AGGCGUU", "AGGCGUU", isSeed = TRUE)
-#'
-#'
-#' @importFrom seqinr swap
-#' @importFrom stringr str_count
-#' @export
+# The function getMatches() retrives the number of total matches,
+# continuous canonical Watson and Crick matches and a non-canonical matches
+# (G:U) between 2 given sequences of the same length. The analysis is
+# performed by comparing the 2 sequences without gap and by introducing a
+# gap in each position of one of the 2 sequences at the time.
 getMatches <-  function(seq1, seq2, isSeed = TRUE) {
     # Exclude the t1 nucleotide from the analysis if the seq2 is the
     # seed
@@ -885,7 +784,6 @@ getMatches <-  function(seq1, seq2, isSeed = TRUE) {
         k <- k + 1
     }
 
-
     # Find the max number of total matches and the max number of continuous
     # matches beteeen the seed region and the seed site considering also
     # the presence of a buldge within the seed site of the target sequence.
@@ -909,36 +807,15 @@ getMatches <-  function(seq1, seq2, isSeed = TRUE) {
         k <- k + 1
     }
 
-
     return(matches)
-
 }
 
 
-#' @title Align sequences
-#'
-#' @description The function compareSequences() combines two equal-length
-#' strings that are assumed to be aligned into a single character string.
-#' The Watson-Crick matches are replaced with "w", the mismatches with "m",
-#' G:U matches are replaced either with "n" or with "w" based on the value of
-#' isGUMatch argument.
-#'
-#' @param seq1 A character string.
-#'
-#' @param seq2 A character string.
-#'
-#' @param isGUMatch A logical specifying whether to consider G:U pair as a match
-#'  or as a mismatch. Default value is TRUE.
-#'
-#' @return A character string.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function.
-#' compareSequences("UGGCGUU", "AGGUUUG", isGUMatch = TRUE)
-#'
-#' @export
+# The function compareSequences() combines two equal-length
+# strings that are assumed to be aligned into a single character string.
+# The Watson-Crick matches are replaced with "w", the mismatches with "m",
+# G:U matches are replaced either with "n" or with "w" based on the value of
+# isGUMatch argument.
 compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
     # n is a non canonical pair
     # w is a watson- crick match
@@ -997,20 +874,20 @@ compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
 #'     isRandom = FALSE)
 #'
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences.
 #'  targets <- getCircSeqs(
 #'      annotatedBSJs,
 #'      gtf,
-#'      species = "Hsapiens",
-#'      genome = "hg19")
+#'      genome)
 #'
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #'
 #' #miRsites <- getMiRsites(
 #' #    targets,
-#' #    species = "Hsapiens",
-#' #    genome = "hg19",
 #' #    miRspeciesCode = "hsa",
 #' #    miRBaseLatestRelease = TRUE,
 #' #    totalMatches = 6,
@@ -1023,7 +900,6 @@ compareSequences <- function(seq1, seq2, isGUMatch = TRUE) {
 #'
 #' @import dplyr
 #' @importFrom magrittr %>%
-#'
 #' @export
 rearrangeMiRres <- function(miRsites) {
     # Create an empty list of 9 data frames
@@ -1039,7 +915,7 @@ rearrangeMiRres <- function(miRsites) {
             ))
         colnames(rearragedMiRres[[i]][[1]]) <-
             colnames(miRsites$targets)
-        rearragedMiRres[[i]][[1]] <- miRsites$targets[i,]
+        rearragedMiRres[[i]][[1]] <- miRsites$targets[i, ]
 
         # Second dataframe is filled with the results
         rearragedMiRres[[i]][[2]] <-
@@ -1092,8 +968,6 @@ rearrangeMiRres <- function(miRsites) {
         rearragedMiRres[[i]][[2]] <-
             rearragedMiRres[[i]][[2]] %>%
             dplyr::filter(counts  != 0)
-
-
     }
 
     return(rearragedMiRres)

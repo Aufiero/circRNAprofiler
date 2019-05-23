@@ -11,15 +11,21 @@ test_that("annotateRepeats() generates the correct data structure", {
     # Retrieve the genomic features of the circRNAs
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # Retrieve sequences type = "ie"
     targets <-
         getSeqsFromGRs(
             annotatedBSJs,
+            genome,
             lIntron = 500,
             lExon = 10,
-            type = "ie",
-            species = "Mmusculus",
-            genome = "mm10"
+            type = "ie"
+
         )
 
     # Retrieve overlapping repeats
@@ -38,11 +44,10 @@ test_that("annotateRepeats() generates the correct data structure", {
     targets <-
         getSeqsFromGRs(
             annotatedBSJs,
+            genome,
             lIntron = 500,
             lExon = 10,
-            type = "fi",
-            species = "Mmusculus",
-            genome = "mm10"
+            type = "fi"
         )
 
     # Retrieve overlapping repeats

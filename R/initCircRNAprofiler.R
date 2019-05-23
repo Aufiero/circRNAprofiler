@@ -37,7 +37,6 @@ initCircRNAprofiler <-
 
         }
 
-
         if (file.exists(projectFolderName)) {
             stop(
                 paste(

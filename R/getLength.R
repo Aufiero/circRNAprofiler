@@ -1,37 +1,5 @@
-#' @title Retieve feature length
-#'
-#' @description The function getLength() calculates the length (nt) of the
-#' back-spliced exons and the corresponding flanking introns.
-#'
-#' @param annotatedBSJs A data frame with the annotated back-spliced junctions.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function
-#' annotatedBSJs <- data.frame(
-#'     matrix(nrow = 1, ncol = length(getAnnotatedBSJsColNames())))
-#'
-#' colnames(annotatedBSJs) <- getAnnotatedBSJsColNames()
-#' annotatedBSJs$id <- "SYCP2:-:chr20:58497514:58497445"
-#' annotatedBSJs$startUpIntron <- 58507116
-#' annotatedBSJs$endUpIntron <- 58497515
-#' annotatedBSJs$startUpBSE <- 58497514
-#' annotatedBSJs$endUpBSE <- 58497445
-#' annotatedBSJs$startDownBSE <- 58497514
-#' annotatedBSJs$endDownBSE <- 58497445
-#' annotatedBSJs$startDownIntron <- 58497444
-#' annotatedBSJs$endDownIntron <- 58496509
-#'
-#' # Retrieve length
-#' getLength(annotatedBSJs)
-#'
-#' @import dplyr
-#' @importFrom magrittr %>%
-#' @importFrom rlang .data
-#' @export
+# The function getLength() calculates the length (nt) of the
+# back-spliced exons and the corresponding flanking introns.
 getLength <- function(annotatedBSJs) {
     colNames <- c(
         "id",

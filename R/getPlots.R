@@ -711,24 +711,26 @@ volcanoPlot <- function(res,
 #' # Annotate random back-spliced junctions
 #' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 #'
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences from detected back-spliced junctions
 #' targetsFTS <- getSeqsFromGRs(
 #'    annotatedFBSJs,
+#'    genome,
 #'    lIntron = 200,
 #'    lExon = 10,
-#'    type = "ie",
-#'    species = "Hsapiens",
-#'    genome = "hg19")
+#'    type = "ie"
+#'    )
 #'
 #' # Retrieve target sequences from random back-spliced junctions
 #' targetsBTS <- getSeqsFromGRs(
 #'    annotatedBBSJs,
+#'    genome,
 #'    lIntron = 200,
 #'    lExon = 10,
-#'    type = "ie",
-#'    species = "Hsapiens",
-#'    genome = "hg19")
-#'
+#'    type = "ie"
+#'    )
 #'
 #' # Get motifs
 #' motifsFTS <- getMotifs(
@@ -879,20 +881,20 @@ plotMotifs <-
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
 #'     isRandom = FALSE)
 #'
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve target sequences.
 #' targets <- getCircSeqs(
 #'     annotatedBSJs,
 #'     gtf,
-#'     species = "Hsapiens",
-#'     genome = "hg19")
+#'     genome)
 #'
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 #'
 #' miRsites <- getMiRsites(
 #'     targets,
-#'     species = "Hsapiens",
-#'     genome = "hg19",
 #'     miRspeciesCode = "hsa",
 #'     miRBaseLatestRelease = TRUE,
 #'     totalMatches = 6,
@@ -910,7 +912,6 @@ plotMotifs <-
 #'     miRid = TRUE,
 #'     id = 3)
 #' p
-#'
 #'
 #' @importFrom rlang .data
 #' @import ggplot2

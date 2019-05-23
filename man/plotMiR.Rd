@@ -44,20 +44,20 @@ data("gtf")
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
     isRandom = FALSE)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve target sequences.
 targets <- getCircSeqs(
     annotatedBSJs,
     gtf,
-    species = "Hsapiens",
-    genome = "hg19")
+    genome)
 
 # Screen target sequence for miR binding sites.
 pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 
 miRsites <- getMiRsites(
     targets,
-    species = "Hsapiens",
-    genome = "hg19",
     miRspeciesCode = "hsa",
     miRBaseLatestRelease = TRUE,
     totalMatches = 6,
@@ -75,6 +75,5 @@ p <- plotMiR(
     miRid = TRUE,
     id = 3)
 p
-
 
 }

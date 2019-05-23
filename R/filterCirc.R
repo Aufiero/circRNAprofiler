@@ -73,7 +73,6 @@ filterCirc <- function(backSplicedJunctions,
                 sep = "\t"
             )
 
-
         # Get colum names
         colNames <- c(getBasicColNames(), experiment$label)
         # Create the data frame that will be filled with the circRNA prediction
@@ -99,12 +98,10 @@ filterCirc <- function(backSplicedJunctions,
 
                 filteredCirc <-
                     rbind(filteredCirc, backSplicedJunctionsCond)
-
             }
 
             filteredCirc <-
                 filteredCirc[!duplicated(filteredCirc),]
-
         }
     } else{
         filteredCirc <- backSplicedJunctions

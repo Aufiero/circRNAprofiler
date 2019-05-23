@@ -1,5 +1,5 @@
 ---
-title: 'circRNAprofiler: An R-based computational framework for downstream analysis of circRNA molecules'
+title: 'circRNAprofiler: An R-based computational framework for the downstream analysis of circRNA molecules'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
@@ -84,9 +84,11 @@ library(VennDiagram)
 library(gridExtra)
 ```
 
-## Module 1 - set up project folder
+## Running circRNAprofiler
 
-### initCircRNAprofiler()
+### Module 1 - set up project folder
+
+#### _initCircRNAprofiler()_
 
 An important step of the analysis workflow is to initialize the project folder,
 which can be done with the helper function initCircRNAprofiler()
@@ -134,7 +136,7 @@ initCircRNAprofiler(
 
 Next, set project folder circRNAprofiler as your working directory.
 
-**_project files description_**
+**_Project files description_**
 
 The file **experiment.txt** contains the experiment design information.
 It must have at least 3 columns with headers:
@@ -310,7 +312,7 @@ circRNApredictions <-
 knitr::kable(circRNApredictions)
 ```
 
-### checkProjectFolder()
+#### _checkProjectFolder()_
 
 The function checkProjectFolder() helps to verify that the project folder is 
 set up correctly.
@@ -322,9 +324,9 @@ check
 
 If the project folder is set up correctly, check should be equal to 0.
 
-## Module 2 - Import predicted circRNAs
+### Module 2 - Import predicted circRNAs
 
-### formatGTF()
+#### _formatGTF()_
 
 The function formatGTF() formats the given annotation file from ensemble gencode,
 UCSC or NCBI. The gtf object is then called in other functions. 
@@ -340,7 +342,7 @@ head(gtf)
 ```
 
 
-### getBackSplicedJunctions()
+#### _getBackSplicedJunctions()_
 
 The function getBackSplicedJunctions() reads the circRNAs_X.txt, adapts the 
 content and generates a unique data frame with the circRNAs detected by each 
@@ -375,9 +377,9 @@ dt <- getDetectionTools() %>%
 gridExtra::grid.arrange(p, dt, nrow=1)
 ```
 
-## Module 3 - Merge commonly identified circRNAs
+### Module 3 - Merge commonly identified circRNAs
 
-### mergeBSJunctions()
+#### _mergeBSJunctions()_
 
 The function mergeBSJunctions() is called to shrink the data frame by grouping 
 back-spliced junction coordinates commonly identified by multiple detection tools.
@@ -425,9 +427,9 @@ gridExtra::grid.arrange(p, dt, nrow=1)
 
 ```
 
-## Module 4 - Filter circRNAs 
+### Module 4 - Filter circRNAs 
 
-### filterCirc()
+#### _filterCirc()_
 
 The use of multiple detection tools leads to the identification of a higher number
 of circRNAs. To rule out false positive candidates a filtering step can be applied
@@ -484,9 +486,9 @@ p <- VennDiagram::draw.triple.venn(
 
 ```
 
-## Module 5 - Find differentially expressed circRNAs
+### Module 5 - Find differentially expressed circRNAs
 
-### getDeseqRes()
+#### _getDeseqRes()_
 
 The helper functions getDeseqRes() identifies differentially expressed
 circRNAs. The latter uses the R Bioconductor packages DESeq2 which 
@@ -558,7 +560,7 @@ ggarrange(p1,
           nrow = 2)
 ```
 
-### edgerRes()
+#### _edgerRes()_
 
 Alternatively, the helper functions edgerRes() can also be used to identifies
 differentially expressed circRNAs. The latter uses the R Bioconductor packages 
@@ -594,10 +596,9 @@ edgerResCvsA <-
 head(edgerResCvsA)
 ```
 
-## Module 6 - Map BSJ coordinates between species and genome assemblies
+### Module 6 - Map BSJ coordinates between species and genome assemblies
 
-
-### liftBSJCoords()
+#### _liftBSJCoords()_
 
 The function liftBSJCoords() converts back-spliced junction coordinates between
 different species and genome assemblies by using the liftOver utility from UCSC.
@@ -614,9 +615,9 @@ liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
                                  annotationHubID = "AH14155")
 ```
 
-## Module 7 - Annotate circRNAs internal structure and the flanking introns   
+### Module 7 - Annotate circRNAs internal structure and the flanking introns   
 
-### annotateBSJs()
+#### _annotateBSJs()_
 
 The function annotateBSJs() annotates circRNAs internal structure and the 
 flanking introns. The genomic features are exracted from the user provided gene
@@ -721,9 +722,9 @@ annotatedBSJs <- annotateBSJs(filteredCirc[1:30,], gtf)
 head(annotatedBSJs)
 ```
 
-## Module 8 - Generate random BSJs
+### Module 8 - Generate random BSJs
  
-### getRandomBSJunctions() 
+#### _getRandomBSJunctions()_ 
 
 The function getRandomBSJunctions() retrieves random back-spliced junctions 
 from the user genome annotation.  Two random back-spliced exons are selected 
@@ -812,11 +813,11 @@ ggarrange(p1,
 knitr::include_graphics("./images/image3.png")
 ```
 
-## Downstream screenings
+### Retrieve target sequences
 
 Downstream screenings can be perfomed on one or multiple circRNAs (e.g 
 differentially expressed circRNAs or circRNAs arising from the same host genes).
-We selected ALPK2 circRNA for further functional screenings.
+We selected ALPK2 circRNA for further downstream screenings.
 
 ```{r, eval = FALSE}
 # Select ALPK2:-:chr18:56247780:56246046 circRNA
@@ -830,7 +831,7 @@ annotatedBSJs[which(annotatedBSJs$id != "ALPK2:-:chr18:56247780:56246046"), ]
 ```
 
 CircRNA sequences, back-spliced junction sequences only or sequences flanking 
-the back-spliced junctions can be used for downstream functional analysis 
+the back-spliced junctions can be analyze
 The sequences are retrieved from UCSC database. Default query sequence corresponds
 to the positive strand of the DNA (5'->3'). For all the circRNAs arising from 
 genes located on the negative strand, the sequences are complemented and subsequently
@@ -840,18 +841,18 @@ transcript (see annotateBSJs()).
 
 
 ```{r}
-# Load the BSgenome.
 # All the sequences will be retrieved from the BSgenome package which contains 
 # the serquences of the genome of interest
 if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE))
     install.packages("BSgenome.Hsapiens.UCSC.hg19")
 
-bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 ```
 
-## Module 9 - Retrieve internal circRNA sequences
+### Module 9 - Retrieve internal circRNA sequences
 
-### getCircSeqs()
+#### _getCircSeqs()_
 
 The function getCircSeqs() retrieves the internal circRNA sequences. By default,
 the circRNA sequences are the sequences of all the exons between 
@@ -868,13 +869,13 @@ at the 3' tail to recreate the back-spliced junction.
 ```{r,eval = FALSE}
 # Foreground target sequences
 targetsFTS_circ <-
-getCircSeqs(annotatedCirc, gtf, bsGenome)
+getCircSeqs(annotatedCirc, gtf, genome)
 
 ```
 
-## Module 10 - Retrieve BSJ sequences
+### Module 10 - Retrieve BSJ sequences
 
-### getSeqsAcrossBSJs()
+#### _getSeqsAcrossBSJs()_
 
 The function getSeqsAcrossBSJs() can be used to retrieve the sequences across
 the back-spliced junctions.  A total of 11 nucleotides from each side of the
@@ -883,13 +884,13 @@ back-spliced junction are taken and concatenated together.
 ```{r, eval = FALSE}
 # Foreground target sequences
 targetsFTS_bsj <-
-    getSeqsAcrossBSJs(annotatedCirc, gtf, bsGenome)
+    getSeqsAcrossBSJs(annotatedCirc, gtf, genome)
 
 ```
 
-## Module 11 - Retrieve intronic sequences flanking the BSJs
+### Module 11 - Retrieve intronic sequences flanking the BSJs
 
-### getSeqsFromGRs()
+#### _getSeqsFromGRs()_
 
 The function getSeqsFromGRs() includes 3 modules to retrieve the 3 types of sequences:
 i) sequences of the introns flanking back-spliced junctions, ii) sequences from a 
@@ -905,24 +906,25 @@ back-spliced exons are retrieved.
 targetsFTS_gr <-
     getSeqsFromGRs(
         annotatedCirc,
+        genome,
         lIntron = 200,
         lExon = 9,
-        type = "ie",
-        bsGenome)
+        type = "ie"
+        )
 # Background target sequences.
 targetsBTS_gr <-
     getSeqsFromGRs(
         annotatedBackgroundCircs,
+        genome,
         lIntron = 200,
         lExon = 9,
-        type = "ie",
-        bsGenome)
+        type = "ie")
 ```
 
 
-## Module 12 - Screen target sequences for RBP/de Novo motifs
+### Module 12 - Screen target sequences for RBP/de Novo motifs
 
-### getMotifs()
+#### _getMotifs()_
 
 The function getMotifs() scans the target sequences from module 9-11
 for the presence of recurrent motifs of a specific length defined in input. 
@@ -960,7 +962,7 @@ motifsBTS_gr <-
               reverse = FALSE)
 ```
 
-### mergeMotifs()
+#### _mergeMotifs()_
 
 The function mergeMotifs() groups all the motifs recognized by the same RBP and 
 report the total counts.
@@ -1027,9 +1029,9 @@ sequences and back-spliced junction sequences. For this purpose the target seque
 have to be retrieved and then the functions getMotifs() and mergeMotifs() have 
 to be run, as described above.
     
-## Module 13 - Screen circRNA sequences for miRNA binding sites
+### Module 13 - Screen circRNA sequences for miRNA binding sites
 
-### getMiRsites()
+#### _getMiRsites()_
 
 The function getMirSites() searches miRNA binding sites within circRNA sequences.
 Briefly, circRNAprofiler queries the miRBase database
@@ -1135,8 +1137,6 @@ use only miRNAs expressed in the tissues of interest.
 miRsites <-
     getMiRsites(
         targetsFTS_circ,
-        species = "Hsapiens",
-        genome = "hg19",
         miRspeciesCode = "hsa",
         miRBaseLatestRelease = TRUE,
         totalMatches = 6,
@@ -1145,7 +1145,7 @@ miRsites <-
   
 ```
 
-### rearrageMiRresults()
+#### _rearrageMiRresults()_
 
 The function rearrangeMirResults() rearranges the results of the getMiRsites() 
 function.
@@ -1203,9 +1203,9 @@ p
 ```
 
 
-## Module 14 - Annotate repetitive elements
+### Module 14 - Annotate repetitive elements
 
-### annotateSNPsGWAS()
+#### _annotateSNPsGWAS()_
 
 The function annotateSNPsGWAS() can be used to annotate the GWAS SNPs located 
 in the regions flanking the back-spliced junctions of each circRNA. SNPs information
@@ -1215,13 +1215,13 @@ genomic coordinates of the target sequences. This is possible only for the human
 genome.
 
 ```{r, eval = FALSE}
-snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, genome = "hg19")
+snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19")
 
 ```
 
-## Module 15 - Annotate GWAS SNPs
+### Module 15 - Annotate GWAS SNPs
 
-### annotateRepeats() 
+#### _annotateRepeats()_
 
 The function annotateRepeats() annotates repetitive elements 
 located in the region flanking the back-spliced junctions of each circRNA. 

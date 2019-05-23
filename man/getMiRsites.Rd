@@ -4,22 +4,13 @@
 \alias{getMiRsites}
 \title{Screen target sequences for miR binding sites}
 \usage{
-getMiRsites(targets, species = "Hsapiens", genome = "hg19",
-  miRspeciesCode = "hsa", miRBaseLatestRelease = TRUE,
-  totalMatches = 7, maxNonCanonicalMatches = 1, pathToMiRs = NULL)
+getMiRsites(targets, miRspeciesCode = "hsa",
+  miRBaseLatestRelease = TRUE, totalMatches = 7,
+  maxNonCanonicalMatches = 1, pathToMiRs = NULL)
 }
 \arguments{
 \item{targets}{A list containing the target sequences to analyze.
 This data frame can be generated with \code{\link{getCircSeqs}}.}
-
-\item{species}{A string specifying the species the target sequences came
-from. For Example: Mmusculus or Hsapiens. See available.genomes() from
-BSgenome package to see all possible species. Default values is "Hsapiens".}
-
-\item{genome}{A string specifying the genome assembly the target sequences
-came from. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-See available.genomes() from BSgenome package to see all genomes.
-Default value is "hg19".}
 
 \item{miRspeciesCode}{A string specifying the species code (3 letters) as
 reported in miRBase db. E.g. to analyze the mouse microRNAs specify "mmu",
@@ -78,21 +69,20 @@ data("gtf")
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
     isRandom = FALSE)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve target sequences.
 targets <- getCircSeqs(
     annotatedBSJs,
     gtf,
-    species = "Hsapiens",
-    genome = "hg19")
-
+    genome)
 
 # Screen target sequence for miR binding sites.
 pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 
 #miRsites <- getMiRsites(
 #    targets,
-#    species = "Hsapiens",
-#    genome = "hg19",
 #    miRspeciesCode = "hsa",
 #    miRBaseLatestRelease = TRUE,
 #    totalMatches = 6,

@@ -4,12 +4,17 @@
 \alias{getSeqsFromGRs}
 \title{Retrieve sequences flanking back-spliced junctions}
 \usage{
-getSeqsFromGRs(annotatedBSJs, lIntron = 100, lExon = 10, type = "ie",
-  species = "Hsapiens", genome = "hg19")
+getSeqsFromGRs(annotatedBSJs, genome, lIntron = 100, lExon = 10,
+  type = "ie")
 }
 \arguments{
 \item{annotatedBSJs}{A data frame with the annotated back-spliced junctions.
 This data frame can be generated with \code{\link{annotateBSJs}}.}
+
+\item{genome}{A BSgenome object containing the genome sequences.
+It can be generated with in \code{\link{getBSgenome}}.
+See \code{\link[BSgenome]{available.genomes}} to see the BSgenome package
+currently available}
 
 \item{lIntron}{An integer indicating how many nucleotides are taken from
 the introns flanking the back-spliced junctions. This number must be
@@ -25,16 +30,6 @@ defined by using the lIntron and lExon given in input. If type = "bse"
 the sequences of the back-spliced exons are retrieved. If type = "fi"
 the sequences of the introns flanking the back-spliced exons are retrieved.
 Default value is "ie".}
-
-\item{species}{A string specifying the species from which to retrieve the
-sequences. For Example: Mmusculus or Hsapiens.
-See available.genomes() from BSgenome package to see all the species.
-Default value is "Hsapiens".}
-
-\item{genome}{A string specifying the genome assembly from which to retrieve
-the sequences. For Example: mm10 or mm9 for Mouse, hg38 or hg19 for Human.
-See available.genomes() from BSgenome package to see all genomes.
-Default value is "hg19".}
 }
 \value{
 A list.
@@ -55,14 +50,16 @@ data("gtf")
 # Annotate the first 10 back-spliced junctions
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve target sequences
 targets <- getSeqsFromGRs(
     annotatedBSJs,
+    genome,
     lIntron = 200,
     lExon = 10,
-    type = "ie",
-    species = "Hsapiens",
-    genome = "hg19")
-
+    type = "ie"
+    )
 
 }

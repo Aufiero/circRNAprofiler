@@ -186,10 +186,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
 #'
 #' @return A data frame
 #'
-#' @keywords internal
-#'
 #' @examples
-#' # Inner function.
 #' getDetectionTools()
 #'
 #' @export
@@ -222,7 +219,6 @@ getDetectionTools <- function() {
     return(detectionTools)
 
 }
-
 
 
 #' @title Group circRNAs identified by multiple prediction tools

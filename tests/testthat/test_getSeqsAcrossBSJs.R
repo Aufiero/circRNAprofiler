@@ -10,11 +10,16 @@ test_that("getSeqsAcrossBSJs() retrieves the correct sequences", {
     # Retrive the genomic features
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # retrieve target sequences
     targets <- getSeqsAcrossBSJs(annotatedBSJs,
         gtf,
-        species = "Mmusculus",
-        genome = "mm10")
+        genome)
 
     # For positive strand
     expect_equal(targets$bsj$id[11], "Arhgap5:+:chr12:52516079:52542636")

@@ -4,20 +4,23 @@
 \alias{annotateSNPsGWAS}
 \title{Annotate GWAS SNPs}
 \usage{
-annotateSNPsGWAS(targets, genome = "hg19", pathToTraits = NULL)
+annotateSNPsGWAS(targets, assembly = "hg19", makeCurrent = FALSE,
+  pathToTraits = NULL)
 }
 \arguments{
 \item{targets}{A list containing the target regions to analyze.
 It can be generated with \code{\link{getSeqsFromGRs}}.}
 
-\item{genome}{A string specifying the human genome assembly the target
-sequences came from. Possible options are hg38 or hg19.
-Current image for GWAS SNPS coordinates is hg38. If hg19 is specified
-SNPs coordinates are realtime liftOver to hg19 coordinates.
-Internally at first the function \code{\link[gwascat]{makeCurrentGwascat}}
-from the \code{\link{gwascat}} package is used to get the more recent image.
-If an error occurs due to connection to the db, data(ebicat37) or
-data(ebicat38) are used. Default value is "hg19".}
+\item{assembly}{A string specifying the human genome assembly.
+Possible options are hg38 or hg19. Current image for GWAS SNPS coordinates
+is hg38. If hg19 is specified SNPs coordinates are realtime liftOver to
+hg19 coordinates.}
+
+\item{makeCurrent}{A logical specifying whether to download the
+current image of the GWAS catalog.  If FALSE is specified, the function
+\code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
+package is used to get the more recent image. If TRUE is specified the
+image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.}
 
 \item{pathToTraits}{A string containing the path to the traits.txt
 file. contains diseases/traits specified by the user. It must
@@ -50,16 +53,19 @@ data("gtf")
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
 isRandom = FALSE)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve targets
 targets <- getSeqsFromGRs(
     annotatedBSJs,
+    genome,
     lIntron = 200,
     lExon = 10,
-    type = "ie",
-    species = "Hsapiens",
-    genome = "hg19")
+    type = "ie"
+    )
 
 # Annotate GWAS SNPs
-snpsGWAS <- annotateSNPsGWAS(targets, genome = "hg19")
+snpsGWAS <- annotateSNPsGWAS(targets, assembly = "hg19")
 
 }

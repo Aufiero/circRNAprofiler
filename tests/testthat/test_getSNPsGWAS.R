@@ -17,20 +17,25 @@ test_that("annotateSNPsGWAS() generates the correct
         # Retrieve the genomic features of the circRNAs
         annotatedBSJs <- annotateBSJs(liftedBSJs, gtf)
 
+        if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+            install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg38")
+
         # Retrieve sequences
         targets <-
             getSeqsFromGRs(
                 annotatedBSJs,
+                genome,
                 lIntron = 500,
                 lExon = 10,
-                type = "fi",
-                species = "Hsapiens",
-                genome = "hg38"
+                type = "fi"
             )
 
         #options(warn = -1)
         # Retrieve overlapping gwas
-        SNPsGWAS <- annotateSNPsGWAS(targets, genome = "hg38")
+        SNPsGWAS <- annotateSNPsGWAS(targets, assembly = "hg38", makeCurrent = FALSE)
         #options(warn = 0) # default
 
         expect_is(SNPsGWAS, "list")

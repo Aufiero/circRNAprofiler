@@ -15,8 +15,6 @@ containing the codes corresponding to each circRNA detection tool for which
 a specific import function has been developed.
 }
 \examples{
-# Inner function.
 getDetectionTools()
 
 }
-\keyword{internal}

@@ -11,17 +11,21 @@ test_that("getMiRsites() generates the correct data structure", {
     # Retrive the genomic features
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # Retrieve the target sequences
     targets <- getCircSeqs(annotatedBSJs[1, ],
-        species = "Mmusculus",
-        genome = "mm10",
-        gtf)
+        gtf,
+        genome
+        )
 
     # miR analysis
     miRsites <- getMiRsites(
         targets,
-        species = "Mmusculus",
-        genome = "mm10",
         miRspeciesCode = "mmu",
         miRBaseLatestRelease = FALSE,
         totalMatches = 7,
@@ -72,17 +76,21 @@ test_that("getMiRsites() retrieves the correct matches", {
     # Retrive the genomic features
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # Retrieve the target sequences (Arhgap5:+:chr12:52516079:52542636)
     targets <- getCircSeqs(annotatedBSJs[11,],
-        species = "Mmusculus",
-        genome = "mm10",
-        gtf)
+        gtf,
+        genome
+        )
 
     # miR analysis
     miRsites <- getMiRsites(
         targets,
-        species = "Mmusculus",
-        genome = "mm10",
         miRspeciesCode = "mmu",
         miRBaseLatestRelease = FALSE,
         totalMatches = 7,
@@ -107,8 +115,6 @@ test_that("getMiRsites() retrieves the correct matches", {
     # miR analysis
     miRsites <- getMiRsites(
         targets,
-        species = "Mmusculus",
-        genome = "mm10",
         miRspeciesCode = "mmu",
         miRBaseLatestRelease = FALSE,
         totalMatches = 6,
@@ -145,18 +151,21 @@ test_that(" rearrangeMiRres() rearranges correctly the miRresults", {
     # Retrive the genomic features
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # Retrieve the target sequences
     targets <-
         getCircSeqs(annotatedBSJs[1,],
             gtf,
-            species = "Mmusculus",
-            genome = "mm10")
+            genome)
 
     # We only analyze the first row
     miRsites <- getMiRsites(
         targets,
-        species = "Mmusculus",
-        genome = "mm10",
         miRspeciesCode = "mmu",
         miRBaseLatestRelease = FALSE,
         totalMatches = 6,

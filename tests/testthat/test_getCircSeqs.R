@@ -11,12 +11,16 @@ test_that("getCircSeqs() generate the correct data structure", {
     # Annotate BSJs
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Get BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # retrieve target sequences
     targets <- getCircSeqs(annotatedBSJs,
         gtf,
-        species = "Mmusculus",
-        genome = "mm10"
-        )
+        genome)
 
     expect_is(targets, "list")
     expect_equal(
@@ -49,12 +53,16 @@ test_that("getCircSeqs() retrieves the right sequences", {
     # Annotate BSJs
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+    if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+        install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+    # Load BSgenome object
+    genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
     # retrieve target sequences
     targets <- getCircSeqs(annotatedBSJs,
         gtf,
-        species = "Mmusculus",
-        genome = "mm10"
-    )
+        genome)
 
     expect_equal(nrow(targets$circ), nrow(annotatedBSJs))
 

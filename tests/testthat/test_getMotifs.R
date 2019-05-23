@@ -14,15 +14,20 @@ test_that("getMotifs() and mergeMotifs() generate the correct data structure
         # Annonate BSJs
         annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+        if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+            install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
         # Retrieve sequences
         targets <-
             getSeqsFromGRs(
                 annotatedBSJs,
+                genome,
                 lIntron = 101,
                 lExon = 9,
-                type = "ie",
-                species = "Mmusculus",
-                genome = "mm10"
+                type = "ie"
             )
 
         # Retrieve motifs
@@ -85,15 +90,20 @@ test_that("getMotifs() generates a list with the correct
         # Annonate BSJs
         annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
+        if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+            install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
         # Retrieve sequences
         targets <-
             getSeqsFromGRs(
                 annotatedBSJs,
+                genome,
                 lIntron = 101,
                 lExon = 9,
-                type = "ie",
-                species = "Mmusculus",
-                genome = "mm10"
+                type = "ie"
             )
 
         # Retrieve motifs
@@ -152,12 +162,17 @@ test_that(
         annotatedBSJs <-
             annotateBSJs(mergedBSJunctions[1:3, ], gtf)
 
+        if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+            install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
         # Retrieve sequences (BSJs)
         targets <-
             getSeqsAcrossBSJs(annotatedBSJs,
                 gtf,
-                species = "Mmusculus",
-                genome = "mm10"
+                genome
                 )
 
         # Retrieve motifs
@@ -202,12 +217,14 @@ test_that(
         mergedMotifs <- mergeMotifs(motifs)
         expect_is(mergedMotifs, "data.frame")
 
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
         # Retrieve sequences (circRNA seqs)
         targets <-
             getCircSeqs(annotatedBSJs,
                 gtf,
-                species = "Mmusculus",
-                genome = "mm10"
+                genome
                 )
 
         # Retrieve motifs
@@ -271,15 +288,20 @@ test_that("plotMotifs() generates the correct data structure",
         annotatedBSJs <-
             annotateBSJs(mergedBSJunctions[1,], gtf)
 
+        if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
+            install.packages("BSgenome.Mmusculus.UCSC.mm10")
+
+        # Get BSgenome object
+        genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
+
         # Retrieve sequences
         targets <-
             getSeqsFromGRs(
                 annotatedBSJs,
+                genome,
                 lIntron = 50,
                 lExon = 10,
-                type = "ie",
-                species = "Mmusculus",
-                genome = "mm10"
+                type = "ie"
             )
 
         # Retrieve motifs
@@ -305,11 +327,10 @@ test_that("plotMotifs() generates the correct data structure",
         targetsRBSJs <-
             getSeqsFromGRs(
                 annotatedRBSJs,
+                genome,
                 lIntron = 50,
                 lExon = 10,
-                type = "ie",
-                species = "Mmusculus",
-                genome = "mm10"
+                type = "ie"
             )
 
         # Retrieve motifs

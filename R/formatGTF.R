@@ -28,7 +28,6 @@ formatGTF <- function(pathToGTF = NULL) {
         gtf <- suppressWarnings(rtracklayer::import(pathToGTF)) %>%
             as.data.frame()
 
-
         # Keep only the needed rows
         # Rename seqnames to chrom
         gtf <- gtf %>%
@@ -36,7 +35,6 @@ formatGTF <- function(pathToGTF = NULL) {
             dplyr::rename(chrom = .data$seqnames) %>%
             dplyr::mutate(strand = as.character(.data$strand),
                 chrom = as.character(.data$chrom))
-
 
         needColumns <-
             c(
@@ -50,7 +48,6 @@ formatGTF <- function(pathToGTF = NULL) {
                 "transcript_id"
             )
 
-
         # For UCSC and Ncbi the exon_number column needs to be added
         if (!("exon_number" %in% colnames(gtf))) {
             pos <-  gtf  %>%
@@ -58,7 +55,6 @@ formatGTF <- function(pathToGTF = NULL) {
                 dplyr::group_by(.data$transcript_id) %>%
                 dplyr::arrange(.data$start, .by_group = TRUE) %>%
                 dplyr::mutate (exon_number = row_number())
-
 
             neg <-  gtf  %>%
                 dplyr::filter(.data$strand == "-") %>%
@@ -77,13 +73,11 @@ formatGTF <- function(pathToGTF = NULL) {
                 dplyr::select(c(needColumns), "exon_number") %>%
                 dplyr::mutate(exon_number = as.numeric(.data$exon_number)) %>%
                 as.data.frame()
-
         }
 
         # For ensamble and ncbi the "chr" needs to be added to the chromosome number
         if (is.na(stringr::str_extract(formattedGTF$chrom[1], "chr"))) {
             formattedGTF$chrom <- paste0("chr", formattedGTF$chrom)
-
         }
     } else{
         formattedGTF <- data.frame()

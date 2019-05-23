@@ -11,14 +11,16 @@
 #' @param targets A list containing the target regions to analyze.
 #' It can be generated with \code{\link{getSeqsFromGRs}}.
 #'
-#' @param genome A string specifying the human genome assembly the target
-#' sequences came from. Possible options are hg38 or hg19.
-#' Current image for GWAS SNPS coordinates is hg38. If hg19 is specified
-#' SNPs coordinates are realtime liftOver to hg19 coordinates.
-#' Internally at first the function \code{\link[gwascat]{makeCurrentGwascat}}
-#' from the \code{\link{gwascat}} package is used to get the more recent image.
-#' If an error occurs due to connection to the db, data(ebicat37) or
-#' data(ebicat38) are used. Default value is "hg19".
+#' @param assembly A string specifying the human genome assembly.
+#' Possible options are hg38 or hg19. Current image for GWAS SNPS coordinates
+#' is hg38. If hg19 is specified SNPs coordinates are realtime liftOver to
+#' hg19 coordinates.
+#'
+#' @param makeCurrent A logical specifying whether to download the
+#' current image of the GWAS catalog.  If FALSE is specified, the function
+#' \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
+#' package is used to get the more recent image. If TRUE is specified the
+#' image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.
 #'
 #' @param pathToTraits A string containing the path to the traits.txt
 #' file. contains diseases/traits specified by the user. It must
@@ -41,17 +43,20 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
 #' isRandom = FALSE)
 #'
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
 #' # Retrieve targets
 #' targets <- getSeqsFromGRs(
 #'     annotatedBSJs,
+#'     genome,
 #'     lIntron = 200,
 #'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
+#'     type = "ie"
+#'     )
 #'
 #' # Annotate GWAS SNPs
-#' snpsGWAS <- annotateSNPsGWAS(targets, genome = "hg19")
+#' snpsGWAS <- annotateSNPsGWAS(targets, assembly = "hg19")
 #'
 #' @import dplyr
 #' @importFrom GenomicRanges makeGRangesFromDataFrame
@@ -61,14 +66,15 @@
 #' @importFrom S4Vectors subjectHits
 #' @importFrom S4Vectors queryHits
 #' @importFrom rlang .data
-#' @importFrom utils data
 #' @importFrom GenomeInfoDb seqlevelsStyle
 #' @importFrom gwascat makeCurrentGwascat
 #' @importFrom gwascat subsetByTraits
+#' @importFrom utils data
 #' @export
 annotateSNPsGWAS <-
     function(targets,
-        genome = "hg19",
+        assembly = "hg19",
+        makeCurrent = FALSE,
         pathToTraits = NULL) {
         options(readr.num_columns = 0)
         if (length(targets) == 2 &
@@ -83,54 +89,11 @@ annotateSNPsGWAS <-
                 GRs are allowed.")
         }
 
-        #require(gwascat, quietly = TRUE)
-        if (genome == "hg19") {
-            gwas <- suppressWarnings(tryCatch(
-                gwascat::makeCurrentGwascat(
-                    fixNonASCII = FALSE, genome = "GRCh37"),
-                error = function(e)
-                    NULL
-            ))
-
-            if (!is.null(gwas)) {
-                GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
-
-
-            } else{
-                #Load lifted over image
-                utils::data(ebicat37)
-                gwas <- ebicat37
-                cat("Connection to the db failed, using data(ebicat37)")
-            }
-
-        } else if (genome == "hg38") {
-            gwas <- suppressWarnings(tryCatch(
-                gwascat::makeCurrentGwascat(
-                    fixNonASCII = FALSE, genome = "GRCh38"),
-                error = function(e)
-                    NULL
-            ))
-
-            if (!is.null(gwas)) {
-                GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
-
-            } else{
-                # Load image dated 3 August 2015
-                utils::data(ebicat38)
-                gwas <- ebicat38
-                cat("Connection to the db failed, using data(ebicat38)")
-            }
-
-        } else {
-            stop("Possible genome assembly: hg19, hg38")
-        }
-
-
+        gwas <- getGWAS(assembly, makeCurrent)
 
         if (is.null(pathToTraits)) {
             pathToTraits <- "traits.txt"
         }
-
 
         if (file.exists(pathToTraits)) {
             traitsFromFile <-
@@ -145,7 +108,6 @@ annotateSNPsGWAS <-
             traitsFromFile <- data.frame()
         }
 
-
         # Check if there there are traits
         if (nrow(traitsFromFile) > 0) {
             gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
@@ -158,21 +120,19 @@ annotateSNPsGWAS <-
         # Clean targets dataframe by removing the rows with NA values to avoid
         # getting errors with the makeGRangesFromDataFrame function that does
         # not handle NA values
-        index1 <-
-            which(
-                !is.na(targets[[1]]$transcript) &
-                    !is.na(targets[[1]]$startGR) &
-                    !is.na(targets[[1]]$endGR)
-            )
-        index2 <-
-            which(
-                !is.na(targets[[2]]$transcript) &
-                    !is.na(targets[[2]]$startGR) &
-                    !is.na(targets[[2]]$endGR)
-            )
+        index1 <- which(
+            !is.na(targets[[1]]$transcript) &
+                !is.na(targets[[1]]$startGR) &
+                !is.na(targets[[1]]$endGR)
+        )
+        index2 <- which(
+            !is.na(targets[[2]]$transcript) &
+                !is.na(targets[[2]]$startGR) &
+                !is.na(targets[[2]]$endGR)
+        )
 
-        targets[[1]] <- targets[[1]][intersect(index1, index2), ]
-        targets[[2]] <- targets[[2]][intersect(index1, index2), ]
+        targets[[1]] <- targets[[1]][intersect(index1, index2),]
+        targets[[2]] <- targets[[2]][intersect(index1, index2),]
 
         for (i in seq_along(snpsGWAS)) {
             # Create an empty list of 2 elements to store the extracted
@@ -197,13 +157,9 @@ annotateSNPsGWAS <-
                 starts.in.df.are.0based = FALSE
             )
 
-
             # Find the overlapping gwas snps
             #we can get some wornings if there are no sequence levels in common
-            overlaps <-
-                suppressWarnings(
-                    GenomicRanges::findOverlaps(
-                        gwas, genRanges, ignore.strand = TRUE))
+            overlaps <- suppressWarnings(GenomicRanges::findOverlaps(gwas, genRanges, ignore.strand = TRUE))
             if (length(overlaps) == 0) {
                 # no genomic ranges in common
                 snpsGWAS[[i]]$snps <-
@@ -222,18 +178,16 @@ annotateSNPsGWAS <-
                     "study"
                 )
 
-
             } else{
                 # Keep only targets where a hit is found
                 snpsGWAS[[i]]$targets <-
-                    snpsGWAS[[i]]$targets[S4Vectors::subjectHits(overlaps),] %>%
+                    snpsGWAS[[i]]$targets[S4Vectors::subjectHits(overlaps), ] %>%
                     dplyr::filter(!duplicated(.)) %>%
                     dplyr::arrange(.data$id)
 
                 snpsGWAS[[i]]$snps <-
                     data.frame(genRanges[S4Vectors::subjectHits(overlaps)],
                         gwas[S4Vectors::queryHits(overlaps)])
-
 
                 snpsGWAS[[i]]$snps <- snpsGWAS[[i]]$snps %>%
                     dplyr::select(
@@ -263,10 +217,59 @@ annotateSNPsGWAS <-
                         study = .data$STUDY
                     ) %>%
                     dplyr::arrange(.data$id)
-
-
             }
         }
 
         return(snpsGWAS)
+    }
+
+
+
+# Get GWAS SNPs
+getGWAS <- function(assembly = "hg19",
+    makeCurrent = FALSE) {
+    if (assembly == "hg19") {
+        if (makeCurrent) {
+            gwas <- suppressWarnings(tryCatch(
+                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh37"),
+                error = function(e)
+                    NULL
+            ))
+        } else{
+            gwas <- NULL
         }
+
+        if (!is.null(gwas)) {
+            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
+
+        } else{
+            #Load lifted over image
+            utils::data(ebicat37)
+            gwas <- ebicat37
+        }
+
+    } else if (assembly == "hg38") {
+        if (makeCurrent) {
+            gwas <- suppressWarnings(tryCatch(
+                gwascat::makeCurrentGwascat(fixNonASCII = FALSE, genome = "GRCh38"),
+                error = function(e)
+                    NULL
+            ))
+        }else{
+            gwas <- NULL
+        }
+
+        if (!is.null(gwas)) {
+            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
+
+        } else{
+            # Load image dated 3 August 2015
+            utils::data(ebicat38)
+            gwas <- ebicat38
+        }
+
+    } else {
+        stop("Possible genome assembly: hg19, hg38")
+    }
+    return(gwas)
+}

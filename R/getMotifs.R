@@ -3,14 +3,14 @@
 #' @description The function getMotifs() scans the target sequences for the
 #' presence of recurrent motifs of a specific length defined in input.
 #' By setting rbp equals to TRUE, the identified motifs are matched with motifs
-#' of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database and
-#' with motifs specified by the user. The user motifs must go in the file
-#' motifs.txt. If this file is absent or  empty, only motifs from the ATtRACT
-#' database are considered in the analysis. By setting rbp equals to FALSE,
-#' only motifs that do not match with any motifs deposited in the ATtRACT
-#' database or user motifs are reported in the final output. Location of the
-#' selected motifs is also reported. This corresponds to the start position of
-#' the motif within the sequence (1-index based).
+#' of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database
+#' (\url{http://attract.cnic.es}) and with motifs specified by the user.
+#' The user motifs must go in the file motifs.txt. If this file is absent or
+#' empty, only motifs from the ATtRACT database are considered in the analysis.
+#' By setting rbp equals to FALSE, only motifs that do not match with any motifs
+#' deposited in the ATtRACT database or user motifs are reported in the final
+#' output. Location of the selected motifs is also reported. This corresponds
+#' to the start position of the motif within the sequence (1-index based).
 #'
 #' @param targets A list containing the target sequences to analyze.
 #' It can be generated with \code{\link{getCircSeqs}},
@@ -60,14 +60,17 @@
 #' # Annotate detected back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
 #'
-#' # Retrieve target sequences.
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
+#' # Retrieve target sequences
 #' targets <- getSeqsFromGRs(
 #'     annotatedBSJs,
+#'     genome,
 #'     lIntron = 200,
 #'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
+#'     type = "ie"
+#'     )
 #'
 #' # Get motifs
 #' motifs <- getMotifs(
@@ -77,10 +80,14 @@
 #'     rbp = TRUE,
 #'     reverse = FALSE)
 #'
-#'
 #' @importFrom stringr str_count
+#' @importFrom stringr str_extract
 #' @importFrom stringi stri_locate_all
 #' @importFrom Biostrings RNAStringSet
+#' @importFrom Biostrings RNAStringSet
+#' @importFrom Biostrings oligonucleotideFrequency
+#' @import dplyr
+#' @import magrittr
 #' @export
 getMotifs <-
     function(targets,
@@ -168,69 +175,16 @@ getMotifs <-
                         paste("(?=", stringMotif, ")", sep = ""))
 
             }
-
             # Put 0 count where the string "NA" is found
             #index <- which(motifs[[i]]$targets$seq == "NA")
             #motifs[[i]]$counts[index,-1] <- 0
 
         }
-
-
         return(motifs)
-
     }
 
 
-#' @title Compute and search motifs of a given length in the target sequences.
-#'
-#' @description The function computeMotifs() first computes all possible motifs
-#' of a given length and subsequently searches those motifs in the target
-#' sequences. Only motifs present at least 1 time are kept.
-#'
-#' @param targets A list containing the target sequences to analyze.
-#' It can be generated with: \code{\link{getCircSeqs}} or
-#' \code{\link{getSeqsAcrossBSJs}} or \code{\link{getSeqsFromGRs}}.
-#'
-#' @param width An integer specifying the length of all possible motifs to
-#' extract from the target sequences. Default value is 6.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing detected back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junctions.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate detected back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Retrieve targets
-#' targets <- getSeqsFromGRs(
-#'     annotatedBSJs,
-#'     lIntron = 200,
-#'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
-#'
-#' # Inner function
-#' # Compute motifs
-#' computedMotifs <- computeMotifs(
-#'     targets,
-#'     width = 6)
-#'
-#'
-#' @import magrittr
-#' @importFrom Biostrings RNAStringSet
-#' @importFrom Biostrings oligonucleotideFrequency
-#' @export
+# The function computeMotifs() first computes all possible motifs
 computeMotifs <-
     function(targets, width = 6) {
         if (width < 4 | width > 20) {
@@ -283,10 +237,7 @@ computeMotifs <-
             ) %>%
                 unique()
         }
-
-
         return(computedMotifs)
-
     }
 
 
@@ -319,8 +270,6 @@ computeMotifs <-
 #'
 #' @return A data frame.
 #'
-#' @keywords internal
-#'
 #' @examples
 #' # Inner function
 #' userAttractMotifs <- getUserAttractMotifs(species = "Hsapiens",
@@ -346,17 +295,6 @@ getUserAttractMotifs <-
         utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
             tf)
         db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
-
-
-        # # Check if ATtRACT_db.txt is in the working directory.
-        # # If not it will be downloaded from ATtRACT database
-        # if (!file.exists("ATtRACT.zip")) {
-        #     utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
-        #         "./ATtRACT.zip")
-        # }
-        #
-        # db <-
-        #     suppressWarnings(readr::read_tsv(unz("./ATtRACT.zip", "ATtRACT_db.txt")))
 
         # Reformat how the species name is reported in ATtRACT database so
         # that it can be compared with the species given in input.
@@ -398,11 +336,9 @@ getUserAttractMotifs <-
                     motif = .data$Motif)
         }
 
-
         if (is.null(pathToMotifs)) {
             pathToMotifs <- "motifs.txt"
         }
-
 
         if (file.exists(pathToMotifs)) {
             # Read file containing user given patterns
@@ -415,7 +351,6 @@ getUserAttractMotifs <-
                 )
             # colnames(motifsFromFile) <-
             #     c("id", "motif", "length")
-
 
         } else{
             motifsFromFile <- data.frame(matrix(nrow = 0, ncol = 3))
@@ -449,7 +384,6 @@ getUserAttractMotifs <-
             newMotifsFromFile <- motifsFromFile
         }
 
-
         if (reverse) {
             # we revere the motifs so that they can be analyzed also
             # in the other orientation
@@ -468,92 +402,14 @@ getUserAttractMotifs <-
         userAttractMotifs <-
             dplyr::bind_rows(newMotifsFromFile[, c(1, 2)], newAttractRBPmotifs)
 
-
         return(userAttractMotifs)
         }
 
 
-
-#' @title Filter motifs
-#'
-#' @description The function filterMotifs() finds motifs that match with motifs
-#' of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database and
-#' with motifs specified by the user reported in motifs.txt. Subsequently,
-#' they are filtered based on the value of rbp argument.
-#'
-#' @param computedMotifs A character vector containing motifs extracted from
-#' the target sequences. It can be generated with \code{\link{computeMotifs}}.
-#'
-#' @param species A string specifying the species of the RBP motifs to use.
-#' Type data(attractSpecies) to see the possible options.
-#' Default values is "Hsapiens".
-#'
-#' @param rbp A logical specifying whether to report only motifs matching
-#' with known RBP motifs from ATtRACT database or user motifs specified in
-#' motifs.txt. If FALSE is specified only motifs that do not match with any of
-#' these motifs are reported. Default value is TRUE.
-#'
-#' @param reverse A logical specifying whether to reverse the motifs collected
-#' from ATtRACT database and from motifs.txt. If TRUE is specified all the
-#' motifs are reversed and analyzed together with the direct motifs as they are
-#' reported in the ATtRACT db and motifs.txt. Default value is FALSE.
-#'
-#' @param pathToMotifs A string containing the path to the motifs.txt
-#' file. The file motifs.txt contains motifs/regular expressions specified
-#' by the user. It must have 3 columns with headers:
-#' - id (1st column): name of the motif. - e.g. RBM20 or motif1.
-#' - motif (2nd column): motif/pattern to search.
-#' - length (3rd column): length of the motif.
-#' By default pathToMotifs is set to NULL and the file it is searched in the
-#' working directory. If motifs.txt is located in a different directory then
-#' the path needs to be specified. If this file is absent or empty only the
-#' motifs of RNA Binding Proteins in the ATtRACT database are considered in
-#' the motifs analysis.
-#'
-#' @return A data frame
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing detected back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junctions.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate detected back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Retrieve targets
-#' targets <- getSeqsFromGRs(
-#'     annotatedBSJs,
-#'     lIntron = 200,
-#'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19" )
-#'
-#' # Inner function
-#' # Compute motifs
-#' computedMotifs <- computeMotifs(
-#'     targets,
-#'     width = 6)
-#'
-#' # Inner function
-#' # Filter motifs
-#' filteredMotifs <- filterMotifs(
-#'    computedMotifs,
-#'    species = "Hsapiens",
-#'    rbp = TRUE,
-#'    reverse = FALSE)
-#'
-#' @import dplyr
-#' @import magrittr
-#' @importFrom stringr str_extract
-#' @export
+# The function filterMotifs() finds motifs that match with motifs
+# of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database and
+# with motifs specified by the user reported in motifs.txt. Subsequently,
+# they are filtered based on the value of rbp argument.
 filterMotifs <-
     function(computedMotifs,
         species  = "Hsapiens",
@@ -628,63 +484,7 @@ filterMotifs <-
 
 
 
-#' @title Create list to store motif results
-#'
-#' @param targets A list containing the target sequences to analyze.
-#' It can be generated with \code{\link{getCircSeqs}}.
-#'
-#' @param filteredMotifs A data frame containing motifs to analyze.
-#' It can be generated with \code{\link{filterMotifs}}.
-#'
-#' @return A list.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing detected back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junctions.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate detected back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Retrieve targets
-#' targets <-
-#' getSeqsFromGRs(
-#'     annotatedBSJs,
-#'     lIntron = 200,
-#'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
-#'
-#' # Inner function
-#' # Compute motifs
-#' computedMotifs <- computeMotifs(
-#'     targets,
-#'     width = 6)
-#'
-#' # Inner function
-#' # Filter motifs
-#' filteredMotifs <- filterMotifs(
-#'     computedMotifs,
-#'     species = "Hsapiens",
-#'     rbp = TRUE,
-#'     reverse = FALSE)
-#'
-#' # Inner function
-#' # Create list
-#' motifs <- createMotifsList(
-#'     targets,
-#'     filteredMotifs)
-#'
-#'
-#' @export
+# Create list to store motif results
 createMotifsList <-
     function(targets, filteredMotifs) {
         if (length(targets) == 2 & names(targets)[[1]] == "upGR") {
@@ -705,8 +505,6 @@ createMotifsList <-
             motifs <- vector("list", 1)
             names(motifs)[1] <- "circ"
         }
-
-
 
         for (i in seq_along(motifs)) {
             # Put the string NA so that the we do not get error when calling
@@ -749,14 +547,10 @@ createMotifsList <-
                 colnames(motifs[[i]]$locations) <-
                     c("id", c(filteredMotifs$motif))
                 motifs[[i]]$locations$id <- targets[[i]]$id
-
             }
         }
-
         return(motifs)
-
     }
-
 
 
 #' @title Group motifs shared by multiple RBPs
@@ -782,15 +576,17 @@ createMotifsList <-
 #' # Annotate detected back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
-#' # Retrieve targets
-#' targets <-
-#' getSeqsFromGRs(
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#'
+#' # Retrieve target sequences
+#' targets <- getSeqsFromGRs(
 #'     annotatedBSJs,
+#'     genome,
 #'     lIntron = 200,
 #'     lExon = 10,
-#'     type = "ie",
-#'     species = "Hsapiens",
-#'     genome = "hg19")
+#'     type = "ie"
+#'     )
 #'
 #' # Get motifs
 #' motifs <-
@@ -871,8 +667,6 @@ mergeMotifs <- function(motifs) {
             splittedRBPs <- motifs[[1]]$motif
         }
 
-
-        . <- NULL # For R CMD check
         if (length(mergedMotifs) == 2) {
             mergedMotifsAll <-
                 dplyr::bind_rows(mergedMotifs[[1]], mergedMotifs[[2]]) %>%
@@ -893,7 +687,6 @@ mergeMotifs <- function(motifs) {
                 ) %>%
                 as.data.frame()
 
-
         } else {
             mergedMotifsAll <- mergedMotifs[[1]] %>%
                 base::merge(
@@ -912,7 +705,5 @@ mergeMotifs <- function(motifs) {
                 as.data.frame()
         }
     }
-
-
     return(mergedMotifsAll)
 }

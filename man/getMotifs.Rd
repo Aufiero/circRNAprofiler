@@ -48,14 +48,14 @@ A list.
 The function getMotifs() scans the target sequences for the
 presence of recurrent motifs of a specific length defined in input.
 By setting rbp equals to TRUE, the identified motifs are matched with motifs
-of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database and
-with motifs specified by the user. The user motifs must go in the file
-motifs.txt. If this file is absent or  empty, only motifs from the ATtRACT
-database are considered in the analysis. By setting rbp equals to FALSE,
-only motifs that do not match with any motifs deposited in the ATtRACT
-database or user motifs are reported in the final output. Location of the
-selected motifs is also reported. This corresponds to the start position of
-the motif within the sequence (1-index based).
+of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database
+(\url{http://attract.cnic.es}) and with motifs specified by the user.
+The user motifs must go in the file motifs.txt. If this file is absent or
+empty, only motifs from the ATtRACT database are considered in the analysis.
+By setting rbp equals to FALSE, only motifs that do not match with any motifs
+deposited in the ATtRACT database or user motifs are reported in the final
+output. Location of the selected motifs is also reported. This corresponds
+to the start position of the motif within the sequence (1-index based).
 }
 \examples{
 # Load data frame containing detected back-spliced junctions
@@ -70,14 +70,17 @@ data("gtf")
 # Annotate detected back-spliced junctions
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
 
-# Retrieve target sequences.
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
+# Retrieve target sequences
 targets <- getSeqsFromGRs(
     annotatedBSJs,
+    genome,
     lIntron = 200,
     lExon = 10,
-    type = "ie",
-    species = "Hsapiens",
-    genome = "hg19")
+    type = "ie"
+    )
 
 # Get motifs
 motifs <- getMotifs(
@@ -86,6 +89,5 @@ motifs <- getMotifs(
     species = "Hsapiens",
     rbp = TRUE,
     reverse = FALSE)
-
 
 }

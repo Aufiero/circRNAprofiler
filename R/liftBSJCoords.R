@@ -29,7 +29,6 @@
 #' # LifOver the first 10 back-spliced junction coordinates
 #' liftedBSJCoords <- liftBSJCoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
 #'
-#'
 #' @importFrom IRanges IRanges
 #' @importFrom rtracklayer import.chain
 #' @importFrom rtracklayer liftOver
@@ -101,7 +100,6 @@ liftBSJCoords <-
             liftedBSJCoords$gene <- backSplicedJunctions$gene
         }
 
-
         liftedBSJCoords$strand <-
             unlist(as.character(liftedOverStartUpBSE$strand[mtStart]))
         liftedBSJCoords$chrom <-
@@ -114,7 +112,6 @@ liftBSJCoords <-
 
         liftedBSJCoords[, paste(basicColumns[1], species1, sep = "_")] <-
             backSplicedJunctions$id
-
 
         # It can happen that some genes are located on different strands in
         # different species so a check needs to be done to switch

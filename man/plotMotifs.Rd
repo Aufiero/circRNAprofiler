@@ -68,24 +68,26 @@ randomBSJunctions <- getRandomBSJunctions(gtf, n = 10, f = 10)
 # Annotate random back-spliced junctions
 annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 # Retrieve target sequences from detected back-spliced junctions
 targetsFTS <- getSeqsFromGRs(
    annotatedFBSJs,
+   genome,
    lIntron = 200,
    lExon = 10,
-   type = "ie",
-   species = "Hsapiens",
-   genome = "hg19")
+   type = "ie"
+   )
 
 # Retrieve target sequences from random back-spliced junctions
 targetsBTS <- getSeqsFromGRs(
    annotatedBBSJs,
+   genome,
    lIntron = 200,
    lExon = 10,
-   type = "ie",
-   species = "Hsapiens",
-   genome = "hg19")
-
+   type = "ie"
+   )
 
 # Get motifs
 motifsFTS <- getMotifs(

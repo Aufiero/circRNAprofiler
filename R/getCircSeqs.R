@@ -10,9 +10,10 @@
 #' @param gtf A data frame containing genome annotation information. It can be
 #' generated with \code{\link{formatGTF}}.
 #'
-#' @param bsGenome A BSgenome object from which to retrieve the sequences.
-#' It can be generated with \code{\link[BSgenome]{getBSgenome}}.
-#' See available.genomes() to see the BSgenome package currently available.
+#' @param genome A BSgenome object containing the genome sequences.
+#' It can be generated with \code{\link{getBSgenome}}.
+#' See \code{\link[BSgenome]{available.genomes}} to see the BSgenome package
+#' currently available
 #'
 #' @return A list.
 #'
@@ -26,25 +27,26 @@
 #' # Annotate the first 10 back-spliced junctions
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ],gtf)
 #'
-#' # Load BSgenome object
-#' bsGenome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+#' # Get genome
+#' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve target sequences
 #' targets <- getCircSeqs(
 #'     annotatedBSJs,
 #'     gtf,
-#'     bsGenome)
+#'     genome)
 #'
 #' @importFrom BSgenome getSeq
 #' @importFrom Biostrings reverseComplement
 #' @importFrom Biostrings RNAString
 #' @importFrom rlang .data
 #' @import dplyr
+#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @export
 getCircSeqs <-
     function(annotatedBSJs,
         gtf,
-        bsGenome) {
+        genome) {
         # Create a enmpty list of 1 elements
         targets <- vector("list", 1)
         names(targets)[1] <- "circ"
@@ -112,7 +114,7 @@ getCircSeqs <-
                             "U",
                             as.character(
                                 BSgenome::getSeq(
-                                    bsGenome,
+                                    genome,
                                     names = transcript$chrom[j],
                                     transcript$start[j],
                                     transcript$end[j]
@@ -153,7 +155,7 @@ getCircSeqs <-
                             "U",
                             as.character(
                                 BSgenome::getSeq(
-                                    bsGenome,
+                                    genome,
                                     names = transcript$chrom[j],
                                     transcript$start[j],
                                     transcript$end[j]

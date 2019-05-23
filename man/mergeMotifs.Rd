@@ -30,15 +30,17 @@ data("gtf")
 # Annotate detected back-spliced junctions
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
-# Retrieve targets
-targets <-
-getSeqsFromGRs(
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
+# Retrieve target sequences
+targets <- getSeqsFromGRs(
     annotatedBSJs,
+    genome,
     lIntron = 200,
     lExon = 10,
-    type = "ie",
-    species = "Hsapiens",
-    genome = "hg19")
+    type = "ie"
+    )
 
 # Get motifs
 motifs <-

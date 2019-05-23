@@ -28,7 +28,7 @@ library(ggplot2)
 library(VennDiagram)
 library(gridExtra)
 
-## ---- echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Project folder structure"----
+## ---- echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"----
 knitr::include_graphics("./images/image2.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
@@ -162,7 +162,7 @@ filteredCirc <-
 filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5)
 
 ## ---- fig.align="center", fig.width = 10, fig.height = 4-----------------
-# Plot using histogram
+# Plot
 p <- ggplot(filteredCirc, aes(x = tool)) +
     geom_bar() +
     labs(title = "", x = "Detection tool", y = "No. of circRNAs") +
@@ -171,7 +171,7 @@ p <- ggplot(filteredCirc, aes(x = tool)) +
 gridExtra::grid.arrange(p, dt, nrow=1)
 
 ## ---- fig.align="center", fig.width = 5, fig.height = 4------------------
-# Plot using Vann diagram
+# Plot using Venn diagram
 cm <- filteredCirc[base::grep("cm", filteredCirc$tool), ]
 ms <- filteredCirc[base::grep("ms", filteredCirc$tool), ]
 ns <- filteredCirc[base::grep("ns", filteredCirc$tool), ]
@@ -359,16 +359,25 @@ knitr::include_graphics("./images/image3.png")
 #  annotatedBackgroundCircs <-
 #  annotatedBSJs[which(annotatedBSJs$id != "ALPK2:-:chr18:56247780:56246046"), ]
 
+## ------------------------------------------------------------------------
+# All the sequences will be retrieved from the BSgenome package which contains 
+# the serquences of the genome of interest
+if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE))
+    install.packages("BSgenome.Hsapiens.UCSC.hg19")
+
+# Get genome
+genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
+
 ## ----eval = FALSE--------------------------------------------------------
 #  # Foreground target sequences
 #  targetsFTS_circ <-
-#      getCircSeqs(annotatedCirc, gtf, species = "Hsapiens", genome = "hg19")
+#  getCircSeqs(annotatedCirc, gtf, genome)
 #  
 
 ## ---- eval = FALSE-------------------------------------------------------
 #  # Foreground target sequences
 #  targetsFTS_bsj <-
-#      getSeqsAcrossBSJs(annotatedCirc, gtf, species = "Hsapiens", genome = "hg19")
+#      getSeqsAcrossBSJs(annotatedCirc, gtf, genome)
 #  
 
 ## ---- eval = FALSE-------------------------------------------------------
@@ -376,22 +385,19 @@ knitr::include_graphics("./images/image3.png")
 #  targetsFTS_gr <-
 #      getSeqsFromGRs(
 #          annotatedCirc,
+#          genome,
 #          lIntron = 200,
 #          lExon = 9,
-#          type = "ie",
-#          species = "Hsapiens",
-#          genome = "hg19"
-#      )
+#          type = "ie"
+#          )
 #  # Background target sequences.
 #  targetsBTS_gr <-
 #      getSeqsFromGRs(
 #          annotatedBackgroundCircs,
+#          genome,
 #          lIntron = 200,
 #          lExon = 9,
-#          type = "ie",
-#          species = "Hsapiens",
-#          genome = "hg19"
-#      )
+#          type = "ie")
 
 ## ---- eval = FALSE-------------------------------------------------------
 #  # Find motifs in the foreground target sequences
@@ -443,8 +449,6 @@ knitr::include_graphics("./images/image4.png")
 #  miRsites <-
 #      getMiRsites(
 #          targetsFTS_circ,
-#          species = "Hsapiens",
-#          genome = "hg19",
 #          miRspeciesCode = "hsa",
 #          miRBaseLatestRelease = TRUE,
 #          totalMatches = 6,
@@ -471,14 +475,14 @@ knitr::include_graphics("./images/image4.png")
 #  while (i <= (length(rearragedMiRres))) {
 #      write.xlsx2(
 #          rearragedMiRres[[i]][[1]],
-#          "miRsites_TM7_NCM0.xlsx",
+#          "miRsites_TM6_NCM1.xlsx",
 #          paste("sheet", j, sep = ""),
 #          append = TRUE
 #      )
 #      j <- j + 1
 #      write.xlsx2(
 #          rearragedMiRres[[i]][[2]],
-#          "miRsites_TM7_NCM0.xlsx",
+#          "miRsites_TM6_NCM1.xlsx",
 #          paste("sheet", j, sep = ""),
 #          append = TRUE
 #      )
@@ -496,7 +500,7 @@ knitr::include_graphics("./images/image4.png")
 #  p
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, genome = "hg19")
+#  snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19")
 #  
 
 ## ---- eval = FALSE-------------------------------------------------------

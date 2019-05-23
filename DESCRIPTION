@@ -1,6 +1,6 @@
 Package: circRNAprofiler
 Type: Package
-Title: circRNAprofiler: An R-Based Computational Framework for Downstream Analysis of Circular RNAs
+Title: circRNAprofiler: An R-Based Computational Framework for the Downstream Analysis of Circular RNAs
 Version: 0.1.1
 Author: Simona Aufiero
 Maintainer: Simona Aufiero <simo.aufiero@gmail.com>
@@ -17,7 +17,8 @@ Depends:
     R(>= 3.6.0), 
     gwascat
 RoxygenNote: 6.1.1
-Suggests: testthat,
+Suggests: 
+    testthat,
     knitr,
     roxygen2,
     rmarkdown,
@@ -25,7 +26,10 @@ Suggests: testthat,
     devtools,
     gridExtra,
     ggpubr,
-    VennDiagram
+    VennDiagram,
+    BSgenome.Mmusculus.UCSC.mm9,
+    BSgenome.Hsapiens.UCSC.hg38,
+    BSgenome.Mmusculus.UCSC.mm10,
 Imports:
     dplyr,
     magrittr,
@@ -44,15 +48,11 @@ Imports:
     reshape2,
     ggplot2,
     utils,
-    BiocManager,
     rlang,
     S4Vectors,
     stats,
     AnnotationHub,
     GenomeInfoDb,
-    BSgenome.Hsapiens.UCSC.hg19,
-    BSgenome.Hsapiens.UCSC.hg38,
-    BSgenome.Mmusculus.UCSC.mm10,
-    BSgenome.Mmusculus.UCSC.mm9,
+    BSgenome.Hsapiens.UCSC.hg19
 VignetteBuilder: 
     knitr

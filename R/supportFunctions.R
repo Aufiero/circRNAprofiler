@@ -1,16 +1,4 @@
-#' @title Return column names
-#'
-#' @description The function getBasicColNames() returns the basic column names.
-#'
-#' @return A character vector
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function
-#' getBasicColNames()
-#'
-#' @export
+# The function getBasicColNames() returns the basic column names.
 getBasicColNames <- function() {
     basicColumns <- c("id",
         "gene",
@@ -23,43 +11,8 @@ getBasicColNames <- function() {
 }
 
 
-#' @title Check backSplicedJunctions data frame
-#'
-#' @description The function checkBSJsDF() verifies that the functions to import
-#' the detected circRNAs generate the correct data structure and content.
-#'
-#' @param backSplicedJunctions A data frame containing back-spliced junction
-#' coordinates.
-#'
-#' @param addColNames A string vector containing the columns that the data frame
-#' must contains in addition to the basic columns. By default addColNames is set
-#' to NULL.
-#'
-#' @return A data frame
-#'
-#' @importFrom magrittr %>%
-#' @import dplyr
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Path to an example file containing circRNA detected by MapSplice2
-#' pathToFile <- system.file("extdata", "mapsplice/circRNAs_001.txt",
-#'     package="circRNAprofiler")
-#'
-#' # Inner function.
-#' # Import circRNAs.
-#' backSplicedJunctions <- importMapSplice(pathToFile, gtf)
-#'
-#' # Inner function
-#' # check table
-#' checkBSJsDF(backSplicedJunctions, addColNames = "coverage")
-#'
-#' @import magrittr
-#' @export
+# The function checkBSJsDF() verifies that the functions to import
+# the detected circRNAs generate the correct data structure and content.
 checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
     colNames <- c(getBasicColNames(), addColNames)
 
@@ -102,19 +55,8 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
         }
 
 
-#' @title Return column names
-#'
-#' @description The function getTargetsColNames() returns the column names.
-#'
-#' @return A character vector.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function
-#' getTargetsColNames()
-#'
-#' @export
+
+# The function getTargetsColNames() returns the column names.
 getTargetsColNames <- function() {
     targetsColumns <- c(
         "id",
