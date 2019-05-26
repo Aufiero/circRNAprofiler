@@ -5,7 +5,7 @@
 \title{Group circRNAs identified by multiple prediction tools}
 \usage{
 mergeBSJunctions(backSplicedJunctions, gtf, pathToExperiment = NULL,
-  antisense = FALSE)
+  exportAntisense = FALSE)
 }
 \arguments{
 \item{backSplicedJunctions}{A data frame containing back-spliced junction

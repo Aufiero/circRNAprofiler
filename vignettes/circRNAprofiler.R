@@ -7,7 +7,7 @@ source("render_toc.R")
 ## ---- toc, echo = FALSE--------------------------------------------------
 render_toc("circRNAprofiler.Rmd")
 
-## ---- echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules described in the text with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."----
+## ---- echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."----
 
 knitr::include_graphics("./images/image1.png")
 
@@ -17,7 +17,7 @@ knitr::include_graphics("./images/image1.png")
 #  
 #  BiocManager::install("devtools")
 #  library(devtools)
-#  devtools::install_github("Aufiero/circRNAprofiler")
+#  devtools::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
 
 ## ------------------------------------------------------------------------
 library(circRNAprofiler)
@@ -28,7 +28,7 @@ library(ggplot2)
 library(VennDiagram)
 library(gridExtra)
 
-## ---- echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"----
+## ---- echo=FALSE, out.width='50%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"----
 knitr::include_graphics("./images/image2.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
@@ -438,7 +438,7 @@ genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #            nrow = 1)
 #  
 
-## ---- echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the counts of the RBP motifs found in the region flanking the predicted back-spliced junctions of circALPK2 compared to the remaining 1457 detected circRNAs."----
+## ---- echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."----
 knitr::include_graphics("./images/image4.png")
 
 ## ---- eval = FALSE-------------------------------------------------------

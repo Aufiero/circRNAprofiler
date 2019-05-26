@@ -37,7 +37,7 @@ have been identified. It allows to combine circRNAs detected by multiple
 publicly available circRNA detection tools and analyze their expression, 
 evolutionary conservation, biogenesis and putative functions.
 
-```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules described in the text with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
+```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
 
 knitr::include_graphics("./images/image1.png")
 ```
@@ -57,8 +57,6 @@ that will be used in this vignettes.
 Raw RNA sequencing data are available at NCBI BioProject accession number 
 PRJNA533243.
 
-<!-- The data used in this tutorial has been published in... -->
-
 ## Install the package
 
 The latest version of the circRNprofiler package is available on github and it 
@@ -70,7 +68,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 BiocManager::install("devtools")
 library(devtools)
-devtools::install_github("Aufiero/circRNAprofiler")
+devtools::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
 ```
 
 ## Load the package
@@ -96,7 +94,7 @@ available in the package. The project folder should be structured as in the
 example Figure 2 if seven detection tools are used to detect circRNAs in 
 6 samples.
 
-```{r, echo=FALSE, out.width='40%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"}
+```{r, echo=FALSE, out.width='50%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"}
 knitr::include_graphics("./images/image2.png")
 ```
 
@@ -600,15 +598,16 @@ head(edgerResCvsA)
 
 #### _liftBSJCoords()_
 
-The function liftBSJCoords() converts back-spliced junction coordinates between
+The function liftBSJCoords() maps back-spliced junction coordinates between
 different species and genome assemblies by using the liftOver utility from UCSC.
 Type data(ahChainFiles) to see all possibile options for annotationHubID 
 E.g. if "AH14155" is specified, the hg19ToMm9.over.chain.gz will be used to 
 convert the hg19 (Human GRCh37) coordinates to mm9 (Mouse GRCm37). 
 
 NOTE:
-NA values in the table means that the conversion failed, that is
-the exons that are back-spliced in human are not conserved to mouse.
+Only back-spliced junction coordinates where the mapping was successful 
+are reported. For all the other not reported the conversion failed, meaning that
+the exons that are back-spliced in human might be not conserved to mouse.
 
 ```{r, eval = FALSE}
 liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
@@ -996,7 +995,7 @@ ggarrange(p[[1]],
 
 ```
 
-```{r, echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the counts of the RBP motifs found in the region flanking the predicted back-spliced junctions of circALPK2 compared to the remaining 1457 detected circRNAs."}
+```{r, echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."}
 knitr::include_graphics("./images/image4.png")
 ```
 
@@ -1203,7 +1202,7 @@ p
 ```
 
 
-### Module 14 - Annotate repetitive elements
+### Module 14 - Annotate GWAS SNPs
 
 #### _annotateSNPsGWAS()_
 
@@ -1219,7 +1218,7 @@ snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19")
 
 ```
 
-### Module 15 - Annotate GWAS SNPs
+### Module 15 - Annotate repetitive elements
 
 #### _annotateRepeats()_
 
