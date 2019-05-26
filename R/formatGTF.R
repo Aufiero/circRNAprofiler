@@ -24,29 +24,10 @@ if (getRversion() >= "3.1.0")
 #' @export
 formatGTF <- function(pathToGTF = NULL) {
     if (!is.null(pathToGTF)) {
-        # suppress warning for closing unused connection
-        gtf <- suppressWarnings(rtracklayer::import(pathToGTF)) %>%
-            as.data.frame()
-
-        # Keep only the needed rows
-        # Rename seqnames to chrom
-        gtf <- gtf %>%
-            dplyr::filter(.data$type == "exon") %>%
-            dplyr::rename(chrom = .data$seqnames) %>%
-            dplyr::mutate(strand = as.character(.data$strand),
-                chrom = as.character(.data$chrom))
-
-        needColumns <-
-            c(
-                "chrom",
-                "start",
-                "end",
-                "width",
-                "strand",
-                "type",
-                "gene_name",
-                "transcript_id"
-            )
+        # Read GTF file
+        gtf <- readGTF(pathToGTF)
+        # Get needed column in the GTF file
+        needColumns <- getNeededColumn()
 
         # For UCSC and Ncbi the exon_number column needs to be added
         if (!("exon_number" %in% colnames(gtf))) {
@@ -86,3 +67,39 @@ formatGTF <- function(pathToGTF = NULL) {
 
     return(formattedGTF)
 }
+
+
+# Read GTF file
+readGTF<- function(pathToGTF = NULL){
+    # suppress warning for closing unused connection
+    gtf <- suppressWarnings(rtracklayer::import(pathToGTF)) %>%
+        as.data.frame()
+
+    # Keep only the needed rows
+    # Rename seqnames to chrom
+    gtf <- gtf %>%
+        dplyr::filter(.data$type == "exon") %>%
+        dplyr::rename(chrom = .data$seqnames) %>%
+        dplyr::mutate(strand = as.character(.data$strand),
+            chrom = as.character(.data$chrom))
+    return(gtf)
+}
+
+# get needed column in the GTF file
+getNeededColumn<- function(){
+    needColumns <-
+        c(
+            "chrom",
+            "start",
+            "end",
+            "width",
+            "strand",
+            "type",
+            "gene_name",
+            "transcript_id"
+        )
+    return(needColumns)
+}
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

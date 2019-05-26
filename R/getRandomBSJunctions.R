@@ -26,13 +26,62 @@
 #' @import dplyr
 #' @export
 getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
+     # Create an empty data frame
+    randomBSJunctions <-createRandomBSJunctionsDF(n)
+
+   # Select random BSEs from gtf
+    allBSEs <- selectRandomBSEs(gtf, n, f)
+
+    # For negative strand
+    allBSEsNeg <- allBSEs[allBSEs$strand == "-",]
+    if (nrow(allBSEsNeg) > 0) {
+        randomBSJunctions$gene[seq_along(allBSEsNeg$exon_number)] <-
+            allBSEsNeg$gene_name
+        randomBSJunctions$strand[seq_along(allBSEsNeg$exon_number)] <-
+            allBSEsNeg$strand
+        randomBSJunctions$chrom[seq_along(allBSEsNeg$exon_number)] <-
+            allBSEsNeg$chrom
+        randomBSJunctions$startUpBSE[seq_along(allBSEsNeg$exon_number)] <-
+            allBSEsNeg$end
+        randomBSJunctions$endDownBSE[seq_along(allBSEsNeg$exon_number)] <-
+            allBSEsNeg$start1
+    }
+
+    # For positive strand
+    allBSEsPos <- allBSEs[allBSEs$strand == "+",]
+    if (nrow(allBSEsPos) > 0) {
+        randomBSJunctions$gene[(nrow(allBSEsNeg) + 1):n] <-
+            allBSEsPos$gene_name
+        randomBSJunctions$strand[(nrow(allBSEsNeg) + 1):n] <-
+            allBSEsPos$strand
+        randomBSJunctions$chrom[(nrow(allBSEsNeg) + 1):n] <-
+            allBSEsPos$chrom
+        randomBSJunctions$startUpBSE[(nrow(allBSEsNeg) + 1):n] <-
+            allBSEsPos$start
+        randomBSJunctions$endDownBSE[(nrow(allBSEsNeg) + 1):n] <-
+            allBSEsPos$end1
+    }
+
+    # Generate a unique identifier
+    randomBSJunctions$id <- getID(randomBSJunctions)
+    return(randomBSJunctions)
+}
+
+
+# Create randomBSJunctions data frame
+createRandomBSJunctionsDF <- function(n){
     basicColumns <- getBasicColNames()
 
     # Create an empty data frame
     randomBSJunctions <-
         data.frame(matrix(nrow = n, ncol = length(basicColumns)))
     colnames(randomBSJunctions) <- basicColumns
+    return(randomBSJunctions)
+}
 
+
+# Select random BSEs from gtf file
+selectRandomBSEs<- function(gtf, n, f ){
     # calculate the percentage of back-spliced junctions from sigle exons
     c <- round((n / 100) * f, 0)
 
@@ -77,51 +126,9 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
 
     allBSEs <- dplyr::bind_cols(cleanedDF, duplicates[mt,])
 
-    # For negative strand
-    allBSEsNeg <- allBSEs[allBSEs$strand == "-",]
-    if (nrow(allBSEsNeg) > 0) {
-        randomBSJunctions$gene[seq_along(allBSEsNeg$exon_number)] <-
-            allBSEsNeg$gene_name
-        randomBSJunctions$strand[seq_along(allBSEsNeg$exon_number)] <-
-            allBSEsNeg$strand
-        randomBSJunctions$chrom[seq_along(allBSEsNeg$exon_number)] <-
-            allBSEsNeg$chrom
-        randomBSJunctions$startUpBSE[seq_along(allBSEsNeg$exon_number)] <-
-            allBSEsNeg$end
-        randomBSJunctions$endDownBSE[seq_along(allBSEsNeg$exon_number)] <-
-            allBSEsNeg$start1
-    }
-
-    # For positive strand
-    allBSEsPos <- allBSEs[allBSEs$strand == "+",]
-    if (nrow(allBSEsPos) > 0) {
-        randomBSJunctions$gene[(nrow(allBSEsNeg) + 1):n] <-
-            allBSEsPos$gene_name
-        randomBSJunctions$strand[(nrow(allBSEsNeg) + 1):n] <-
-            allBSEsPos$strand
-        randomBSJunctions$chrom[(nrow(allBSEsNeg) + 1):n] <-
-            allBSEsPos$chrom
-        randomBSJunctions$startUpBSE[(nrow(allBSEsNeg) + 1):n] <-
-            allBSEsPos$start
-        randomBSJunctions$endDownBSE[(nrow(allBSEsNeg) + 1):n] <-
-            allBSEsPos$end1
-    }
-
-    # Generate a unique identifier by combining the values of the following
-    # columns: gene, strand, chrom, endDownBSE and startUpBSE.
-    # The values are separated by a semicolumns (:)
-    randomBSJunctions$id <- paste(
-        randomBSJunctions$gene,
-        randomBSJunctions$strand,
-        randomBSJunctions$chrom,
-        randomBSJunctions$startUpBSE,
-        randomBSJunctions$endDownBSE,
-        sep = ":"
-    )
-
-
-    # Return the data frame with the genimic coordinates of randomly selected
-    # back-spliced exon juntions
-    return(randomBSJunctions)
-
+    return(allBSEs)
 }
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

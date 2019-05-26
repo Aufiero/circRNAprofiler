@@ -53,13 +53,7 @@ getSeqsAcrossBSJs <-
         names(targets)[1] <- "bsj"
 
         # Create an empty data frame
-        targets[[1]] <-
-            data.frame(matrix(
-                nrow = nrow(annotatedBSJs),
-                ncol = length(getTargetsColNames())
-            ))
-        colnames(targets[[1]]) <- getTargetsColNames()
-
+        targets[[1]] <- getTargetsDF(annotatedBSJs)
 
         # Fill the data frame with the needed information
         targets[[1]]$id <- annotatedBSJs$id
@@ -78,11 +72,11 @@ getSeqsAcrossBSJs <-
                 targets[[1]]$endGR[k] <- annotatedBSJs$startUpBSE[k]
             }
         }
-
         # Retrieve the sequences
         for (i in seq_along(annotatedBSJs$id)) {
             # If the transcript is not present we do not have the coordinates
             # to retrieve the seq
+
             if (!is.na(annotatedBSJs$transcript[i])) {
                 exonsToSelect <-
                     annotatedBSJs$exNumUpBSE[i]:annotatedBSJs$exNumDownBSE[i]
@@ -95,99 +89,60 @@ getSeqsAcrossBSJs <-
                         .data$exon_number %in% exonsToSelect
                     )
 
-                exonSeqs <- as.character()
+                bsjSeq <- recreateBSJseq(transcript, genome)
+                targets[[1]]$length[i] <- nchar(bsjSeq)
+                targets[[1]]$seq[i] <- bsjSeq
 
-                if (transcript$strand[1] == "-") {
-                    transcript <- transcript  %>%
-                        dplyr::arrange(desc(.data$exon_number))
-
-                    # Note: the sequences retrieved by getSeq function from
-                    # BSgenome correspond to the positive strand of the DNA
-                    # (genome reference).
-                    # For a circRNA that arises from a gene transcribed from
-                    # the negative strand we need to take the reverse
-                    # complement of the sequence. Complement because the
-                    # sense strand is the negative strand of the DNA.
-                    # Reverse because we always report the sequences from
-                    # 5' to 3' in the final data frame.
-
-                    for (j in seq_along(transcript$exon_number)) {
-                        exonSeqs[j] <- gsub("T",
-                            "U",
-                            as.character(
-                                BSgenome::getSeq(
-                                    genome,
-                                    names = transcript$chrom[j],
-                                    transcript$start[j],
-                                    transcript$end[j]
-                                )
-                            ))
-
-                    }
-
-                    joinedExonSeqs <- paste(exonSeqs, collapse = "")
-
-                    # The first 11 nucleotides of the upstream back-spliced
-                    # exon are taken and attached at the end of the downstream
-                    # back-spliced exon.
-
-                    bsjSeq <-
-                        paste0(
-                            base::substr(
-                                joinedExonSeqs,
-                                nchar(joinedExonSeqs) - 10,
-                                nchar(joinedExonSeqs)
-                            ),
-                            base::substr(joinedExonSeqs, 1, 11)
-                        )
-
-                    targets[[1]]$length[i] <- nchar(bsjSeq)
-                    targets[[1]]$seq[i] <-
-                        as.character(Biostrings::reverseComplement(Biostrings::RNAString(bsjSeq)))
-
-
-                } else if (transcript$strand[1] == "+") {
-                    transcript <- transcript  %>%
-                        dplyr::arrange(.data$exon_number)
-                    # For the positive strand no modification is needed because
-                    # the sense strand corresponds to the positive strand of
-                    # the DNA that is the genome reference.
-                    for (j in seq_along(transcript$exon_number)) {
-                        exonSeqs[j] <- gsub("T",
-                            "U",
-                            as.character(
-                                BSgenome::getSeq(
-                                    genome,
-                                    names = transcript$chrom[j],
-                                    transcript$start[j],
-                                    transcript$end[j]
-                                )
-                            ))
-                    }
-
-                    joinedExonSeqs <- paste(exonSeqs, collapse = "")
-
-                    # The first 11 nucleotides of the upstream back-spliced
-                    # exon are taken and attached at the end of the downstream
-                    # back-spliced exon.
-                    bsjSeq <- paste0(
-                        base::substr(
-                            joinedExonSeqs,
-                            nchar(joinedExonSeqs) - 10,
-                            nchar(joinedExonSeqs)
-                        ),
-                        base::substr(joinedExonSeqs, 1, 11)
-                    )
-
-
-                    targets[[1]]$length[i] <- nchar(bsjSeq)
-                    targets[[1]]$seq[i] <- bsjSeq
-
-                }
             }
-
         }
-
         return(targets)
+    }
 
-        }
+
+# recreate BSJ sequence
+recreateBSJseq <- function(transcript, genome) {
+    if (transcript$strand[1] == "-") {
+        transcript <- transcript  %>%
+            dplyr::arrange(desc(.data$exon_number))
+        # Get exons sequences
+        exonSeqs <- getExonSeqs(transcript, genome)
+        # Join sequences
+        joinedExonSeqs <- paste(exonSeqs, collapse = "")
+        # Recreate bsj seq
+        # For negative strand we take the reverse complement
+        bsjSeqToReverse <-
+            paste0(
+                base::substr(
+                    joinedExonSeqs,
+                    nchar(joinedExonSeqs) - 10,
+                    nchar(joinedExonSeqs)
+                ),
+                base::substr(joinedExonSeqs, 1, 11)
+            )
+        bsjSeq <-
+            as.character(Biostrings::reverseComplement(Biostrings::RNAString(bsjSeqToReverse)))
+
+    } else if (transcript$strand[1] == "+") {
+        transcript <- transcript  %>%
+            dplyr::arrange(.data$exon_number)
+        # Get exons sequences
+        exonSeqs <- getExonSeqs(transcript, genome)
+        # Join sequences
+        joinedExonSeqs <- paste(exonSeqs, collapse = "")
+        # Recreate bsj seq
+        # For the positive strand no modification is needed
+        bsjSeq <- paste0(
+            base::substr(
+                joinedExonSeqs,
+                nchar(joinedExonSeqs) - 10,
+                nchar(joinedExonSeqs)
+            ),
+            base::substr(joinedExonSeqs, 1, 11)
+        )
+    }
+    return(bsjSeq)
+}
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

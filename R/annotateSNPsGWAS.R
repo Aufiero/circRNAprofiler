@@ -77,37 +77,13 @@ annotateSNPsGWAS <-
         makeCurrent = FALSE,
         pathToTraits = NULL) {
         options(readr.num_columns = 0)
-        if (length(targets) == 2 &
-                names(targets)[[1]] == "upGR") {
-            # Create an empty list of 2 elements
-            snpsGWAS <- vector("list", 2)
-            names(snpsGWAS)[1] <- "upGR"
-            names(snpsGWAS)[2] <- "downGR"
 
-        }  else {
-            stop("target sequences not valid, only upstream and downtream
-                GRs are allowed.")
-        }
-
+        # Create a snpsGWAS list
+        snpsGWAS <- createSNPsGWASlist(targets)
+        # Retrieve SNPs from the GWAS catalog
         gwas <- getGWAS(assembly, makeCurrent)
-
-        if (is.null(pathToTraits)) {
-            pathToTraits <- "traits.txt"
-        }
-
-        if (file.exists(pathToTraits)) {
-            traitsFromFile <-
-                utils::read.table(
-                    pathToTraits,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
-            # colnames(traitsFromFile)[1] <- "id"
-        } else{
-            traitsFromFile <- data.frame()
-        }
-
+        # Read traits.txt
+        traitsFromFile <- readTraits(pathToTraits)
         # Check if there there are traits
         if (nrow(traitsFromFile) > 0) {
             gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
@@ -116,23 +92,8 @@ annotateSNPsGWAS <-
             cat("traits.txt is empty or absent. All
                 traits in the GWAS catalog will be analyzed")
         }
-
-        # Clean targets dataframe by removing the rows with NA values to avoid
-        # getting errors with the makeGRangesFromDataFrame function that does
-        # not handle NA values
-        index1 <- which(
-            !is.na(targets[[1]]$transcript) &
-                !is.na(targets[[1]]$startGR) &
-                !is.na(targets[[1]]$endGR)
-        )
-        index2 <- which(
-            !is.na(targets[[2]]$transcript) &
-                !is.na(targets[[2]]$startGR) &
-                !is.na(targets[[2]]$endGR)
-        )
-
-        targets[[1]] <- targets[[1]][intersect(index1, index2),]
-        targets[[2]] <- targets[[2]][intersect(index1, index2),]
+        # Clean targets from NA value
+        targets <- cleanTargets(targets)
 
         for (i in seq_along(snpsGWAS)) {
             # Create an empty list of 2 elements to store the extracted
@@ -141,85 +102,12 @@ annotateSNPsGWAS <-
             names(snpsGWAS[[i]])[1] <- "targets"
             names(snpsGWAS[[i]])[2] <- "snps"
 
-            # Fill the data frame with the target sequences
-            snpsGWAS[[i]]$targets <- targets[[i]]
+            targetsToAnalyze <- targets[[i]]
+            overlaps <- findOverlappingSNPs(gwas, targetsToAnalyze)
+            snpsGWAS[[i]]$targets <- overlaps$targets
+            snpsGWAS[[i]]$snps <- overlaps$snps
 
-            # Make GR object for the upstream region of the circRNAs
-            genRanges <- GenomicRanges::makeGRangesFromDataFrame(
-                snpsGWAS[[i]]$targets,
-                keep.extra.columns = TRUE,
-                ignore.strand = FALSE,
-                seqinfo = NULL,
-                seqnames.field = c("chrom"),
-                start.field = c("startGR"),
-                end.field = c("endGR"),
-                strand.field = "strand",
-                starts.in.df.are.0based = FALSE
-            )
-
-            # Find the overlapping gwas snps
-            #we can get some wornings if there are no sequence levels in common
-            overlaps <- suppressWarnings(GenomicRanges::findOverlaps(gwas, genRanges, ignore.strand = TRUE))
-            if (length(overlaps) == 0) {
-                # no genomic ranges in common
-                snpsGWAS[[i]]$snps <-
-                    data.frame(matrix(nrow = 0, ncol = 11))
-                colnames(snpsGWAS[[i]]$snps) <- c(
-                    "id",
-                    "snp",
-                    "chrom",
-                    "coord",
-                    "mappedGene",
-                    "diseaseTrait",
-                    "pvalue",
-                    "context",
-                    "strongestSNPriskAllele",
-                    "pubmedID",
-                    "study"
-                )
-
-            } else{
-                # Keep only targets where a hit is found
-                snpsGWAS[[i]]$targets <-
-                    snpsGWAS[[i]]$targets[S4Vectors::subjectHits(overlaps), ] %>%
-                    dplyr::filter(!duplicated(.)) %>%
-                    dplyr::arrange(.data$id)
-
-                snpsGWAS[[i]]$snps <-
-                    data.frame(genRanges[S4Vectors::subjectHits(overlaps)],
-                        gwas[S4Vectors::queryHits(overlaps)])
-
-                snpsGWAS[[i]]$snps <- snpsGWAS[[i]]$snps %>%
-                    dplyr::select(
-                        .data$id,
-                        .data$SNPS,
-                        .data$seqnames.1,
-                        .data$start.1,
-                        .data$MAPPED_GENE,
-                        .data$DISEASE.TRAIT,
-                        .data$P.VALUE,
-                        .data$CONTEXT,
-                        .data$STRONGEST.SNP.RISK.ALLELE,
-                        .data$PUBMEDID,
-                        .data$STUDY
-                    ) %>%
-                    dplyr::rename(
-                        snp = .data$SNPS,
-                        chrom = .data$seqnames.1 ,
-                        coord = .data$start.1,
-                        mappedGene = .data$MAPPED_GENE,
-                        diseaseTrait = .data$DISEASE.TRAIT,
-                        pvalue = .data$P.VALUE,
-                        context = .data$CONTEXT,
-                        strongestSNPriskAllele =
-                            .data$STRONGEST.SNP.RISK.ALLELE,
-                        pubmedID = .data$PUBMEDID,
-                        study = .data$STUDY
-                    ) %>%
-                    dplyr::arrange(.data$id)
-            }
         }
-
         return(snpsGWAS)
     }
 
@@ -255,7 +143,7 @@ getGWAS <- function(assembly = "hg19",
                 error = function(e)
                     NULL
             ))
-        }else{
+        } else{
             gwas <- NULL
         }
 
@@ -273,3 +161,152 @@ getGWAS <- function(assembly = "hg19",
     }
     return(gwas)
 }
+
+
+
+# Create a snpsGWAS list
+createSNPsGWASlist <- function(targets) {
+    if (length(targets) == 2 &
+            names(targets)[[1]] == "upGR") {
+        # Create an empty list of 2 elements
+        snpsGWAS <- vector("list", 2)
+        names(snpsGWAS)[1] <- "upGR"
+        names(snpsGWAS)[2] <- "downGR"
+
+    }  else {
+        stop("target sequences not valid, only upstream and downtream
+            GRs are allowed.")
+    }
+
+    return(snpsGWAS)
+}
+
+
+# Read traits.txt
+readTraits <- function(pathToTraits = NULL) {
+    if (is.null(pathToTraits)) {
+        pathToTraits <- "traits.txt"
+    }
+
+    if (file.exists(pathToTraits)) {
+        traitsFromFile <-
+            utils::read.table(
+                pathToTraits,
+                stringsAsFactors = FALSE,
+                header = TRUE,
+                sep = "\t"
+            )
+        # colnames(traitsFromFile)[1] <- "id"
+    } else{
+        traitsFromFile <- data.frame()
+    }
+
+    return(traitsFromFile)
+}
+
+
+# get SNPsGWAS column names
+getSNPsGWASColNames <- function() {
+    colNames <- c(
+        "id",
+        "snp",
+        "chrom",
+        "coord",
+        "mappedGene",
+        "diseaseTrait",
+        "pvalue",
+        "context",
+        "strongestSNPriskAllele",
+        "pubmedID",
+        "study"
+    )
+
+    return(colNames)
+}
+
+# Select the needed column and rename snps data frame
+renameSNPsGWAS <- function(snps){
+    snps <- snps %>%
+        dplyr::select(
+            .data$id,
+            .data$SNPS,
+            .data$seqnames.1,
+            .data$start.1,
+            .data$MAPPED_GENE,
+            .data$DISEASE.TRAIT,
+            .data$P.VALUE,
+            .data$CONTEXT,
+            .data$STRONGEST.SNP.RISK.ALLELE,
+            .data$PUBMEDID,
+            .data$STUDY
+        ) %>%
+        dplyr::rename(
+            snp = .data$SNPS,
+            chrom = .data$seqnames.1 ,
+            coord = .data$start.1,
+            mappedGene = .data$MAPPED_GENE,
+            diseaseTrait = .data$DISEASE.TRAIT,
+            pvalue = .data$P.VALUE,
+            context = .data$CONTEXT,
+            strongestSNPriskAllele =
+                .data$STRONGEST.SNP.RISK.ALLELE,
+            pubmedID = .data$PUBMEDID,
+            study = .data$STUDY
+        ) %>%
+        dplyr::arrange(.data$id)
+    return(snps)
+}
+
+
+
+# Find the overlapping gwas snps
+findOverlappingSNPs <- function(gwas, targetsToAnalyze) {
+
+     # Make GR objects
+    genRanges <- GenomicRanges::makeGRangesFromDataFrame(
+        targetsToAnalyze,
+        keep.extra.columns = TRUE,
+        ignore.strand = FALSE,
+        seqinfo = NULL,
+        seqnames.field = c("chrom"),
+        start.field = c("startGR"),
+        end.field = c("endGR"),
+        strand.field = "strand",
+        starts.in.df.are.0based = FALSE
+    )
+
+    overlappingGRs <-
+        suppressWarnings(GenomicRanges::findOverlaps(gwas, genRanges, ignore.strand = TRUE))
+
+    if (length(overlappingGRs) == 0) {
+        # No genomic ranges in common
+        snps <-  data.frame(matrix(nrow = 0, ncol = 11))
+        colnames(snps) <- getSNPsGWASColNames()
+
+        targets <- targetsToAnalyze[NULL, ]
+
+    } else{
+        snps <- data.frame(genRanges[S4Vectors::subjectHits(overlappingGRs)],
+                gwas[S4Vectors::queryHits(overlappingGRs)])
+        snps <- renameSNPsGWAS(snps)
+
+        # Keep only targets where a hit is found
+        targets <- targetsToAnalyze[S4Vectors::subjectHits(overlappingGRs), ] %>%
+            dplyr::filter(!duplicated(.)) %>%
+            dplyr::arrange(.data$id)
+    }
+
+    overlaps <- vector("list", 2)
+    names(overlaps)[1] <- "snps"
+    names(overlaps)[2] <- "targets"
+
+    overlaps$snps <- snps
+    overlaps$targets <- targets
+
+    return(overlaps)
+}
+
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

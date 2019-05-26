@@ -44,22 +44,10 @@
 #' @importFrom rlang .data
 #' @export
 getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
-    if (is.null(pathToExperiment)) {
-        pathToExperiment <- "experiment.txt"
-    }
-
-    if (file.exists(pathToExperiment)) {
-        # Read from path given in input
-        experiment <-
-            utils::read.table(
-                pathToExperiment,
-                stringsAsFactors = FALSE,
-                header = TRUE,
-                sep = "\t"
-            )
-
+    # Read experiment.txt
+    experiment <- readExperiment(pathToExperiment)
+    if (nrow(experiment) > 0) {
         fileNames <- list.files()
-
         # Retrieve the code for each circRNA prediction tool
         detectionTools <- getDetectionTools()
 
@@ -69,27 +57,14 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
             dplyr::filter(.data$name %in% fileNames)
 
         if (nrow(detectionToolsUsed) > 0) {
-            # Get basic colum names
-            basicColumns <- getBasicColNames()
-            # Create the data frame that will be filled with the circRNA prediction
-            # perfomed by the prediction tools used.
+            # Create backSplicedJunctions data frame
             backSplicedJunctions <-
-                data.frame(matrix(nrow = 0, ncol = length(c(
-                    basicColumns, "tool"
-                ))))
-            colnames(backSplicedJunctions) <-
-                c(basicColumns, "tool")
-
-
+                createBackSplicedJunctionsDF(addColNames = "tool")
             for (j in seq_along(detectionToolsUsed$name)) {
                 # Create en empty data frame to be filled the circRNA prediction of
                 # each tool at a time.
                 backSplicedJunctionsTool <-
-                    data.frame(matrix(
-                        nrow = 0,
-                        ncol = length(basicColumns)
-                    ))
-                colnames(backSplicedJunctionsTool) <- basicColumns
+                    createBackSplicedJunctionsDF()
 
                 for (i in seq_along(experiment$fileName)) {
                     # Read the file contaning the prediction one at the time
@@ -98,33 +73,25 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                             experiment$fileName[i],
                             sep = "/")
 
+                    nameTool <- detectionToolsUsed$name[j]
                     # A specific import function is called
                     adaptedPatientBSJunctions <-
-                        switch(
-                            detectionToolsUsed$name[j],
-                            mapsplice = importMapSplice(pathToFile, gtf),
-                            nclscan = importNCLscan(pathToFile),
-                            knife = importKnife(pathToFile),
-                            circexplorer2 = importCircExplorer2(pathToFile),
-                            other = importOther(pathToFile),
-                            circmarker = importCircMarker (pathToFile, gtf),
-                            uroborus <- importUroborus(pathToFile)
-                        )
+                        getAdaptedPatientBSJunctions(nameTool, pathToFile, gtf)
 
                     # Check validity of adaptedPatientBSJunctions.
                     adaptedPatientBSJunctions <-
                         checkBSJsDF(adaptedPatientBSJunctions, addColNames = "coverage")
 
                     patientBSJunctions <- adaptedPatientBSJunctions
-
                     indexCoverage <-
                         which(colnames(patientBSJunctions) == "coverage")
-
                     colnames(patientBSJunctions)[indexCoverage] <-
                         experiment$label[i]
 
                     # Add a new row if a new circRNA is found and the corresponding
                     # columns with all circRNA coverages
+                    # Get basic colum names
+                    basicColumns <- getBasicColNames()
                     backSplicedJunctionsTool <- base::merge(
                         backSplicedJunctionsTool,
                         patientBSJunctions,
@@ -132,26 +99,20 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                         all = TRUE,
                         sort = FALSE
                     )
-
-
                 }
-
                 tool <-
                     rep(detectionToolsUsed$code[j],
                         nrow(backSplicedJunctionsTool))
-
                 # Repalce NA values with 0 (zero)
                 backSplicedJunctionsTool <-
                     backSplicedJunctionsTool %>%
                     dplyr::mutate_at(experiment$label, ~ replace(., is.na(.), 0)) %>%
                     dplyr::mutate(tool = tool)
 
-                #bind the data frame containing circRNA prediction perfomed by the
-                # circRNA detection tools
+                # rbind the data frame containing circRNA prediction
                 backSplicedJunctions <-
                     dplyr::bind_rows(backSplicedJunctions,
                         backSplicedJunctionsTool)
-
             }
 
             # Round
@@ -165,16 +126,12 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                 detection tools."
             )
         }
-
-
         } else{
             backSplicedJunctions <- data.frame()
-            cat("experiment.txt not found. The analysis can not start.")
+            cat("experiment.txt not found or empty. The analysis can not start.")
         }
-
-
     return(backSplicedJunctions)
-    }
+}
 
 
 
@@ -283,20 +240,10 @@ mergeBSJunctions <-
     function(backSplicedJunctions,
         gtf,
         pathToExperiment = NULL,
-        antisense = FALSE) {
-        if (is.null(pathToExperiment)) {
-            pathToExperiment <- "experiment.txt"
-        }
-
-        if (file.exists(pathToExperiment)) {
-            # Read from path given in input
-            experiment <-
-                utils::read.table(
-                    pathToExperiment,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
+        exportAntisense = FALSE) {
+        # Read experiment.txt
+        experiment <- readExperiment(pathToExperiment)
+        if (nrow(experiment) > 0) {
             detectionTools <- getDetectionTools()
             # Find and merge commonly identified back-spliced junctions
             mergedBSJunctions <- backSplicedJunctions %>%
@@ -322,42 +269,92 @@ mergeBSJunctions <-
                     everything()
                 ) %>%
                 as.data.frame()
-            # dplyr::mutate(mergedTools = paste(sort(detectionTools$code[match(.data$tool, detectionTools$name)]), collapse = ","))
 
-            # For some circRNAs the strand reported in prediction results is
-            # sometimes different from the strand reported in the gtf file.
-            shrinkedGTF <- gtf %>%
-                dplyr::select(.data$gene_name, .data$strand) %>%
-                dplyr::group_by(.data$gene_name) %>%
-                dplyr::filter(row_number() == 1)
-
-            mt <-
-                match(mergedBSJunctions$gene, shrinkedGTF$gene_name)
+            # Identified antisense circRNAs
             antisenseCircRNAs <-
-                dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt, ]) %>%
-                dplyr::filter(.data$strand != .data$strand1) %>%
-                dplyr::select(-c(.data$gene_name, .data$strand1))
-
-            if(antisense){
-                utils::write.table(
-                    antisenseCircRNAs,
-                    "antisenseCircRNAs.txt",
-                    quote = FALSE,
-                    row.names = FALSE,
-                    col.names = TRUE,
-                    sep = "\t"
-                )
-            }
-
-
+                getAntisenseCircRNAs(mergedBSJunctions, gtf, exportAntisense)
             # Remove from the dataframe the antisense circRNAs
             mergedBSJunctionsClenead <- mergedBSJunctions %>%
                 dplyr::filter(!(mergedBSJunctions$id %in% antisenseCircRNAs$id))
 
         } else{
             mergedBSJunctionsClenead <- backSplicedJunctions
-            cat("experiment.txt not found, data frame can not be merged")
+            cat("experiment.txt not found or empty, data frame can not be merged")
         }
-
         return(mergedBSJunctionsClenead)
     }
+
+
+# Create backSplicedJunctions data frame
+createBackSplicedJunctionsDF <- function(addColNames = NULL) {
+    # Get basic colum names
+    basicColumns <- getBasicColNames()
+    # Create the data frame that will be filled with the circRNA prediction
+    # perfomed by the prediction tools used.
+    backSplicedJunctions <-
+        data.frame(matrix(nrow = 0, ncol = length(c(
+            basicColumns, addColNames
+        ))))
+    colnames(backSplicedJunctions) <-
+        c(basicColumns, addColNames)
+
+    return(backSplicedJunctions)
+}
+
+
+
+
+
+# Get the adaptedPatientBSJunctions data frame with circRNA predictions
+getAdaptedPatientBSJunctions <-
+    function(nameTool, pathToFile, gtf) {
+        # A specific import function is called
+        adaptedPatientBSJunctions <-
+            switch(
+                nameTool,
+                mapsplice = importMapSplice(pathToFile),
+                nclscan = importNCLscan(pathToFile),
+                knife = importKnife(pathToFile),
+                circexplorer2 = importCircExplorer2(pathToFile),
+                other = importOther(pathToFile),
+                circmarker = importCircMarker(pathToFile, gtf),
+                uroborus <- importUroborus(pathToFile)
+            )
+
+        return(adaptedPatientBSJunctions)
+    }
+
+# For some circRNAs the strand reported in prediction results is
+# sometimes different from the strand reported in the gtf file.
+# With this function we identified the antisense circRNAs
+getAntisenseCircRNAs <-
+    function(mergedBSJunctions, gtf, exportAntisense = FALSE) {
+        shrinkedGTF <- gtf %>%
+            dplyr::select(.data$gene_name, .data$strand) %>%
+            dplyr::group_by(.data$gene_name) %>%
+            dplyr::filter(row_number() == 1)
+
+        mt <-
+            match(mergedBSJunctions$gene, shrinkedGTF$gene_name)
+        antisenseCircRNAs <-
+            dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt,]) %>%
+            dplyr::filter(.data$strand != .data$strand1) %>%
+            dplyr::select(-c(.data$gene_name, .data$strand1))
+
+        if (exportAntisense) {
+            utils::write.table(
+                antisenseCircRNAs,
+                "antisenseCircRNAs.txt",
+                quote = FALSE,
+                row.names = FALSE,
+                col.names = TRUE,
+                sep = "\t"
+            )
+        }
+
+        return(antisenseCircRNAs)
+    }
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

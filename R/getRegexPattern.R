@@ -31,5 +31,8 @@ getRegexPattern <- function(iupacSeq, isDNA = FALSE) {
     regexPattern <- paste(iupac[mt, col], collapse = "")
 
     return(regexPattern)
-
 }
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

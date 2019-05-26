@@ -59,19 +59,10 @@ filterCirc <- function(backSplicedJunctions,
     allSamples = FALSE,
     min = 3,
     pathToExperiment = NULL) {
-    if (is.null(pathToExperiment)) {
-        pathToExperiment <- "experiment.txt"
-    }
 
-    if (file.exists(pathToExperiment)) {
-        # Read from path given in input
-        experiment <-
-            utils::read.table(
-                pathToExperiment,
-                stringsAsFactors = FALSE,
-                header = TRUE,
-                sep = "\t"
-            )
+    # Read experiment.txt
+    experiment <- readExperiment(pathToExperiment)
+    if (nrow(experiment) > 0) {
 
         # Get colum names
         colNames <- c(getBasicColNames(), experiment$label)
@@ -109,5 +100,8 @@ filterCirc <- function(backSplicedJunctions,
     }
     # Return a filtered data frame
     return(filteredCirc)
-
 }
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

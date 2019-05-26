@@ -1,3 +1,7 @@
+
+# Functions in this file are used by multiple functions.
+
+
 # The function getBasicColNames() returns the basic column names.
 getBasicColNames <- function() {
     basicColumns <- c("id",
@@ -14,6 +18,14 @@ getBasicColNames <- function() {
 # The function checkBSJsDF() verifies that the functions to import
 # the detected circRNAs generate the correct data structure and content.
 checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
+
+    # Remove rows where strand is not available.
+    # (Note: This step is done if the backSplicedJunctions data frame
+    # contains liftedover coordinates. In this case if the strand is NA
+    # means that the coordinates were not found in the new species:
+    # conversion failed)
+    backSplicedJunctions <- backSplicedJunctions[!is.na(backSplicedJunctions$strand),]
+
     colNames <- c(getBasicColNames(), addColNames)
 
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
@@ -58,7 +70,7 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
 
 # The function getTargetsColNames() returns the column names.
 getTargetsColNames <- function() {
-    targetsColumns <- c(
+    colNames <- c(
         "id",
         "gene",
         "transcript",
@@ -70,6 +82,135 @@ getTargetsColNames <- function() {
         "seq",
         "type"
     )
-    return(targetsColumns)
+    return(colNames)
 
+}
+
+# create target data frame
+getTargetsDF <- function(annotatedBSJs){
+    targets <- data.frame(matrix(
+        nrow = nrow(annotatedBSJs),
+        ncol = length(getTargetsColNames())
+    ))
+    colnames(targets) <- getTargetsColNames()
+    return(targets)
+
+}
+
+
+# get exon sequences from BS genome
+getExonSeqs <- function(transcript, genome) {
+
+    exonSeqs <- as.character()
+    for (i in seq_along(transcript$exon_number)) {
+        exonSeqs[i] <- gsub("T",
+            "U",
+            as.character(
+                BSgenome::getSeq(
+                    genome,
+                    names = transcript$chrom[i],
+                    transcript$start[i],
+                    transcript$end[i]
+                )
+            ))
+    }
+    return(exonSeqs)
+}
+
+
+# Generate a unique identifier by combining the values of the following
+# columns: gene, strand, chrom, endDownBSE and startUpBSE.
+# The values are separated by a semicolumns (:)
+getID <- function(circTable) {
+    # Generate a unique identifier by combining the values of the following
+    # columns: gene, strand, chrom, endDownBSE and startUpBSE.
+    # The values are separated by a semicolumns (:)
+    id <- paste(
+        circTable$gene,
+        circTable$strand,
+        circTable$chrom,
+        circTable$startUpBSE,
+        circTable$endDownBSE,
+        sep = ":"
+    )
+    return(id)
+}
+
+
+# Fix the start and the end coordinates for the positive and negative
+# strand.
+# For a cicRNA arising from  gene located on the negative strand the
+# coordinates of the upstream exon in the pre-mRNA have to be greater
+# than the coordinates of downstream exon. The "for" statment swithces
+# the coordinates.
+fixCoords <- function(circTable) {
+    for (i in seq_along(circTable$id)) {
+         if (!is.na(circTable$strand[i])  &
+                !is.na(circTable$chrom[i]) &
+                !is.na(circTable$startUpBSE[i]) &
+                !is.na(circTable$endDownBSE[i]) &
+                circTable$strand[i] == "-" &
+                circTable$startUpBSE[i] <
+                circTable$endDownBSE[i]) {
+            x <- circTable$startUpBSE[i]
+            circTable$startUpBSE[i] <-
+                circTable$endDownBSE[i]
+            circTable$endDownBSE[i] <- x
+
+        } else if (!is.na(circTable$strand[i])  &
+                !is.na(circTable$chrom[i]) &
+                !is.na(circTable$startUpBSE[i]) &
+                !is.na(circTable$endDownBSE[i]) &
+                circTable$strand[i] == "+" &
+                circTable$startUpBSE[i] >
+                circTable$endDownBSE[i]) {
+            x <- circTable$startUpBSE[i]
+            circTable$startUpBSE[i] <-
+                circTable$endDownBSE[i]
+            circTable$endDownBSE[i] <- x
+        }
+    }
+    return(circTable)
+}
+
+# Read experiments.txt
+readExperiment <- function(pathToExperiment = NULL) {
+    if (is.null(pathToExperiment)) {
+        pathToExperiment <- "experiment.txt"
+    }
+    if (file.exists(pathToExperiment)) {
+        # Read from path given in input
+        experiment <-
+            utils::read.table(
+                pathToExperiment,
+                stringsAsFactors = FALSE,
+                header = TRUE,
+                sep = "\t"
+            )
+    } else{
+        experiment <- data.frame()
+    }
+    return(experiment)
+}
+
+
+# Clean targets dataframe by removing the rows with NA values to avoid
+# getting errors with the makeGRangesFromDataFrame function that does
+# not handle NA values
+cleanTargets <- function(targets) {
+    index1 <- which(
+        !is.na(targets[[1]]$transcript) &
+            !is.na(targets[[1]]$startGR) &
+            !is.na(targets[[1]]$endGR)
+    )
+    index2 <- which(
+        !is.na(targets[[2]]$transcript) &
+            !is.na(targets[[2]]$startGR) &
+            !is.na(targets[[2]]$endGR)
+    )
+
+    targets[[1]] <- targets[[1]][intersect(index1, index2), ]
+    targets[[2]] <- targets[[2]][intersect(index1, index2), ]
+
+    return(targets)
 }

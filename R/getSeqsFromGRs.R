@@ -62,7 +62,6 @@ getSeqsFromGRs <-
         lIntron = 100,
         lExon = 10,
         type = "ie") {
-
         # only 3 options are possible for the argument type
         match.arg(type, c("ie", "bse", "fi"))
 
@@ -73,7 +72,6 @@ getSeqsFromGRs <-
             fi = getFIcoords(annotatedBSJs),
             ie = getIECoords(annotatedBSJs, lIntron, lExon)
         )
-
         # Create a list with 2 elements to store the sequences extracted from
         # the upstream and downstream genomic ranges
         targets <- vector("list", 2)
@@ -81,25 +79,16 @@ getSeqsFromGRs <-
         names(targets)[2] <- "downGR"
 
         for (i in seq_along(targets)) {
-            # Create an empty list of 9 data frames
-            targets[[i]] <-
-                data.frame(matrix(
-                    nrow = nrow(annotatedBSJs),
-                    ncol = length(getTargetsColNames())
-                ))
-            colnames(targets[[i]]) <- getTargetsColNames()
-
+            # Create an empty list of data frames
+            targets[[i]] <- getTargetsDF(annotatedBSJs)
 
             if (i == 1) {
                 indexStart <- which(colnames(grCoords) == "startUpGR")
                 indexEnd <- which(colnames(grCoords) == "endUpGR")
-
             } else{
                 indexStart <- which(colnames(grCoords) == "startDownGR")
                 indexEnd <- which(colnames(grCoords) == "endDownGR")
             }
-
-
             # Fill the data frame with the extracted genomic range coordinates
             targets[[i]]$id <- grCoords$id
             targets[[i]]$gene <- grCoords$gene
@@ -110,132 +99,58 @@ getSeqsFromGRs <-
             targets[[i]]$endGR <- grCoords[, indexEnd]
             targets[[i]]$type <- rep(type, nrow(targets[[i]]))
 
-
             for (j in seq_along(targets[[1]]$id)) {
-                # Here check the coordinates instead of the trancript becaseu
-                # even if we have the trancript the back-spliced exons can
-                # first or the last of the transcript so in that case we do
-                # not have the seq.
-                if (targets[[i]]$strand[j] == "-" &
-                        !is.na(targets[[i]]$startGR[j]) &
-                        !is.na(targets[[i]]$endGR[j])) {
-                    # Note: the sequences retrieved by getSeq function from
-                    # BSgenome correspond to the positive strand of the DNA
-                    # (genome reference). For a circRNA that arises from a gene
-                    # trinscribed from negative strand we need to take the
-                    # reverse complement of such a sequences. Complement
-                    # because the sense strand is the negative strand of the
-                    # DNA. Reverse because we always report the sequences
-                    # from 5' to 3' in the final data frame.
+                chrom <- targets[[i]]$chrom[j]
+                startGR <- targets[[i]]$startGR[j]
+                endGR <- targets[[i]]$endGR[j]
+                strand <- targets[[i]]$strand[j]
+                seq <-
+                    getSeqFromBSgenome(genome, chrom, startGR, endGR)
+
+                # Check coordinates and retrieve the seq
+                if (strand == "-" &
+                        !is.na(startGR) & !is.na(endGR)) {
+                    # For a circRNA that arises from a gene transcribed from
+                    # negative strand we take the reverse complement
                     targets[[i]]$seq[j] <-
                         gsub("T",
                             "U",
-                            as.character(
-                                Biostrings::reverseComplement(
-                                    BSgenome::getSeq(
-                                        genome,
-                                        names = targets[[i]]$chrom[j],
-                                        targets[[i]]$startGR[j],
-                                        targets[[i]]$endGR[j]
-                                    )
-                                )
-                            ))
+                            as.character(Biostrings::reverseComplement(seq)))
                     targets[[i]]$length[j] <-
                         nchar(targets[[i]]$seq[j])
 
-
-                } else if (targets[[i]]$strand[j] == "+" &
-                        !is.na(targets[[i]]$startGR[j]) &
-                        !is.na(targets[[i]]$endGR[j])) {
+                } else if (strand == "+" &
+                        !is.na(startGR) & !is.na(endGR)) {
                     # For the positive strand no modification is needed because
-                    # the sense strand corresponds to the posiive strand that
+                    # the sense strand corresponds to the positive strand that
                     # is the genome reference.
                     targets[[i]]$seq[j] <-
-                        gsub("T", "U", as.character(
-                            BSgenome::getSeq(
-                                genome,
-                                targets[[i]]$chrom[j],
-                                targets[[i]]$startGR[j],
-                                targets[[i]]$endGR[j]
-                            )
-                        ))
+                        gsub("T", "U", as.character(seq))
                     targets[[i]]$length[j] <-
                         nchar(targets[[i]]$seq[j])
-                } else{
-
                 }
             }
         }
-
-
         return(targets)
+    }
 
-        }
 
-
-#' @title Retrive coordinates of genomic ranges surrounding back-spliced
-#' junction coordinates
-#'
-#' @description The function getIECoords() retrieves the coordinates of the
-#' genomic ranges defined by the values of the arguments lIntron and lExon.
-#' The start point are the back-spliced junction coordinaes reported in the
-#' annotateBSJs data frame.
-#'
-#' @param annotatedBSJs A data frame with the annotated back-spliced junctions.
-#' This data frame can be generated with \code{\link{annotateBSJs}}.
-#'
-#' @param lIntron An integer indicating how many nucleotides are taken from
-#' the introns flanking the back-spliced junctions. This number must be
-#' positive.
-#'
-#' @param lExon An integer indicating how many nucleotides are taken from
-#' the back-spliced exons starting from the back-spliced junctions. This number
-#' must be positive.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing predicted back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junction.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate predicted back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Inner function
-#' # Retrieve genomic range coordinates
-#' getIECoords(annotatedBSJs, lIntron = 101, lExon = 10)
-#'
-#'
-#' @export
-getIECoords <- function(annotatedBSJs, lIntron, lExon) {
+# The function getIECoords() retrieves the coordinates of the
+# genomic ranges defined by the values of the arguments lIntron and lExon.
+# The start point are the back-spliced junction coordinates reported in the
+# annotateBSJs data frame.
+getIECoords <- function(annotatedBSJs,
+    lIntron = 100,
+    lExon = 10) {
     # lIntron and lExon must be positive numbers
     if (lIntron < 0) {
         stop("lIntron must be a positive number")
     }
-
     if (lExon < 0) {
         stop("lExon must be a positive number")
     }
-
-    #Column names of the new data frame
-    grColNames <- getGRcolNames()
-
     # Create an empty dataframe
-    grCoords <-
-        data.frame(matrix(
-            nrow = nrow(annotatedBSJs),
-            ncol = length(grColNames)
-        ))
-    colnames(grCoords) <- grColNames
-
+    grCoords <- getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -244,209 +159,202 @@ getIECoords <- function(annotatedBSJs, lIntron, lExon) {
         grCoords$strand[i] <- annotatedBSJs$strand[i]
         grCoords$chrom[i] <- annotatedBSJs$chrom[i]
 
-
-        if (!is.na(grCoords$transcript[i])) {
-            # POSITIVE STRAND
-
-            # When the back-spliced exons are NOT the FIRST and LAST of
-            # the transcript
-            if (annotatedBSJs$strand[i] == "+" &
-                    !is.na(annotatedBSJs$endUpIntron[i]) &
-                    !is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    (annotatedBSJs$startUpBSE[i]) - lIntron
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lExon
-
-                # For the downstream genomic range
+        if (!is.na(annotatedBSJs$transcript[i]) &
+                !is.na(annotatedBSJs$strand[i])) {
+            annotatedBSJsToAnalyze <- annotatedBSJs[i,]
+            # Get upstream and dowstream genomic ranges coordinates
+            # for POSITIVE STRAND
+            if (annotatedBSJsToAnalyze$strand == "+") {
+                grCoordsToAnalyze <-
+                    grCoordsForPositive(annotatedBSJsToAnalyze, lIntron, lExon)
+                grCoords$startUpGR[i] <- grCoordsToAnalyze$startUpGR
+                grCoords$endUpGR[i] <- grCoordsToAnalyze$endUpGR
                 grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lExon
-                grCoords$endDownGR[i] <-
-                    (annotatedBSJs$endDownBSE[i]) + lIntron
-
-                # When the upstream back-spliced exon IS the FIRST of the
-                # transcript
-            } else if (annotatedBSJs$strand[i] == "+" &
-                    is.na(annotatedBSJs$endUpIntron[i]) &
-                    !is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    (annotatedBSJs$startUpBSE[i])
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lExon
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lExon
-                grCoords$endDownGR[i] <-
-                    (annotatedBSJs$endDownBSE[i]) + lIntron
-
-                # When the downstream back-spliced exon IS the LAST of the
-                # transcript
-            } else if (annotatedBSJs$strand[i] == "+" &
-                    !is.na(annotatedBSJs$endUpIntron[i]) &
-                    is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    (annotatedBSJs$startUpBSE[i]) - lIntron
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lExon
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lExon
-                grCoords$endDownGR[i] <-
-                    (annotatedBSJs$endDownBSE[i])
-
-
-                # When the back-spliced exons ARE the FIRST and LAST of the
-                # transcript
-
-            } else if (annotatedBSJs$strand[i] == "+" &
-                    is.na(annotatedBSJs$endUpIntron[i]) &
-                    is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    (annotatedBSJs$startUpBSE[i])
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lExon
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lExon
-                grCoords$endDownGR[i] <-
-                    (annotatedBSJs$endDownBSE[i])
-
-                # NEGATIVE STRAND
-
-                # When the back-spliced exons are NOT the FIRST and LAST of the
-                # transcript
-            } else if (!is.na(annotatedBSJs$strand[i]) &
-                    annotatedBSJs$strand[i] == "-" &
-                    !is.na(annotatedBSJs$endUpIntron[i]) &
-                    !is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] - lExon
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lIntron
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lIntron
-                grCoords$endDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] + lExon
-
-                # When the upstream back-spliced exon IS the FIRST of the
-                # transcript
-            } else if (!is.na(annotatedBSJs$strand[i]) &
-                    annotatedBSJs$strand[i] == "-" &
-                    is.na(annotatedBSJs$endUpIntron[i]) &
-                    !is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] - lExon
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i]
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] - lIntron
-                grCoords$endDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] + lExon
-
-
-                # When the downstream the back-spliced exon IS the LAST of
-                # the transcript
-            } else if (!is.na(annotatedBSJs$strand[i]) &
-                    annotatedBSJs$strand[i] == "-" &
-                    !is.na(annotatedBSJs$endUpIntron[i]) &
-                    is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] - lExon
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] + lIntron
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i]
-                grCoords$endDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] + lExon
-
-                # When the back-spliced exons ARE the FIRST and LAST of the
-                # transcript
-            } else if (!is.na(annotatedBSJs$strand[i]) &
-                    annotatedBSJs$strand[i] == "-" &
-                    is.na(annotatedBSJs$endUpIntron[i]) &
-                    is.na(annotatedBSJs$startDownIntron[i])) {
-                # For the upstream genomic range
-                grCoords$startUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i] - lExon
-                grCoords$endUpGR[i] <-
-                    annotatedBSJs$startUpBSE[i]
-
-
-                # For the downstream genomic range
-                grCoords$startDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i]
-                grCoords$endDownGR[i] <-
-                    annotatedBSJs$endDownBSE[i] + lExon
+                    grCoordsToAnalyze$startDownGR
+                grCoords$endDownGR[i] <- grCoordsToAnalyze$endDownGR
 
             }
+            # Get upstream and dowstream genomic ranges coordinates
+            # for NEGATIVE STRAND
+            if (annotatedBSJsToAnalyze$strand == "-") {
+                grCoordsToAnalyze <-
+                    grCoordsForNegative(annotatedBSJsToAnalyze, lIntron, lExon)
+                grCoords$startUpGR[i] <- grCoordsToAnalyze$startUpGR
+                grCoords$endUpGR[i] <- grCoordsToAnalyze$endUpGR
+                grCoords$startDownGR[i] <-
+                    grCoordsToAnalyze$startDownGR
+                grCoords$endDownGR[i] <- grCoordsToAnalyze$endDownGR
+            }
         }
-
     }
-
     return (grCoords)
-
 }
 
+# Get upstream and dowstream genomic ranges coordinates for positive strand
+grCoordsForPositive <-
+    function(annotatedBSJsToAnalyze,
+        lIntron = 100,
+        lExon = 10) {
+        # Create an empty dataframe
+        grCoords <- getGRcoordsDF(annotatedBSJsToAnalyze)
+        # When the BSEs are NOT the FIRST and LAST of the transcript
+        if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                !is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                (annotatedBSJsToAnalyze$startUpBSE) - lIntron
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lExon
 
-#' @title Retrieve back-spliced exon coordinates
-#'
-#' @description The function getBSEcoords() retrieves the coordinates of the
-#' back-spliced exons from the annotateBSJs data frame.
-#'
-#' @param annotatedBSJs A data frame with the annotated back-spliced junctions.
-#' This data frame can be generated with \code{\link{annotateBSJs}}.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing predicted back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junction
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate predicted back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Inner function
-#' # Retrieve back-spliced exon coordinates
-#' getBSEcoords(annotatedBSJs)
-#'
-#'
-#' @export
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lExon
+            grCoords$endDownGR <-
+                (annotatedBSJsToAnalyze$endDownBSE) + lIntron
+
+            # When the upstream back-spliced exon IS the FIRST of the
+            # transcript
+        } else if (is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                !is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                (annotatedBSJsToAnalyze$startUpBSE)
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lExon
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lExon
+            grCoords$endDownGR <-
+                (annotatedBSJsToAnalyze$endDownBSE) + lIntron
+
+            # When the downstream back-spliced exon IS the LAST of the
+            # transcript
+        } else if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                (annotatedBSJsToAnalyze$startUpBSE) - lIntron
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lExon
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lExon
+            grCoords$endDownGR <-
+                (annotatedBSJsToAnalyze$endDownBSE)
+
+            # When the back-spliced exons ARE the FIRST and LAST of the
+            # transcript
+        } else if (is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                (annotatedBSJsToAnalyze$startUpBSE)
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lExon
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lExon
+            grCoords$endDownGR <-
+                (annotatedBSJsToAnalyze$endDownBSE)
+        }
+
+        grCoords <- grCoords %>%
+            dplyr::select(.data$startUpGR,
+                .data$endUpGR,
+                .data$startDownGR,
+                .data$endDownGR)
+        return(grCoords)
+    }
+
+
+# Get startUpGR and endUpGR for negative strand
+grCoordsForNegative <-
+    function(annotatedBSJsToAnalyze,
+        lIntron = 100,
+        lExon = 10) {
+        # Create an empty dataframe
+        grCoords <- getGRcoordsDF(annotatedBSJsToAnalyze)
+        # When the back-spliced exons are NOT the FIRST and LAST of the
+        # transcript
+        if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                !is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE - lExon
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lIntron
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lIntron
+            grCoords$endDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE + lExon
+
+            # When the upstream back-spliced exon IS the FIRST of the
+            # transcript
+        } else if (is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                !is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE - lExon
+            grCoords$endUpGR <- annotatedBSJsToAnalyze$startUpBSE
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE - lIntron
+            grCoords$endDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE + lExon
+
+            # When the downstream the back-spliced exon IS the LAST of
+            # the transcript
+        } else if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE - lExon
+            grCoords$endUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE + lIntron
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE
+            grCoords$endDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE + lExon
+
+            # When the back-spliced exons ARE the FIRST and LAST of the
+            # transcript
+        } else if (is.na(annotatedBSJsToAnalyze$endUpIntron) &
+                is.na(annotatedBSJsToAnalyze$startDownIntron)) {
+            # For the upstream genomic range
+            grCoords$startUpGR <-
+                annotatedBSJsToAnalyze$startUpBSE - lExon
+            grCoords$endUpGR <- annotatedBSJsToAnalyze$startUpBSE
+
+            # For the downstream genomic range
+            grCoords$startDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE
+            grCoords$endDownGR <-
+                annotatedBSJsToAnalyze$endDownBSE + lExon
+        }
+
+        grCoords <- grCoords %>%
+            dplyr::select(.data$startUpGR,
+                .data$endUpGR,
+                .data$startDownGR,
+                .data$endDownGR)
+
+        return(grCoords)
+    }
+
+
+
+# The function getBSEcoords() retrieves the coordinates of the
 getBSEcoords <- function(annotatedBSJs) {
-    #Column names of the new data frame
-    grColNames <- getGRcolNames()
-
     # Create an empty dataframe
-    grCoords <-
-        data.frame(matrix(
-            nrow = nrow(annotatedBSJs),
-            ncol = length(grColNames)
-        ))
-    colnames(grCoords) <- grColNames
-
+    grCoords <- getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -485,49 +393,11 @@ getBSEcoords <- function(annotatedBSJs) {
 }
 
 
-#' @title Retrieve flanking intron coordinates
-#'
-#' @description The function getFIcoords() retrieves the coordinates of
-#' the introns flanking the back-spliced exons from the annotateBSJs data frame.
-#'
-#' @param annotatedBSJs A data frame with the annotated back-spliced junctions.
-#' This data frame can be generated with \code{\link{annotateBSJs}}.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Load data frame containing predicted back-spliced junctions
-#' data("mergedBSJunctions")
-#'
-#' # Load short version of the gencode v19 annotation file
-#' data("gtf")
-#'
-#' # Example with the first back-spliced junction.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
-#'
-#' # Annotate predicted back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
-#'
-#' # Inner function
-#' # Retrieve flanking intron coordinates
-#' getFIcoords(annotatedBSJs)
-#'
-#'
-#' @export
+#The function getFIcoords() retrieves the coordinates of
+# the introns flanking the back-spliced exons from the annotateBSJs data frame.
 getFIcoords <- function(annotatedBSJs) {
-    #Column names of the new data frame
-    grColNames <- getGRcolNames()
-
     # Create an empty dataframe
-    grCoords <-
-        data.frame(matrix(
-            nrow = nrow(annotatedBSJs),
-            ncol = length(grColNames)
-        ))
-    colnames(grCoords) <- grColNames
-
+    grCoords <- getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -564,25 +434,13 @@ getFIcoords <- function(annotatedBSJs) {
                 grCoords$endDownGR[i] <-
                     annotatedBSJs$startDownIntron[i]
             }
-
         }
     }
     return (grCoords)
-
 }
 
 
-#' The function getGRcolNames() returns the column names
-#'
-#' @return A character vector.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function
-#' getGRcolNames()
-#'
-#' @export
+# The function getGRcolNames() returns the column names
 getGRcolNames <- function() {
     grColNames <- c(
         "id",
@@ -596,5 +454,29 @@ getGRcolNames <- function() {
         "endDownGR"
     )
     return(grColNames)
-
 }
+
+# Create grCoords data frame
+getGRcoordsDF <- function(annotatedBSJs) {
+    grCoords <-
+        data.frame(matrix(
+            nrow = nrow(annotatedBSJs),
+            ncol = length(getGRcolNames())
+        ))
+    colnames(grCoords) <- getGRcolNames()
+    return(grCoords)
+}
+
+
+# get sequences from BS genome
+getSeqFromBSgenome <- function(genome, chrom, startGR, endGR) {
+    seq <- BSgenome::getSeq(genome,
+        names = chrom,
+        startGR,
+        endGR)
+    return(seq)
+}
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

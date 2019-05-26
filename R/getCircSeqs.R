@@ -52,12 +52,7 @@ getCircSeqs <-
         names(targets)[1] <- "circ"
 
         # Create an empty data frame
-        targets[[1]] <-
-            data.frame(matrix(
-                nrow = nrow(annotatedBSJs),
-                ncol = length(getTargetsColNames())
-            ))
-        colnames(targets[[1]]) <- getTargetsColNames()
+        targets[[1]] <- getTargetsDF(annotatedBSJs)
 
         # Fill the data frame with the needed information
         targets[[1]]$id <- annotatedBSJs$id
@@ -94,91 +89,54 @@ getCircSeqs <-
                         .data$exon_number %in% exonsToSelect
                     )
 
-                exonSeqs <- as.character()
-
-                if (transcript$strand[1] == "-") {
-                    transcript <- transcript  %>%
-                        dplyr::arrange(desc(.data$exon_number))
-
-                    # Note: the sequences retrieved by getSeq function
-                    # from BSgenome correspond to the positive strand of
-                    # the DNA (genome reference).For a circRNA that arises
-                    # from a gene transcribed from negative strand we need to
-                    # take the reverse complement of the sequence. Complement
-                    # because the sense strand is the negative strand of the
-                    # DNA. Reverse because we always report the sequences from
-                    # 5' to 3'in the final data frame.
-
-                    for (j in seq_along(transcript$exon_number)) {
-                        exonSeqs[j] <- gsub("T",
-                            "U",
-                            as.character(
-                                BSgenome::getSeq(
-                                    genome,
-                                    names = transcript$chrom[j],
-                                    transcript$start[j],
-                                    transcript$end[j]
-                                )
-                            ))
-
-                    }
-
-                    joinedExonSeqs <- paste(exonSeqs, collapse = "")
-
-                    # For the negative strand the last 40 nucleotide of the
-                    # upstream back-spliced exons are attached at the end to
-                    # the downstream back-spliced exon to recreate the
-                    # back-spliced sequence. In this way the mir analysis
-                    # can be perfomed also across the back-spliced
-                    # junctions.
-
-                    joinedExonSeqsWithBSJ <-
-                        paste0(substr(
-                            joinedExonSeqs,
-                            nchar(joinedExonSeqs) - 49,
-                            nchar(joinedExonSeqs)
-                        ),
-                            joinedExonSeqs)
-
-
-                    targets[[1]]$seq[i] <-
-                        as.character(reverseComplement(Biostrings::RNAString(joinedExonSeqsWithBSJ)))
-
-                } else if (transcript$strand[1] == "+") {
-                    transcript <- transcript  %>%
-                        arrange(.data$exon_number)
-                    # For the positive strand no modification is needed because
-                    # the sense strand corresponds to the positive strand of
-                    # the DNA that is the genome reference.
-                    for (j in seq_along(transcript$exon_number)) {
-                        exonSeqs[j] <- gsub("T",
-                            "U",
-                            as.character(
-                                BSgenome::getSeq(
-                                    genome,
-                                    names = transcript$chrom[j],
-                                    transcript$start[j],
-                                    transcript$end[j]
-                                )
-                            ))
-                    }
-
-                    joinedExonSeqs <- paste(exonSeqs, collapse = "")
-
-                    # For the positive strand the first 50 nucleotide of the
-                    # upstream back-spliced exon are taken and attached at
-                    # the end of the downstream back-spliced exon.
-                    joinedExonSeqsWithBSJ <-
-                        paste0(joinedExonSeqs, substr(joinedExonSeqs, 1, 50))
-
-
-                    targets[[1]]$seq[i] <- joinedExonSeqsWithBSJ
-
-                }
+                joinedExonSeqsWithBSJ <- recreateCircSeq(transcript, genome)
+                targets[[1]]$seq[i] <- joinedExonSeqsWithBSJ
             }
-
         }
-
         return(targets)
+    }
 
-        }
+# Recreate circRNA sequence including the bsj
+recreateCircSeq <- function(transcript, genome){
+    if (transcript$strand[1] == "-") {
+        transcript <- transcript  %>%
+            dplyr::arrange(desc(.data$exon_number))
+        # Get exons sequences
+        exonSeqs <- getExonSeqs(transcript, genome)
+        # Join sequences
+        joinedExonSeqs <- paste(exonSeqs, collapse = "")
+        # Recreate bsj seq
+        # For negative strand we take the reverse complement
+        joinedExonSeqsWithBSJToReverse <-
+            paste0(substr(
+                joinedExonSeqs,
+                nchar(joinedExonSeqs) - 49,
+                nchar(joinedExonSeqs)
+            ),
+                joinedExonSeqs)
+
+        joinedExonSeqsWithBSJ <-
+            as.character(reverseComplement(
+                Biostrings::RNAString(joinedExonSeqsWithBSJToReverse)
+            ))
+
+    } else if (transcript$strand[1] == "+") {
+        transcript <- transcript  %>%
+            dplyr::arrange(.data$exon_number)
+        # Get exon sequences
+        exonSeqs <- getExonSeqs(transcript, genome)
+        # Join sequencs
+        joinedExonSeqs <- paste(exonSeqs, collapse = "")
+        # Recreate bsj seq
+        # For the positive strand no modification is needed
+        joinedExonSeqsWithBSJ <-
+            paste0(joinedExonSeqs, substr(joinedExonSeqs, 1, 50))
+    }
+
+    return(joinedExonSeqsWithBSJ)
+
+}
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.
+

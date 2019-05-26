@@ -92,7 +92,6 @@ plotLenIntrons <-
                 variable.name = "feature",
                 value.name = "length"
             )
-
         combinedFB <- rbind(reshForeground, reshBackground)
         combinedFB$length <- as.numeric(combinedFB$length)
         # Plot
@@ -104,7 +103,6 @@ plotLenIntrons <-
             theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_text(hjust = 0.5)) +
             scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
-
         return(p)
     }
 
@@ -203,7 +201,6 @@ plotLenBSEs <-
                 variable.name = "feature",
                 value.name = "length"
             )
-
         combinedFB <- rbind(reshForeground, reshBackground)
         combinedFB$length <- as.numeric(combinedFB$length)
         # Plot
@@ -215,7 +212,6 @@ plotLenBSEs <-
             theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_text(hjust = 0.5)) +
             scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
-
         return(p)
     }
 
@@ -332,7 +328,6 @@ plotExPosition <-
                     .data$exNumUpBSE,
                     .data$exNumDownBSE)
         }
-
         # Plot
         p <-  annotatedBSJs %>%
             reshape2::melt(
@@ -356,9 +351,6 @@ plotExPosition <-
                 ),
                 plot.title = element_text(hjust = 0.5)
             )
-
-
-
         return(p)
     }
 
@@ -458,7 +450,7 @@ plotTotExons <-
     function(annotatedBSJs, title = "") {
         # Keep unique transcript
         annotatedBSJsNoDup <-
-            annotatedBSJs[!duplicated(annotatedBSJs$transcript),]
+            annotatedBSJs[!duplicated(annotatedBSJs$transcript), ]
 
         p <- annotatedBSJsNoDup %>%
             dplyr::select(.data$totExons) %>%
@@ -478,7 +470,6 @@ plotTotExons <-
                 ),
                 plot.title = element_text(hjust = 0.5)
             )
-
         return(p)
     }
 
@@ -564,27 +555,14 @@ volcanoPlot <- function(res,
     setyLim = FALSE,
     ylim = c(0, 5)) {
     res <- stats::na.omit(res)
-    diffExpCirc <-
-        stats::na.omit(res[abs(res$log2FC) >= log2FC &
-                res$padj <= padj,])
+    diffExpCirc <- stats::na.omit(res[abs(res$log2FC) >= log2FC &
+            res$padj <= padj, ])
 
-    if (setxLim) {
-        xmin <- xlim[1]
-        xmax <- xlim[2]
-    } else{
-        xmin <- min(res$log2FC)
-        xmax <- max(res$log2FC)
-    }
-
-    if (setyLim) {
-        ymin <- ylim[1]
-        ymax <- ylim[2]
-    } else{
-        ymin <- min(-log10(res$padj))
-        ymax <- max(-log10(res$padj))
-    }
-
-
+    xyLim <- setxyLim(setxLim, xlim, setyLim, ylim, res)
+    xmin <- xyLim$xmin
+    xmax <- xyLim$xmax
+    ymin <- xyLim$ymin
+    ymax <- xyLim$ymax
 
     p <- ggplot(data = res, aes(x = log2FC, y = -log10(padj))) +
         geom_point(colour = "black",
@@ -643,11 +621,46 @@ volcanoPlot <- function(res,
                 vjust = -0.3
             )
     }
-
-
-
     return(p)
 }
+
+# Set xyLim
+setxyLim <- function(setxLim = FALSE,
+    xlim = c(-8 , 8),
+    setyLim = FALSE,
+    ylim = c(0, 5),
+    res) {
+    if (setxLim) {
+        xmin <- xlim[1]
+        xmax <- xlim[2]
+    } else{
+        xmin <- min(res$log2FC)
+        xmax <- max(res$log2FC)
+    }
+
+    if (setyLim) {
+        ymin <- ylim[1]
+        ymax <- ylim[2]
+    } else{
+        ymin <- min(-log10(res$padj))
+        ymax <- max(-log10(res$padj))
+    }
+
+    xyLim <- vector("list", 4)
+    names(xyLim)[1] <- "xmin"
+    names(xyLim)[2] <- "xmax"
+    names(xyLim)[1] <- "ymin"
+    names(xyLim)[2] <- "ymax"
+
+    xyLim$xmin <- xmin
+    xyLim$xmax <- xmax
+
+    xyLim$ymin <- ymin
+    xyLim$ymax <- ymax
+
+    return(xyLim)
+}
+
 
 
 #' @title Plot motifs analysis results
@@ -771,43 +784,18 @@ plotMotifs <-
         mergedMotifsBTS,
         log2FC = 1,
         nf1 = 1,
-        nf2 = 1 ,
+        nf2 = 1,
         df1Name = "foreground",
         df2Name = "background") {
-        p <- list()
         mergedMotifsAll <-
-            base::merge(mergedMotifsFTS,
+            getMergedMotifsAll(
+                mergedMotifsFTS,
                 mergedMotifsBTS,
-                by = "id",
-                all = TRUE) %>%
-            dplyr::rename(foreground = .data$count.x,
-                background = .data$count.y) %>%
-            dplyr::mutate(
-                foreground = ifelse(is.na(.data$foreground), 0, .data$foreground),
-                background = ifelse(is.na(.data$background), 0, .data$background)
-            ) %>%
-            dplyr::mutate(
-                foregroundNorm = .data$foreground / nf1,
-                backgroundNorm = .data$background / nf2
-            ) %>%
-            dplyr::mutate(log2fc = log2((.data$foregroundNorm + 1) / (.data$backgroundNorm + 1))) %>%
-            dplyr::filter(abs(.data$log2fc) >= log2FC) %>%
-            dplyr::arrange(.data$log2fc) %>%
-            dplyr::rename(log2FC = .data$log2fc) %>%
-            dplyr::mutate(id = factor(.data$id, levels = .data$id)) %>%
-            dplyr::mutate(motif.x = ifelse(is.na(.data$motif.x), .data$motif.y, .data$motif.x)) %>%
-            dplyr::rename(motif = .data$motif.x) %>%
-            dplyr::select(
-                .data$id,
-                .data$foreground,
-                .data$background,
-                .data$foregroundNorm,
-                .data$backgroundNorm,
-                .data$log2FC,
-                .data$motif
+                log2FC = 1,
+                nf1 = 1,
+                nf2 = 1
             )
-
-
+        p <- list()
         p[[1]] <-  mergedMotifsAll %>%
             ggplot(aes(x = .data$id,
                 y = .data$log2FC)) +
@@ -839,10 +827,50 @@ plotMotifs <-
 
         p[[3]] <- mergedMotifsAll %>%
             dplyr::arrange(desc(.data$log2FC))
-
-
         return(p)
     }
+
+
+# get mergedMotifsAll data frame
+getMergedMotifsAll <- function(mergedMotifsFTS,
+    mergedMotifsBTS,
+    log2FC = 1,
+    nf1 = 1,
+    nf2 = 1) {
+    mergedMotifsAll <-
+        base::merge(mergedMotifsFTS,
+            mergedMotifsBTS,
+            by = "id",
+            all = TRUE) %>%
+        dplyr::rename(foreground = .data$count.x,
+            background = .data$count.y) %>%
+        dplyr::mutate(
+            foreground = ifelse(is.na(.data$foreground), 0, .data$foreground),
+            background = ifelse(is.na(.data$background), 0, .data$background)
+        ) %>%
+        dplyr::mutate(
+            foregroundNorm = .data$foreground / nf1,
+            backgroundNorm = .data$background / nf2
+        ) %>%
+        dplyr::mutate(log2fc = log2((.data$foregroundNorm + 1) / (.data$backgroundNorm + 1))) %>%
+        dplyr::filter(abs(.data$log2fc) >= log2FC) %>%
+        dplyr::arrange(.data$log2fc) %>%
+        dplyr::rename(log2FC = .data$log2fc) %>%
+        dplyr::mutate(id = factor(.data$id, levels = .data$id)) %>%
+        dplyr::mutate(motif.x = ifelse(is.na(.data$motif.x), .data$motif.y, .data$motif.x)) %>%
+        dplyr::rename(motif = .data$motif.x) %>%
+        dplyr::select(
+            .data$id,
+            .data$foreground,
+            .data$background,
+            .data$foregroundNorm,
+            .data$backgroundNorm,
+            .data$log2FC,
+            .data$motif
+        )
+    return(mergedMotifsAll)
+}
+
 
 #' @title Plot miRNA analysis results
 #'
@@ -924,10 +952,7 @@ plotMiR <-
         color = "blue",
         miRid = FALSE,
         id = 1) {
-        topMir <- rearragedMiRres[[id]][[2]] %>%
-            dplyr::filter(.data$counts >= n) %>%
-            dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", ""))
-
+        topMir <- getTopMir(rearragedMiRres, id = 1, n = 40)
         p <-  rearragedMiRres[[id]][[2]] %>%
             dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", "")) %>%
             dplyr::filter(!is.na(.data$counts)) %>%
@@ -954,7 +979,6 @@ plotMiR <-
                 )
             ) +
             expand_limits(y = 0)
-
         if (miRid) {
             p <- p +
                 geom_text(
@@ -971,6 +995,19 @@ plotMiR <-
                     #angle = 90
                 )
         }
-
         return(p)
     }
+
+
+# Get miRNAs with a number of binding sites higher than n
+getTopMir <- function(rearragedMiRres,
+    id = 1,
+    n = 40) {
+    topMir <- rearragedMiRres[[id]][[2]] %>%
+        dplyr::filter(.data$counts >= n) %>%
+        dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", ""))
+    return(topMir)
+}
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

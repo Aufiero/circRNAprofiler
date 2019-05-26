@@ -80,26 +80,13 @@ getEdgerRes <-
         normMethod = "TMM",
         pAdjustMethod = "BH",
         pathToExperiment = NULL) {
-        if (is.null(pathToExperiment)) {
-            pathToExperiment <- "experiment.txt"
-        }
-
-        if (file.exists(pathToExperiment)) {
+        # Read experiment.txt
+        experiment <- readExperiment(pathToExperiment)
+        if (nrow(experiment) > 0) {
             # Read from path given in input
-            experiment <-
-                utils::read.table(
-                    pathToExperiment,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
-
 
             match.arg(normMethod, c("TMM", "RLE", "upperquartile", "none"))
-
-
             cond <- strsplit(condition, "-")[[1]]
-
             experiment <-
                 experiment[experiment$condition %in% cond,]
 
@@ -126,34 +113,45 @@ getEdgerRes <-
                     adjust.method = pAdjustMethod,
                     sort.by = "none"
                 )
-
-
-            edgerRes <-
-                dplyr::bind_cols(
-                    data.frame(
-                        backSplicedJunctions$id,
-                        backSplicedJunctions$gene,
-                        statistics$table,
-                        dge$pseudo.counts
-                    )
-                ) %>%
-                dplyr::select(-.data$logCPM) %>%
-                dplyr::rename(
-                    log2FC = .data$logFC,
-                    pvalue = .data$PValue,
-                    padj = .data$FDR,
-                    gene = .data$backSplicedJunctions.gene,
-                    id = .data$backSplicedJunctions.id
-                ) %>%
-                dplyr::mutate(id = as.character(.data$id),
-                    gene = as.character(.data$gene))
+            # Get edgerRes data frame
+            edgerRes <- getEdgerResDF(backSplicedJunctions,
+                statistics, dge)
 
         } else{
             edgerRes <- data.frame()
             cat("experiment.txt not found. Differential expression analysis can
                 not be run.")
         }
-
         return(edgerRes)
+    }
 
-        }
+# Get edgerRes data frame
+getEdgerResDF <- function(backSplicedJunctions,
+    statistics, dge) {
+    edgerRes <-
+        dplyr::bind_cols(
+            data.frame(
+                backSplicedJunctions$id,
+                backSplicedJunctions$gene,
+                statistics$table,
+                dge$pseudo.counts
+            )
+        ) %>%
+        dplyr::select(-.data$logCPM) %>%
+        dplyr::rename(
+            log2FC = .data$logFC,
+            pvalue = .data$PValue,
+            padj = .data$FDR,
+            gene = .data$backSplicedJunctions.gene,
+            id = .data$backSplicedJunctions.id
+        ) %>%
+        dplyr::mutate(id = as.character(.data$id),
+            gene = as.character(.data$gene))
+    return(edgerRes)
+}
+
+
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

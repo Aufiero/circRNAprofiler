@@ -190,20 +190,18 @@ computeMotifs <-
         if (width < 4 | width > 20) {
             stop("width must be an integer between 4 and 20")
         }
-
         # Compute all motifs of length width
         computedMotifs <- as.character()
         for (i in seq_along(targets)) {
             # Put the string NA so that the we do not get error when calling
             # RNAStringSet
-            targets[[i]]$seq[is.na(targets[[i]]$seq)] <-
-                "NA"
+            targets[[i]]$seq[is.na(targets[[i]]$seq)] <- "NA"
 
             # Adjust sequences
             if (names(targets)[1] == "circ") {
                 # We adjust the length of circ seqs  based on the length of
                 # the motifs and remove the first 30 nucleotides since
-                # they are analyzed at the end with together with
+                # they are analyzed at the end together with
                 # the BSJs (see getCircSeq() function)
                 ss <- base::substring(targets[[i]]$seq, 30,
                     ((targets[[i]]$length + 30) + (width - 1)))
@@ -221,8 +219,7 @@ computeMotifs <-
                     (base::nchar(targets[[i]]$seq) / 2) - (width - 2)
                 r2 <-
                     (base::nchar(targets[[i]]$seq) / 2) + (width - 1)
-                rnaSS <-
-                    Biostrings::RNAStringSet(base::substring(targets[[i]]$seq, r1, r2))
+                rnaSS <- Biostrings::RNAStringSet(base::substring(targets[[i]]$seq, r1, r2))
 
             } else{
                 rnaSS <- Biostrings::RNAStringSet(targets[[i]]$seq)
@@ -286,116 +283,24 @@ getUserAttractMotifs <-
         pathToMotifs = NULL) {
         options(readr.num_columns = 0)
 
+        # Get motifs from attract data base
+        attractRBPmotifs <- getAttractRBPMotifs(species)
+        # Read motifs.txt
+        motifsFromFile <- readMotifs(pathToMotifs)
 
-        # Create a temporary directory
-        td = tempdir()
-        # Create the placeholder file
-        tf = tempfile(tmpdir = td, fileext = "ATtRACT.zip")
-        # download into the placeholder file
-        utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
-            tf)
-        db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
-
-        # Reformat how the species name is reported in ATtRACT database so
-        # that it can be compared with the species given in input.
-        # E.g Mus_musculus in ATtRACT db becomes Mmusculus. the last one is
-        # how it is reported in BSgenome.
-        el1 <-
-            substr(unlist(lapply(
-                base::strsplit(db$Organism, "_"), "[", 1
-            )), 1, 1)
-        el2 <-
-            tolower(unlist(lapply(
-                base::strsplit(db$Organism, "_"), "[", 2
-            )))
-        db$Organism <- paste0(el1, el2)
-
-        # if the organims given in input is not present in ATtRACT db
-        # then take the human motifs.
-
-        if (species %in% db$Organism) {
-            attractRBPmotifs <- db %>%
-                dplyr::filter(.data$Organism == species) %>%
-                dplyr::select(.data$Gene_name,
-                    .data$Motif) %>%
-                dplyr::rename(id = .data$Gene_name,
-                    motif = .data$Motif)
-        } else{
-            cat(
-                paste(
-                    "Organism not found in ATtRACT db, the human RBP
-                    motifs in the ATtRACT database will be used.",
-                    sep = " "
-                )
-            )
-            attractRBPmotifs <- db %>%
-                dplyr::filter(.data$Organism == "Hsapiens") %>%
-                dplyr::select(.data$Gene_name,
-                    .data$Motif) %>%
-                dplyr::rename(id = .data$Gene_name,
-                    motif = .data$Motif)
-        }
-
-        if (is.null(pathToMotifs)) {
-            pathToMotifs <- "motifs.txt"
-        }
-
-        if (file.exists(pathToMotifs)) {
-            # Read file containing user given patterns
-            motifsFromFile <-
-                utils::read.table(
-                    pathToMotifs,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
-            # colnames(motifsFromFile) <-
-            #     c("id", "motif", "length")
-
-        } else{
-            motifsFromFile <- data.frame(matrix(nrow = 0, ncol = 3))
-            colnames(motifsFromFile) <- c("id", "motif", "length")
-        }
-
-        if (nrow(motifsFromFile) == 0) {
-            cat("motifs.txt is empty or absent. Only
-                ATtRACT motifs will be analyzed")
-        }
-
-        # If the file is empty then only the ATtRACT motifs are analyzed
-        if (nrow(motifsFromFile) > 0 & reverse) {
-            # reverse motifs given in input
-            reversedMotifsFromFile <- motifsFromFile
-
-            for (m in seq_along(reversedMotifsFromFile$motif)) {
-                reversedMotifsFromFile$motif[m] <-
-                    reversedMotifsFromFile$motif[m] %>%
-                    gsub("\\[", "Z", .) %>%
-                    gsub("]", "X", .) %>%
-                    IRanges::reverse() %>%
-                    gsub("X", "\\[", .) %>%
-                    gsub("Z", "]", .)
+        # we reverse the motifs so that they can be analyzed also
+        # in the other orientation
+        if (reverse) {
+            # If the file is empty then only the ATtRACT motifs are analyzed
+            if (nrow(motifsFromFile) > 0) {
+                # reverse motifs given in input
+                newMotifsFromFile <-
+                    getReverseMotifsFromFile(motifsFromFile)
             }
-
-            newMotifsFromFile <-
-                dplyr::bind_rows(motifsFromFile, reversedMotifsFromFile)
-
+            newAttractRBPmotifs <-
+                getReverseAttractRBPmotifs(attractRBPmotifs)
         } else{
             newMotifsFromFile <- motifsFromFile
-        }
-
-        if (reverse) {
-            # we revere the motifs so that they can be analyzed also
-            # in the other orientation
-            reverseAttractRBPmotifs <- attractRBPmotifs
-            reverseAttractRBPmotifs$motif <-
-                IRanges::reverse(reverseAttractRBPmotifs$motif)
-
-            newAttractRBPmotifs <-
-                dplyr::bind_rows(attractRBPmotifs, reverseAttractRBPmotifs)
-            newAttractRBPmotifs <-
-                newAttractRBPmotifs[!duplicated(newAttractRBPmotifs), ]
-        } else{
             newAttractRBPmotifs <- attractRBPmotifs
         }
 
@@ -403,7 +308,7 @@ getUserAttractMotifs <-
             dplyr::bind_rows(newMotifsFromFile[, c(1, 2)], newAttractRBPmotifs)
 
         return(userAttractMotifs)
-        }
+    }
 
 
 # The function filterMotifs() finds motifs that match with motifs
@@ -417,55 +322,15 @@ filterMotifs <-
         reverse = FALSE,
         pathToMotifs = NULL) {
         # Identify motifs matching with RBPs
-        filteredMotifs <-
-            data.frame(matrix(nrow = length(computedMotifs),
-                ncol = 2))
-        colnames(filteredMotifs) <-  c("motif", "id")
-        filteredMotifs$motif <- computedMotifs
-
-        widthCompMotifs <- nchar(computedMotifs[1])
+        filteredMotifs <- createFilteredMotifsDF(computedMotifs)
 
         # Get user and ATtRACT RBP motifs
         userATtRACTmotifs <-
-            getUserAttractMotifs(species,  reverse, pathToMotifs)
+            getUserAttractMotifs(species, reverse, pathToMotifs)
 
-        . <- NULL # For R CMD check
-        for (j in seq_along(filteredMotifs$motif)) {
-            # Check whether the motifs matches with or it is contanined within
-            # any RBP motifs
-
-            # Grep do not work with pattern. In motifs.txt the user can reports
-            # patterns.
-            # By using grep there is a hit if there is a perfect match between
-            # 2 strings or the first string it is contained as substring within
-            # the second
-            grepedM <-
-                userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif),] %>%
-                dplyr::mutate(motif = as.character(.data$motif),
-                    id = as.character(.data$id))
-
-            # str_extract works with pattern. In motifs.txt the user can reports
-            # patterns.
-            extractedM <-
-                base::cbind(
-                    stringr::str_extract(filteredMotifs$motif[j], userATtRACTmotifs$motif),
-                    userATtRACTmotifs$id
-                ) %>%
-                magrittr::set_colnames(c("motif", "id")) %>%
-                as.data.frame() %>%
-                dplyr::select(.data$id, .data$motif) %>%
-                dplyr::filter(!is.na(.data$motif)) %>%
-                dplyr::mutate(motif = as.character(.data$motif),
-                    id = as.character(.data$id)) %>%
-                dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
-
-            joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
-                dplyr::filter(!duplicated(.))
-
-            if (nrow(joinedM) > 0) {
-                filteredMotifs$id[j] <- paste(unique(joinedM$id), collapse = ",")
-            }
-        }
+         # Check whether the motifs matches with or it is contanined within
+        # any RBP motifs
+        filteredMotifs <- matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
 
         # Filter
         if (rbp) {
@@ -482,6 +347,57 @@ filterMotifs <-
         return(filteredMotifs)
     }
 
+# Create filteredMotifs data frame
+createFilteredMotifsDF <- function(computedMotifs){
+    filteredMotifs <-
+        data.frame(matrix(nrow = length(computedMotifs),
+            ncol = 2))
+    colnames(filteredMotifs) <-  c("motif", "id")
+    filteredMotifs$motif <- computedMotifs
+
+    return(filteredMotifs)
+
+}
+
+# Check whether the motifs matches with or it is contanined within
+# any RBP motifs
+matchWithKnowRBPs <- function(filteredMotifs, userATtRACTmotifs, computedMotifs){
+    widthCompMotifs <- nchar(computedMotifs[1])
+    for (j in seq_along(filteredMotifs$motif)) {
+        # Grep do not work with pattern. In motifs.txt the user can reports
+        # patterns.
+        # By using grep there is a hit if there is a perfect match between
+        # 2 strings or the first string it is contained as substring within
+        # the second
+        grepedM <-
+            userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif),] %>%
+            dplyr::mutate(motif = as.character(.data$motif),
+                id = as.character(.data$id))
+
+        # str_extract works with pattern. In motifs.txt the user can reports
+        # patterns.
+        extractedM <-
+            base::cbind(
+                stringr::str_extract(filteredMotifs$motif[j], userATtRACTmotifs$motif),
+                userATtRACTmotifs$id
+            ) %>%
+            magrittr::set_colnames(c("motif", "id")) %>%
+            as.data.frame() %>%
+            dplyr::select(.data$id, .data$motif) %>%
+            dplyr::filter(!is.na(.data$motif)) %>%
+            dplyr::mutate(motif = as.character(.data$motif),
+                id = as.character(.data$id)) %>%
+            dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
+
+        joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
+            dplyr::filter(!duplicated(.))
+
+        if (nrow(joinedM) > 0) {
+            filteredMotifs$id[j] <- paste(unique(joinedM$id), collapse = ",")
+        }
+    }
+    return(filteredMotifs)
+}
 
 
 # Create list to store motif results
@@ -614,58 +530,19 @@ mergeMotifs <- function(motifs) {
         mergedMotifs <- list()
         for (i in seq_along(motifs)) {
             # Reshape the data frame
-            mergedMotifs[[i]] <- motifs[[i]]$counts %>%
-                reshape2::melt(
-                    id.vars = c("id"),
-                    variable.name = "motif",
-                    value.name = "count"
-                ) %>%
-                # dplyr::mutate_all(funs(replace(., is.na(.), 0)))%>%
-                dplyr::group_by(.data$motif) %>%
-                dplyr::summarise(count = sum(.data$count, na.rm = TRUE)) %>%
-                dplyr::mutate(motif = as.character(.data$motif))
-
+            counts <- motifs[[i]]$counts
+            mergedMotifs[[i]] <- reshapeCounts(counts)
         }
+
+        # For the up and the down sequences motifs[[1]]$motifs and
+        # motifs[[2]]$motifs are the same, so we use the motifs reported
+        # in motifs[[1]]$motif.
+        motifsToSplit <- motifs[[1]]$motifs
 
         # Check whether a same motif is shared by multiple RBPs.
         # If so retrive and duplicate those motifs by reporting one
         # RBP name.
-
-        # In case the up and the down sequences have been analyzed the
-        # motifs[[1]]$motif and motifs[[2]]$motif are the same,
-        # so we use the motifs reported in motifs[[1]]$motif.
-        toSplit <-
-            motifs[[1]]$motifs[base::grep(",", motifs[[1]]$motif$id),]
-
-        if (nrow(toSplit) >= 1) {
-            # Remove motifs shared by multiple RBPs
-            cleanedMotifs <-
-                motifs[[1]]$motif[-base::grep(",", motifs[[1]]$motif$id),]
-
-            # Ducplicate motifs
-            rbpsWithSharedMotifs <-
-                as.data.frame(matrix(nrow = 0, ncol = 2))
-            colnames(rbpsWithSharedMotifs) <- c("id", "motif")
-            for (j in seq_along(toSplit$motif)) {
-                id <- base::strsplit(toSplit$id[j], ",")[[1]]
-                for (b in seq_along(id)) {
-                    rbpsWithSharedMotifs <- dplyr::bind_rows(
-                        rbpsWithSharedMotifs,
-                        as.data.frame(cbind(id[b], toSplit$motif[j])) %>%
-                            magrittr::set_colnames(c("id", "motif")) %>%
-                            dplyr::mutate(
-                                id = as.character(.data$id),
-                                motif = as.character(.data$motif)
-                            )
-                    )
-                }
-            }
-
-            splittedRBPs <-
-                dplyr::bind_rows(rbpsWithSharedMotifs, cleanedMotifs)
-        } else{
-            splittedRBPs <- motifs[[1]]$motif
-        }
+        splittedRBPs <- splitRBPs(motifsToSplit)
 
         if (length(mergedMotifs) == 2) {
             mergedMotifsAll <-
@@ -707,3 +584,195 @@ mergeMotifs <- function(motifs) {
     }
     return(mergedMotifsAll)
 }
+
+
+# Reshape the data frame
+reshapeCounts <- function(counts) {
+    reshapedCounts <- counts %>%
+        reshape2::melt(
+            id.vars = c("id"),
+            variable.name = "motif",
+            value.name = "count"
+        ) %>%
+        # dplyr::mutate_all(funs(replace(., is.na(.), 0)))%>%
+        dplyr::group_by(.data$motif) %>%
+        dplyr::summarise(count = sum(.data$count, na.rm = TRUE)) %>%
+        dplyr::mutate(motif = as.character(.data$motif))
+    return(reshapedCounts)
+}
+
+# Check whether a same motif is shared by multiple RBPs.
+# If so retrive and duplicate those motifs by reporting one
+# RBP name.
+# For the up and the down sequences motifs[[1]]$motifs and
+# motifs[[2]]$motifs are the same, so we use the motifs reported
+# in motifs[[1]]$motif.
+splitRBPs <- function(motifsToSplit) {
+    toSplit <-
+        motifsToSplit[base::grep(",", motifsToSplit$id),]
+
+    if (nrow(toSplit) >= 1) {
+        # Remove motifs shared by multiple RBPs
+        cleanedMotifs <-
+            motifsToSplit[-base::grep(",", motifsToSplit$id),]
+
+        # Ducplicate motifs
+        rbpsWithSharedMotifs <-
+            as.data.frame(matrix(nrow = 0, ncol = 2))
+        colnames(rbpsWithSharedMotifs) <- c("id", "motif")
+        for (j in seq_along(toSplit$motif)) {
+            id <- base::strsplit(toSplit$id[j], ",")[[1]]
+            for (b in seq_along(id)) {
+                rbpsWithSharedMotifs <- dplyr::bind_rows(
+                    rbpsWithSharedMotifs,
+                    as.data.frame(cbind(id[b], toSplit$motif[j])) %>%
+                        magrittr::set_colnames(c("id", "motif")) %>%
+                        dplyr::mutate(
+                            id = as.character(.data$id),
+                            motif = as.character(.data$motif)
+                        )
+                )
+            }
+        }
+
+        splittedRBPs <-
+            dplyr::bind_rows(rbpsWithSharedMotifs, cleanedMotifs)
+    } else{
+        splittedRBPs <- motifsToSplit
+
+    }
+
+    return(splittedRBPs)
+}
+
+
+
+
+
+# Get RBP motifs from attract data base
+getAttractRBPMotifs <- function(species) {
+    # Create a temporary directory
+    td = tempdir()
+    # Create the placeholder file
+    tf = tempfile(tmpdir = td, fileext = "ATtRACT.zip")
+    # download into the placeholder file
+    utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
+        tf)
+    db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
+
+    # Reformat how the species name is reported in ATtRACT database so
+    # that it can be compared with the species given in input.
+    # E.g Mus_musculus in ATtRACT db becomes Mmusculus. the last one is
+    # how it is reported in BSgenome.
+    el1 <-
+        substr(unlist(lapply(
+            base::strsplit(db$Organism, "_"), "[", 1
+        )), 1, 1)
+    el2 <-
+        tolower(unlist(lapply(
+            base::strsplit(db$Organism, "_"), "[", 2
+        )))
+    db$Organism <- paste0(el1, el2)
+
+    # if the organims given in input is not present in ATtRACT db
+    # then take the human motifs.
+
+    if (species %in% db$Organism) {
+        attractRBPmotifs <- db %>%
+            dplyr::filter(.data$Organism == species) %>%
+            dplyr::select(.data$Gene_name,
+                .data$Motif) %>%
+            dplyr::rename(id = .data$Gene_name,
+                motif = .data$Motif)
+    } else{
+        cat(
+            paste(
+                "Organism not found in ATtRACT db, the human RBP
+                motifs in the ATtRACT database will be used.",
+                sep = " "
+            )
+        )
+        attractRBPmotifs <- db %>%
+            dplyr::filter(.data$Organism == "Hsapiens") %>%
+            dplyr::select(.data$Gene_name,
+                .data$Motif) %>%
+            dplyr::rename(id = .data$Gene_name,
+                motif = .data$Motif)
+    }
+    return(attractRBPmotifs)
+}
+
+
+
+# get motifs.txt
+readMotifs <- function(pathToMotifs = NULL) {
+    if (is.null(pathToMotifs)) {
+        pathToMotifs <- "motifs.txt"
+    }
+
+    if (file.exists(pathToMotifs)) {
+        # Read file containing user given patterns
+        motifsFromFile <-
+            utils::read.table(
+                pathToMotifs,
+                stringsAsFactors = FALSE,
+                header = TRUE,
+                sep = "\t"
+            )
+        # colnames(motifsFromFile) <-
+        #     c("id", "motif", "length")
+
+    } else{
+        motifsFromFile <- data.frame(matrix(nrow = 0, ncol = 3))
+        colnames(motifsFromFile) <- c("id", "motif", "length")
+    }
+
+    if (nrow(motifsFromFile) == 0) {
+        cat("motifs.txt is empty or absent. Only
+            ATtRACT motifs will be analyzed")
+    }
+
+    return(motifsFromFile)
+}
+
+
+
+# get reverse motifs from file
+getReverseMotifsFromFile <- function(motifsFromFile) {
+    # reverse motifs given in input
+    reversedMotifsFromFile <- motifsFromFile
+
+    for (m in seq_along(reversedMotifsFromFile$motif)) {
+        reversedMotifsFromFile$motif[m] <-
+            reversedMotifsFromFile$motif[m] %>%
+            gsub("\\[", "Z", .) %>%
+            gsub("]", "X", .) %>%
+            IRanges::reverse() %>%
+            gsub("X", "\\[", .) %>%
+            gsub("Z", "]", .)
+    }
+
+    newMotifsFromFile <-
+        dplyr::bind_rows(motifsFromFile, reversedMotifsFromFile)
+
+    return(newMotifsFromFile)
+}
+
+
+# Reverse motifs from attract data base
+getReverseAttractRBPmotifs <- function(attractRBPmotifs) {
+    reverseAttractRBPmotifs <- attractRBPmotifs
+    reverseAttractRBPmotifs$motif <-
+        IRanges::reverse(reverseAttractRBPmotifs$motif)
+
+    newAttractRBPmotifs <-
+        dplyr::bind_rows(attractRBPmotifs, reverseAttractRBPmotifs)
+    newAttractRBPmotifs <-
+        newAttractRBPmotifs[!duplicated(newAttractRBPmotifs), ]
+
+    return(newAttractRBPmotifs)
+}
+
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.

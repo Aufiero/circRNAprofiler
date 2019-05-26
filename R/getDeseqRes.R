@@ -76,20 +76,9 @@ getDeseqRes <-
         pAdjustMethod = "BH",
         pathToExperiment = NULL,
         ...) {
-        if (is.null(pathToExperiment)) {
-            pathToExperiment <- "experiment.txt"
-        }
-
-        if (file.exists(pathToExperiment)) {
-            # Read from path given in input
-            experiment <-
-                utils::read.table(
-                    pathToExperiment,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
-
+        # Read experiment.txt
+        experiment <- readExperiment(pathToExperiment)
+        if (nrow(experiment) > 0) {
             cond <- strsplit(condition, "-")[[1]]
             experiment <-
                 experiment[experiment$condition %in% cond,]
@@ -105,37 +94,47 @@ getDeseqRes <-
                     design = ~ condition
                 )
 
-
             # Differential expression analysis - standard analysis
             dds <- DESeq(dds, ...)
             statistics <-
                 results(dds, pAdjustMethod = pAdjustMethod)
 
-            deseqRes <-
-                dplyr::bind_cols(
-                    data.frame(
-                        backSplicedJunctions$id,
-                        backSplicedJunctions$gene,
-                        statistics,
-                        counts(dds, norm = TRUE)
-                    )
-                ) %>%
-                dplyr::select(-c(.data$baseMean, .data$lfcSE, .data$stat)) %>%
-                dplyr::rename(
-                    log2FC = .data$log2FoldChange,
-                    gene = .data$backSplicedJunctions.gene,
-                    id = .data$backSplicedJunctions.id
-                ) %>%
-                dplyr::mutate(id = as.character(.data$id),
-                    gene = as.character(.data$gene))
-
-
+            # Get deseqRes data frame
+            deseqRes <- getDeseqResDF(backSplicedJunctions,
+                statistics,
+                dds)
         } else{
             deseqRes <- data.frame()
             cat("experiment.txt not found. Differential expression analysis can
                 not be run.")
         }
-
         return(deseqRes)
+    }
 
-        }
+
+# get deseqRes data frame
+getDeseqResDF <-
+    function(backSplicedJunctions,
+        statistics, dds) {
+        deseqRes <-
+            dplyr::bind_cols(
+                data.frame(
+                    backSplicedJunctions$id,
+                    backSplicedJunctions$gene,
+                    statistics,
+                    counts(dds, norm = TRUE)
+                )
+            ) %>%
+            dplyr::select(-c(.data$baseMean, .data$lfcSE, .data$stat)) %>%
+            dplyr::rename(
+                log2FC = .data$log2FoldChange,
+                gene = .data$backSplicedJunctions.gene,
+                id = .data$backSplicedJunctions.id
+            ) %>%
+            dplyr::mutate(id = as.character(.data$id),
+                gene = as.character(.data$gene))
+        return(deseqRes)
+    }
+
+# If the function you are looking for is not here check supportFunction.R
+# Functions in supportFunction.R are used by multiple functions.
