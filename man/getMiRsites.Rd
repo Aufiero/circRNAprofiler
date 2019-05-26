@@ -87,6 +87,6 @@ pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #    miRBaseLatestRelease = TRUE,
 #    totalMatches = 6,
 #    maxNonCanonicalMatches = 1,
-#    pathToMiRs)
+#    pathToMiRs )
 
 }

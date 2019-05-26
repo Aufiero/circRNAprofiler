@@ -35,6 +35,5 @@ pathToFile <- system.file("extdata", "circmarker/circRNAs_001.txt",
 # returned output.
 importCircMarker(pathToFile, gtf)
 
-
 }
 \keyword{internal}

@@ -28,6 +28,5 @@ pathToFile <- system.file("extdata", "nclscan/circRNAs_001.txt",
 # Import circRNAs
 importNCLscan(pathToFile)
 
-
 }
 \keyword{internal}

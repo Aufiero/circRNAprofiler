@@ -4,14 +4,11 @@
 \alias{importMapSplice}
 \title{Import circRNAs detected by MapSplice2}
 \usage{
-importMapSplice(pathToFile, gtf)
+importMapSplice(pathToFile)
 }
 \arguments{
 \item{pathToFile}{A character string specifying the path to the file
 containing the detected circRNAs.}
-
-\item{gtf}{A data frame containing the formatted GTF file. This is generated
-with \code{\link{formatGTF}}.}
 }
 \value{
 A data frame.
@@ -22,17 +19,13 @@ and adapt the MapSplice2-v2.2.0 output file (circularRNAs.txt).
 See \url{https://github.com/davidroberson/MapSplice2} for more details.
 }
 \examples{
-# Load short version of the gencode v19 annotation file
-data("gtf")
-
 # Path to an example file containing circRNA detected by MapSplice2
 pathToFile <- system.file("extdata", "mapsplice/circRNAs_001.txt",
     package="circRNAprofiler")
 
 # Inner function.
 # Import circRNAs.
-importMapSplice(pathToFile, gtf)
-
+importMapSplice(pathToFile)
 
 }
 \keyword{internal}

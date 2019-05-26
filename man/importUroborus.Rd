@@ -27,6 +27,5 @@ pathToFile <- system.file("extdata", "uroborus/circRNAs_001.txt",
 # Import circRNAs.
 importUroborus(pathToFile)
 
-
 }
 \keyword{internal}
