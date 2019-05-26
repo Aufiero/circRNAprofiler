@@ -53,3 +53,5 @@ test_that("filterCirc() filters the data frame containing circRNA counts", {
 
 
           })
+
+

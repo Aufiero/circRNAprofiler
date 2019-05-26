@@ -22,7 +22,7 @@ test_that("liftBSJCoords() generates the right data structure", {
     expect_equal(ncol(liftedBSJs), length(basicColumns) + 1)
 
     # we know that our test input data has in total 12 unique identifier
-    exptectedrows <- 11
+    exptectedrows <- 10
     expect_equal(nrow(liftedBSJs), exptectedrows)
 
 })
@@ -39,8 +39,8 @@ test_that("liftBSJCoords() generates a data frame with the right content", {
             map = "mm10ToHg38",
             annotationHubID = "AH14528")
 
-    expect_equal(liftedBSJs$chrom[11], "chr14")
-    expect_equal(liftedBSJs$startUpBSE[11], 32090502)
-    expect_equal(liftedBSJs$endDownBSE[11], 32117287)
+    expect_equal(liftedBSJs$chrom[10], "chr14")
+    expect_equal(liftedBSJs$startUpBSE[10], 32090502)
+    expect_equal(liftedBSJs$endDownBSE[10], 32117287)
 
 })

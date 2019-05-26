@@ -16,7 +16,7 @@ test_that("importMapSplice() generate the correct data structure with
     pathToFile <-
         paste("mapsplice", experiment$fileName[1], sep = "/")
 
-    adaptedPatientBSJunctions <- importMapSplice(pathToFile, gtf)
+    adaptedPatientBSJunctions <- importMapSplice(pathToFile)
 
     expect_is(adaptedPatientBSJunctions, "data.frame")
 

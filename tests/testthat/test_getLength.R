@@ -19,8 +19,8 @@ test_that("getLength() generates the correct data structure", {
     # Retrive the genomic features
     annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
 
-    exInLength <- getLength(annotatedBSJs)
-    expect_is(exInLength, "data.frame")
+    lenBSEfi <- getLengthBSEfi(annotatedBSJs)
+    expect_is(lenBSEfi, "data.frame")
 
     colNames <- c(
         "id",
@@ -31,8 +31,8 @@ test_that("getLength() generates the correct data structure", {
         "meanLengthBSEs",
         "meanLengthIntrons"
     )
-    expect_equal(colnames(exInLength), colNames)
-    expect_equal(nrow(exInLength), nrow(annotatedBSJs))
+    expect_equal(colnames(lenBSEfi), colNames)
+    expect_equal(nrow(lenBSEfi), nrow(annotatedBSJs))
 
 
 })
