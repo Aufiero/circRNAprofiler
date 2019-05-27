@@ -51,8 +51,10 @@ annotateBSJs <- function(backSplicedJunctions,
     isRandom = FALSE,
     pathToTranscripts = NULL) {
     # Read trancripts.txt
-    transcriptsFromFile <-
-        readTranscripts(pathToTranscripts, isRandom)
+    transcriptsFromFile <- readTranscripts(pathToTranscripts)
+    if (nrow(transcriptsFromFile) == 0 & !isRandom) {
+        cat("transcripts.txt is empty or absent. The longest
+                transcripts for all circRNAs will be analyzed") }
     # Check the validity and the content
     backSplicedJunctions <- checkBSJsDF(backSplicedJunctions)
     # Create an empty data frame to store the extracted information
@@ -426,39 +428,6 @@ getLengthBSEfi <- function(annotatedBSJs) {
 
 }
 
-
-# Read pathToTranscript.txt
-readTranscripts <-
-    function(pathToTranscripts = NULL,
-        isRandom = FALSE) {
-        if (is.null(pathToTranscripts)) {
-            pathToTranscripts <- "transcripts.txt"
-        }
-
-        # Read from working directory
-        if (file.exists(pathToTranscripts) & !isRandom) {
-            transcriptsFromFile <-
-                utils::read.table(
-                    pathToTranscripts,
-                    stringsAsFactors = FALSE,
-                    header = TRUE,
-                    sep = "\t"
-                )
-            # colnames(transcriptsFromFile) <- "id"
-
-        } else {
-            transcriptsFromFile <- data.frame()
-        }
-
-        if (nrow(transcriptsFromFile) == 0 & !isRandom) {
-            cat(
-                "transcripts.txt is empty or absent. The longest
-                transcripts for all circRNAs will be analyzed"
-            )
-        }
-
-        return(transcriptsFromFile)
-        }
 
 
 # Create annotatedBSJs data frame

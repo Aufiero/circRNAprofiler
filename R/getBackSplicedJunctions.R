@@ -12,9 +12,12 @@
 #' @param pathToExperiment A string containing the path to the experiment.txt
 #' file. The file experiment.txt contains the experiment design information.
 #' It must have at least 3 columns with headers:
+#'
 #' - label (1st column): unique names of the samples (short but informative).
+#'
 #' - fileName (2nd column): name of the input files - e.g. circRNAs_X.txt, where
 #' x can be can be 001, 002 etc.
+#'
 #' - group (3rd column): biological conditions - e.g. A or B; healthy or
 #' diseased if you have only 2 conditions.
 #'
@@ -50,28 +53,22 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
         fileNames <- list.files()
         # Retrieve the code for each circRNA prediction tool
         detectionTools <- getDetectionTools()
-
-        # Keep only the circRNA prediction tools that have been used for
-        # circRNA detection
+        # Keep tools that have been used for circRNA detection
         detectionToolsUsed <- detectionTools %>%
             dplyr::filter(.data$name %in% fileNames)
-
         if (nrow(detectionToolsUsed) > 0) {
             # Create backSplicedJunctions data frame
             backSplicedJunctions <-
                 createBackSplicedJunctionsDF(addColNames = "tool")
             for (j in seq_along(detectionToolsUsed$name)) {
-                # Create en empty data frame to be filled the circRNA prediction of
-                # each tool at a time.
-                backSplicedJunctionsTool <-
-                    createBackSplicedJunctionsDF()
+                # data frame to store circRNA prediction
+                backSplicedJunctionsTool <- createBackSplicedJunctionsDF()
 
                 for (i in seq_along(experiment$fileName)) {
                     # Read the file contaning the prediction one at the time
-                    pathToFile <-
-                        paste(detectionToolsUsed$name[j],
-                            experiment$fileName[i],
-                            sep = "/")
+                    pathToFile <- paste(detectionToolsUsed$name[j],
+                        experiment$fileName[i],
+                        sep = "/")
 
                     nameTool <- detectionToolsUsed$name[j]
                     # A specific import function is called
@@ -83,15 +80,11 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                         checkBSJsDF(adaptedPatientBSJunctions, addColNames = "coverage")
 
                     patientBSJunctions <- adaptedPatientBSJunctions
-                    indexCoverage <-
-                        which(colnames(patientBSJunctions) == "coverage")
-                    colnames(patientBSJunctions)[indexCoverage] <-
-                        experiment$label[i]
+                    indexCoverage <- which(colnames(patientBSJunctions) == "coverage")
+                    colnames(patientBSJunctions)[indexCoverage] <- experiment$label[i]
 
-                    # Add a new row if a new circRNA is found and the corresponding
-                    # columns with all circRNA coverages
-                    # Get basic colum names
-                    basicColumns <- getBasicColNames()
+                    # Merge circRNAs
+                   basicColumns <- getBasicColNames()
                     backSplicedJunctionsTool <- base::merge(
                         backSplicedJunctionsTool,
                         patientBSJunctions,
@@ -100,36 +93,31 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                         sort = FALSE
                     )
                 }
-                tool <-
-                    rep(detectionToolsUsed$code[j],
+                tool <- rep(detectionToolsUsed$code[j],
                         nrow(backSplicedJunctionsTool))
                 # Repalce NA values with 0 (zero)
-                backSplicedJunctionsTool <-
-                    backSplicedJunctionsTool %>%
+                backSplicedJunctionsTool <- backSplicedJunctionsTool %>%
                     dplyr::mutate_at(experiment$label, ~ replace(., is.na(.), 0)) %>%
                     dplyr::mutate(tool = tool)
 
                 # rbind the data frame containing circRNA prediction
-                backSplicedJunctions <-
-                    dplyr::bind_rows(backSplicedJunctions,
+                backSplicedJunctions <- dplyr::bind_rows(backSplicedJunctions,
                         backSplicedJunctionsTool)
             }
-
             # Round
             backSplicedJunctions[, experiment$label] <-
                 round(backSplicedJunctions[, experiment$label], 0)
         } else{
             backSplicedJunctions <- data.frame()
-            cat(
-                "Missing folders with circRNA_X.txt files. Check working directory
+            cat( "Missing folders with circRNA_X.txt files. Check working directory
                 or type getDetectionTools() to see the name of the circRNA
                 detection tools."
             )
         }
-        } else{
-            backSplicedJunctions <- data.frame()
-            cat("experiment.txt not found or empty. The analysis can not start.")
-        }
+    } else{
+        backSplicedJunctions <- data.frame()
+        cat("experiment.txt not found or empty. The analysis can not start.")
+    }
     return(backSplicedJunctions)
 }
 
@@ -178,6 +166,8 @@ getDetectionTools <- function() {
 }
 
 
+
+
 #' @title Group circRNAs identified by multiple prediction tools
 #'
 #' @description The function mergeBSJunctions() shrinks the data frame by
@@ -208,9 +198,9 @@ getDetectionTools <- function() {
 #' the working directory. If experiment.txt is located in a different directory
 #' then the path needs to be specified.
 #'
-#' @param antisense A logical specifying whether to export the identified antisense
-#' circRNAs in a file named antisenseCircRNAs.txt. Default value is FALSE.
-#' A circRNA is defined antisense if the strand reported in the prediction
+#' @param exportAntisense A logical specifying whether to export the identified
+#' antisense circRNAs in a file named antisenseCircRNAs.txt. Default value is
+#' FALSE. A circRNA is defined antisense if the strand reported in the prediction
 #' results is different from the strand reported in the genome annotation file.
 #' The antisense circRNAs are removed from the returned data frame.
 #'
@@ -244,7 +234,6 @@ mergeBSJunctions <-
         # Read experiment.txt
         experiment <- readExperiment(pathToExperiment)
         if (nrow(experiment) > 0) {
-            detectionTools <- getDetectionTools()
             # Find and merge commonly identified back-spliced junctions
             mergedBSJunctions <- backSplicedJunctions %>%
                 dplyr::mutate(mean = rowMeans(.[, experiment$label])) %>%

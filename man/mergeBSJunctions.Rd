@@ -27,9 +27,9 @@ By default pathToExperiment i set to NULL and the file it is searched in
 the working directory. If experiment.txt is located in a different directory
 then the path needs to be specified.}
 
-\item{antisense}{A logical specifying whether to export the identified antisense
-circRNAs in a file named antisenseCircRNAs.txt. Default value is FALSE.
-A circRNA is defined antisense if the strand reported in the prediction
+\item{exportAntisense}{A logical specifying whether to export the identified
+antisense circRNAs in a file named antisenseCircRNAs.txt. Default value is
+FALSE. A circRNA is defined antisense if the strand reported in the prediction
 results is different from the strand reported in the genome annotation file.
 The antisense circRNAs are removed from the returned data frame.}
 }

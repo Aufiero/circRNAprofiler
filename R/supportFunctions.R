@@ -193,6 +193,92 @@ readExperiment <- function(pathToExperiment = NULL) {
     return(experiment)
 }
 
+# Read traits.txt
+readTraits <- function(pathToTraits = NULL) {
+    if (is.null(pathToTraits)) {
+        pathToTraits <- "traits.txt"
+    }
+
+    if (file.exists(pathToTraits)) {
+        traitsFromFile <-
+            utils::read.table(
+                pathToTraits,
+                stringsAsFactors = FALSE,
+                header = TRUE,
+                sep = "\t"
+            )
+    } else{
+        traitsFromFile <- data.frame()
+    }
+
+    return(traitsFromFile)
+}
+
+# get motifs.txt
+readMotifs <- function(pathToMotifs = NULL) {
+    if (is.null(pathToMotifs)) {
+        pathToMotifs <- "motifs.txt"
+    }
+    if (file.exists(pathToMotifs)) {
+        # Read file containing user given patterns
+        motifsFromFile <-
+            utils::read.table(
+                pathToMotifs,
+                stringsAsFactors = FALSE,
+                header = TRUE,
+                sep = "\t"
+            )
+
+    } else{
+        motifsFromFile <- data.frame(matrix(nrow = 0, ncol = 3))
+        colnames(motifsFromFile) <- c("id", "motif", "length")
+    }
+
+    return(motifsFromFile)
+}
+
+# Read pathToTranscript.txt
+readTranscripts <-
+    function(pathToTranscripts = NULL, isRandom = FALSE) {
+        if (is.null(pathToTranscripts)) {
+            pathToTranscripts <- "transcripts.txt"
+        }
+
+        # Read from working directory
+        if (file.exists(pathToTranscripts) & !isRandom) {
+            transcriptsFromFile <-
+                utils::read.table(
+                    pathToTranscripts,
+                    stringsAsFactors = FALSE,
+                    header = TRUE,
+                    sep = "\t"
+                )
+
+        } else {
+            transcriptsFromFile <- data.frame()
+        }
+        return(transcriptsFromFile)
+    }
+
+# Read miRs.txt
+readMiRs <- function(pathToMiRs = NULL){
+    if (is.null(pathToMiRs)) {
+        pathToMiRs <- "miRs.txt"
+    }
+
+    if (file.exists(pathToMiRs)) {
+        # Read the user given miR sequences
+        miRsFromFile <-
+            utils::read.table(pathToMiRs,
+                header = TRUE,
+                stringsAsFactors = FALSE)
+
+        # colnames(miRsFromFile)[1] <- "id"
+    } else{
+        miRsFromFile <- data.frame()
+    }
+    return(miRsFromFile)
+}
 
 # Clean targets dataframe by removing the rows with NA values to avoid
 # getting errors with the makeGRangesFromDataFrame function that does

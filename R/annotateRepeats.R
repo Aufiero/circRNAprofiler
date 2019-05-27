@@ -5,6 +5,7 @@
 #' Repetitive elements are provided by AnnotationHub storage which
 #' collected repeats from RepeatMasker database. See \code{\link{AnnotationHub}}
 #' and \url{http://www.repeatmasker.org} for more details.
+#' An empty list is returned if none overlapping repeats  are found.
 #'
 #' @param targets A list containing the target regions to analyze.
 #' It can be generated with \code{\link{getSeqsFromGRs}}.

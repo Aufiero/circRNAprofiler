@@ -79,9 +79,9 @@ targets <- getCircSeqs(
     genome)
 
 # Screen target sequence for miR binding sites.
-pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
+pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 
-#miRsites <- getMiRsites(
+# miRsites <- getMiRsites(
 #    targets,
 #    miRspeciesCode = "hsa",
 #    miRBaseLatestRelease = TRUE,

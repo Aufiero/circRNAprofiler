@@ -7,6 +7,7 @@
 #' The user can restric the analysis to specific traits/diseases. These must go
 #' in the file traits.txt. If this file is absent or empty, all traits in the
 #' GWAS catalog are considered in the analysis.
+#' An empty list is returned if none overlapping SNPs are found.
 #'
 #' @param targets A list containing the target regions to analyze.
 #' It can be generated with \code{\link{getSeqsFromGRs}}.
@@ -17,9 +18,9 @@
 #' hg19 coordinates.
 #'
 #' @param makeCurrent A logical specifying whether to download the
-#' current image of the GWAS catalog.  If FALSE is specified, the function
+#' current image of the GWAS catalog.  If TRUE is specified, the function
 #' \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
-#' package is used to get the more recent image. If TRUE is specified the
+#' package is used to get the more recent image. If FALSE is specified the
 #' image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.
 #'
 #' @param pathToTraits A string containing the path to the traits.txt
@@ -182,27 +183,6 @@ createSNPsGWASlist <- function(targets) {
 }
 
 
-# Read traits.txt
-readTraits <- function(pathToTraits = NULL) {
-    if (is.null(pathToTraits)) {
-        pathToTraits <- "traits.txt"
-    }
-
-    if (file.exists(pathToTraits)) {
-        traitsFromFile <-
-            utils::read.table(
-                pathToTraits,
-                stringsAsFactors = FALSE,
-                header = TRUE,
-                sep = "\t"
-            )
-        # colnames(traitsFromFile)[1] <- "id"
-    } else{
-        traitsFromFile <- data.frame()
-    }
-
-    return(traitsFromFile)
-}
 
 
 # get SNPsGWAS column names

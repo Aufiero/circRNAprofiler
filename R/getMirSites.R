@@ -68,9 +68,9 @@
 #'     genome)
 #'
 #' # Screen target sequence for miR binding sites.
-#' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
+#' pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 #'
-#' #miRsites <- getMiRsites(
+#' # miRsites <- getMiRsites(
 #' #    targets,
 #' #    miRspeciesCode = "hsa",
 #' #    miRBaseLatestRelease = TRUE,
@@ -78,6 +78,9 @@
 #' #    maxNonCanonicalMatches = 1,
 #' #    pathToMiRs )
 #'
+#' @importFrom IRanges reverse
+#' @importFrom readr read_tsv
+#' @importFrom utils read.table
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom seqinr swap
@@ -87,17 +90,14 @@
 getMiRsites <- function(targets, miRspeciesCode = "hsa",
     miRBaseLatestRelease = TRUE, totalMatches = 7,
     maxNonCanonicalMatches = 1, pathToMiRs = NULL) {
-    # Retrieve miR sequences from miRBase or read from a given file
-    # that must be named mature.fa
+    # Retrieve miR sequences from miRBase or from mature.fa file
     microRNAs <- getMiRseqs(miRBaseLatestRelease, miRspeciesCode, pathToMiRs)
 
     if (length(targets) == 1 & names(targets)[[1]] == "circ") {
         # Create list to store miR results
         miRsites <- createMiRsitesList(targets, microRNAs)
-
         # Scan the target sequences, by using a sliding windows of 1
         for (i in seq_along(miRsites$targets$id)) {
-            # Analysis starts at:
             analysisStart <- 30
             circSeq <- miRsites$targets$seq[i]
             circLen <- miRsites$targets$length[i]
@@ -109,10 +109,8 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
                 # Create createMiRsitesTempDF data frame
                 tempDF <- createMiRsitesTempDF()
                 k <- 1
-                # The length of the circRNAs seq is X nucleotides longer
-                # than predicted length.
-                while (indexTargetSeq <=
-                        (circLen + (analysisStart -  1))) {
+                # CircRNAs seq is X nucleotides longer than the predicted length.
+                while (indexTargetSeq <= (circLen + (analysisStart -  1))) {
                     # FIND MATCHES WITH THE SEED REGION
                     seedMatches <- getSeedMatches(circSeq,
                             indexTargetSeq,
@@ -145,15 +143,13 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
                             k <- k + 1
                         }
                     }
-                    # Sliding window - increase 1 nucleotide at a time
-                    indexTargetSeq <- indexTargetSeq + 1
+                    indexTargetSeq <- indexTargetSeq + 1 # increase of 1
                 }
                 # Keep the following info if at least 1 seed match is found
                 if (sum(tempDF$count) >= 1) {
                     mirId <- miRsites$microRNAs$id[j]
                     rowId <- i
-                    miRsites <-
-                        fillMiRsites(miRsites, rowId, mirId, tempDF)
+                    miRsites <- fillMiRsites(miRsites, rowId, mirId, tempDF)
                 }
             }
         }
@@ -164,54 +160,41 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
 }
 
 
-#' @title Retrive miRNA sequences
-#'
-#' @description The function getMiRseqs() retrieves miRNA sequences from
-#' miRbase data base
-#'
-#' @param miRspeciesCode A string specifying the species code (3 letters) as
-#' reported in miRBase. E.g. to analyze the mouse microRNAs specify "mmu",
-#' to analyze the human microRNAs specify "hsa". Type data(miRspeciesCode)
-#' to see the available codes and the corresponding species reported
-#' in miRBase 22 release. Default value is "hsa".
-#'
-#' @param miRBaseLatestRelease A logical specifying whether to download the
-#' latest release of the mature sequences of the microRNAs from miRBase
-#' (\url{http://www.mirbase.org/ftp.shtml}). If TRUE is specifed then the
-#' latest release is automatically downloaded. If FALSE is specified then a
-#' file named mature.fa containing fasta format sequences of all mature miRNA
-#' sequences previously downloaded by the user from mirBase must be present
-#' in the working directory. Default value is TRUE.
-#'
-#' @param pathToMiRs A string containing the path to the miRs.txt file.
-#' The file miRs.txt contains the microRNA ids from miRBase
-#' specified by the user. It must have one column with header id. The first row
-#' must contain the miR name starting with the ">", e.g >hsa-miR-1-3p. The
-#' sequences of the miRs will be automatically retrieved from the mirBase latest
-#' release or from the given mature.fa file, that should be present in the
-#' working directory. By default pathToMiRs is set to NULL and the file it is
-#' searched in the working directory. If miRs.txt is located in a different
-#' directory then the path needs to be specified. If this file is absent or
-#' empty, all miRs of the species are retrieved.
-#'
-#' @return A data frame.
-#'
-#' @keywords internal
-#'
-#' @examples
-#' # Inner function
-#' microRNAs <- getMiRseqs(miRBaseLatestRelease = TRUE,
-#'     miRspeciesCode = "hsa")
-#'
-#' @importFrom IRanges reverse
-#' @importFrom readr read_tsv
-#' @importFrom magrittr %>%
-#' @importFrom utils read.table
-#' @export
+# Retrive miRNA sequences
 getMiRseqs <- function(miRBaseLatestRelease = TRUE,
     miRspeciesCode = "hsa",
     pathToMiRs = NULL) {
     # 271 options are possible the argument miRspeciesCode
+    checkMiRspeciesCode(miRspeciesCode)
+
+    # Read experiment information
+    options(readr.num_columns = 0)
+    # Retrieve miR sequences from miRBase or read from a mature.fa file
+    miRBase <- getMiRsFromMiRBase(miRBaseLatestRelease)
+
+    # Get miRNAs ids to analyze
+    microRNAids <- getMiRids(miRBase, pathToMiRs, miRspeciesCode)
+    # Fill the microRNAids data frame in the miRsites list
+    microRNAs  <- data.frame(matrix(nrow = length(microRNAids), ncol = 4))
+    colnames(microRNAs) <-  c("id", "length", "seq", "seqRev")
+    for (i in seq_along(microRNAs$id)) {
+        indexMir <- which(miRBase == microRNAids[i])
+        microRNAs$id[i] <- microRNAids[i]
+        microRNAs$seq[i] <- miRBase[indexMir + 1]
+
+        # The direction of the sequences of the microRNAs downloaded
+        # from miRBase are from 5' to 3'. To be able to find matching
+        # regions within the target sequences also reported in direction
+        # 5' to 3', the reverse of the mir sequences must be used.
+        microRNAs$seqRev[i] <- IRanges::reverse(miRBase[indexMir + 1])
+        microRNAs$length[i] <-  nchar(microRNAs$seq[i])
+    }
+    return(microRNAs)
+}
+
+
+# Check miR species code
+checkMiRspeciesCode <- function(miRspeciesCode){
     miRspeciesCodes <- circRNAprofiler::miRspeciesCodes
     if (!miRspeciesCode %in% miRspeciesCodes$code) {
         stop(
@@ -219,11 +202,11 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
             the available codes and the corresponding species."
         )
     }
-    # Read experiment information
-    options(readr.num_columns = 0)
+}
 
-    # 2) Retrieve mir sequences from miRBase or read from a given file
-    # that must be named mature.fa
+#Retrieve mir sequences from miRBase or read from a  mature.fa file
+getMiRsFromMiRBase <- function(miRBaseLatestRelease = TRUE){
+
     if (miRBaseLatestRelease) {
         miRBase <-
             readr::read_tsv("ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz",
@@ -247,7 +230,6 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
 
     colnames(miRBase)[1] <- "seq"
 
-    # The first line shuld start with ">"
     firstChar <- base::substr(miRBase$seq[1], 1, 1)
     if (firstChar != ">") {
         stop(
@@ -256,30 +238,21 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
             second row must contain the miR sequence."
         )
     }
-    # Clean mir names from unwanted characters
+
     miRBaseCleaned <- gsub(" .*", "", miRBase$seq)
+    return(miRBaseCleaned)
+}
 
-    if (is.null(pathToMiRs)) {
-        pathToMiRs <- "miRs.txt"
-    }
 
-    if (file.exists(pathToMiRs)) {
-        # Read the user given miR sequences
-        miRsFromFile <-
-            utils::read.table(pathToMiRs,
-                header = TRUE,
-                stringsAsFactors = FALSE)
 
-        # colnames(miRsFromFile)[1] <- "id"
-    } else{
-        miRsFromFile <- data.frame()
-    }
-
+# Retrive miRNA to analyze
+getMiRids <- function(miRBase, pathToMiRs = NULL, miRspeciesCode){
+    # Read miRs.txt
+    miRsFromFile <- readMiRs(pathToMiRs)
     if (nrow(miRsFromFile) == 0) {
         cat("miRs.txt is empty or absent. All miRNAs of the
             specified species will be analyzed")
     }
-    # microRNAs used in the analysis
     if (nrow(miRsFromFile) > 0) {
         # The first line should start with ">"
         firstChar <- base::substr(miRsFromFile$id[1], 1, 1)
@@ -287,46 +260,17 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
             stop("The microRNA ids in miRs.txt must start with " > ".
                 E.g. >miRid")
         }
-
-        microRNAids <-
-            miRBaseCleaned[miRBaseCleaned %in% miRsFromFile$id]
+        microRNAids <-  miRBase[miRBase %in% miRsFromFile$id]
 
         if (length(miRsFromFile$id) - length(microRNAids) > 0) {
-            notFound <-
-                miRsFromFile$id[!(miRsFromFile$id %in% microRNAids)]
-            cat(paste("miRs not found:",
-                paste(notFound, collapse = ", ")))
+            notFound <- miRsFromFile$id[!(miRsFromFile$id %in% microRNAids)]
+            cat(paste("miRs not found:", paste(notFound, collapse = ", ")))
         }
         } else{
-            microRNAids <-
-                miRBaseCleaned[grep(miRspeciesCode, miRBaseCleaned)]
+            microRNAids <- miRBase[grep(miRspeciesCode, miRBase)]
         }
-
-    # Fill the microRNAids data frame in the miRsites list
-    microRNAs  <-
-        data.frame(matrix(nrow = length(microRNAids), ncol = 4))
-    colnames(microRNAs) <-
-        c("id", "length", "seq", "seqRev")
-
-    for (i in seq_along(microRNAs$id)) {
-        indexMir <-
-            which(miRBaseCleaned == microRNAids[i])
-
-        microRNAs$id[i] <- microRNAids[i]
-        microRNAs$seq[i] <-
-            miRBaseCleaned[indexMir + 1]
-
-        # The direction of the sequences of the microRNAs downloaded
-        # from miRBase are from 5' to 3'. To be able to find matching
-        # regions within the target sequences also reported in direction
-        # 5' to 3', the reverse of the mir sequences must be used.
-        microRNAs$seqRev[i] <-
-            IRanges::reverse(miRBaseCleaned[indexMir + 1])
-        microRNAs$length[i] <-
-            nchar(microRNAs$seq[i])
-    }
-    return(microRNAs)
-    }
+    return(microRNAids)
+}
 
 
 
@@ -334,107 +278,74 @@ getMiRseqs <- function(miRBaseLatestRelease = TRUE,
 createMiRsitesList <- function(targets, microRNAs) {
     if (length(targets) == 1 & names(targets)[[1]] == "circ") {
         miRsites <- vector("list", 12)
-        names(miRsites)[1] <- "targets"
-        names(miRsites)[2] <- "microRNAs"
-        names(miRsites)[3] <- "counts"
-        names(miRsites)[4] <- "totMatchesInSeed"
-        names(miRsites)[5] <- "cwcMatchesInSeed"
-        names(miRsites)[6] <- "seedLocation"
-        names(miRsites)[7] <- "t1"
-        names(miRsites)[8] <- "totMatchesInCentral"
-        names(miRsites)[9] <- "cwcMatchesInCentral"
-        names(miRsites)[10] <- "totMatchesInCompensatory"
-        names(miRsites)[11] <- "cwcMatchesInCompensatory"
-        names(miRsites)[12] <- "localAUcontent"
-
+        miRsites <- nameMiRsitesListDF(miRsites)
         # Fill the target dataframe in the miRsites list
         miRsites$targets <- targets[[1]]
-
         # Fill the microRNAs data frame in the miRsites list
         miRsites$microRNAs  <-  microRNAs
-
-        # Create the empty dataframe to store the number of miR sites found
-        # in the target sequences
-        miRsites$counts <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
+        # Dataframe to store the number of miR binding sites
+        miRsites$counts <- createMiRsitesInternalDF(miRsites, microRNAs)
         colnames(miRsites$counts) <- c("id", microRNAs$id)
         miRsites$counts$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the info about the total
-        # matches found between the seed site of the target and the seed
-        # region of the miR
-        miRsites$totMatchesInSeed <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
-        colnames(miRsites$totMatchesInSeed) <-
-            c("id", microRNAs$id)
+        # Dataframe to store the total matches
+        miRsites$totMatchesInSeed <- createMiRsitesInternalDF(miRsites, microRNAs)
+        colnames(miRsites$totMatchesInSeed) <- c("id", microRNAs$id)
         miRsites$totMatchesInSeed$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the info about the continuous
-        # WC matches found between the seed site of the target and the
-        # seed region of the miR
-        miRsites$cwcMatchesInSeed <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
+        # Dataframe to store the continuous WC matches
+        miRsites$cwcMatchesInSeed <- createMiRsitesInternalDF(miRsites, microRNAs)
         colnames(miRsites$cwcMatchesInSeed) <- c("id", microRNAs$id)
         miRsites$cwcMatchesInSeed$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the location of the seed match
-        miRsites$seedLocation <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
+        # Dataframe to store the location of the seed match
+        miRsites$seedLocation <- createMiRsitesInternalDF(miRsites, microRNAs)
         colnames(miRsites$seedLocation) <- c("id", microRNAs$id)
         miRsites$seedLocation$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the info about the t1
-        # nucleotide
+        # Dataframe to store the info about the t1 nucleotide
         miRsites$t1 <- createMiRsitesInternalDF(miRsites, microRNAs)
         colnames(miRsites$t1) <- c("id", microRNAs$id)
         miRsites$t1$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the total matches found
-        # with the central region of the miR
-        miRsites$totMatchesInCentral <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
-        colnames(miRsites$totMatchesInCentral) <-
-            c("id", microRNAs$id)
+        # Dataframe to store the total matches with the central region
+        miRsites$totMatchesInCentral <- createMiRsitesInternalDF(miRsites, microRNAs)
+        colnames(miRsites$totMatchesInCentral) <- c("id", microRNAs$id)
         miRsites$totMatchesInCentral$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store continuous WC matches
-        # found with the central region of the miR
-        miRsites$cwcMatchesInCentral <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
-        colnames(miRsites$cwcMatchesInCentral) <-
-            c("id", microRNAs$id)
+        # Dataframe to store continuous WC matches with the central region
+        miRsites$cwcMatchesInCentral <- createMiRsitesInternalDF(miRsites, microRNAs)
+        colnames(miRsites$cwcMatchesInCentral) <- c("id", microRNAs$id)
         miRsites$cwcMatchesInCentral$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store total matches found with the
-        # compensatory region
-        miRsites$totMatchesInCompensatory <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
-        colnames(miRsites$totMatchesInCompensatory) <-
-            c("id", microRNAs$id)
+        # Dataframe to store total matches found with the compensatory region
+        miRsites$totMatchesInCompensatory <- createMiRsitesInternalDF(miRsites, microRNAs)
+        colnames(miRsites$totMatchesInCompensatory) <- c("id", microRNAs$id)
         miRsites$totMatchesInCompensatory$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store continuous WC matches
-        # found with the compensatory region
-        miRsites$cwcMatchesInCompensatory <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
-        colnames(miRsites$cwcMatchesInCompensatory) <-
-            c("id", microRNAs$id)
+        # Dataframe to store continuous WC matches with the compensatory region
+        miRsites$cwcMatchesInCompensatory <- createMiRsitesInternalDF(miRsites, microRNAs)
+        colnames(miRsites$cwcMatchesInCompensatory) <- c("id", microRNAs$id)
         miRsites$cwcMatchesInCompensatory$id <- miRsites$targets$id
-
-        # Create the empty dataframe to store the info about the
-        # percentage of A/U nucleotides found in the 10 nucleotides
-        # upstream and downstream the seed match
-        miRsites$localAUcontent <-
-            createMiRsitesInternalDF(miRsites, microRNAs)
+        # Dataframe to store the percentage of A/U nucleotides
+        miRsites$localAUcontent <-  createMiRsitesInternalDF(miRsites, microRNAs)
         colnames(miRsites$localAUcontent) <- c("id", microRNAs$id)
         miRsites$localAUcontent$id <- miRsites$targets$id
     } else{
-        stop("target sequences not valid, only circRNA sequences
-            are allowed.")
+        stop("target sequences not valid, only circRNA sequences are allowed.")
     }
     return(miRsites)
-    }
+}
 
+
+# get names miRsiteslist
+nameMiRsitesListDF <- function(miRsites){
+    names(miRsites)[1] <- "targets"
+    names(miRsites)[2] <- "microRNAs"
+    names(miRsites)[3] <- "counts"
+    names(miRsites)[4] <- "totMatchesInSeed"
+    names(miRsites)[5] <- "cwcMatchesInSeed"
+    names(miRsites)[6] <- "seedLocation"
+    names(miRsites)[7] <- "t1"
+    names(miRsites)[8] <- "totMatchesInCentral"
+    names(miRsites)[9] <- "cwcMatchesInCentral"
+    names(miRsites)[10] <- "totMatchesInCompensatory"
+    names(miRsites)[11] <- "cwcMatchesInCompensatory"
+    names(miRsites)[12] <- "localAUcontent"
+    return(miRsites)
+}
 
 # Create miRsites internal data frame
 createMiRsitesInternalDF <- function(miRsites, microRNAs) {
@@ -476,17 +387,11 @@ createMiRsitesTempDF <- function() {
 # performed by comparing the 2 sequences without gap and by introducing a
 # gap in each position of one of the 2 sequences at the time.
 getMatches <-  function(seq1, seq2, isSeed = TRUE) {
-    # Exclude the t1 nucleotide from the analysis if the seq2 is the
-    # seed
+    # Exclude the t1 nucleotide from the analysis if the seq2 is the seed
     if (isSeed) {
-        seq1 <-
-            base::substr(seq1, 1, nchar(seq2))
+        seq1 <-  base::substr(seq1, 1, nchar(seq2))
     }
-
     # Introduce a gap WITHIN the sequence.
-    # This is done to analyze also whether the presence of a single buldge
-    # WITHIN one of the 2 sequence increase the number of matches
-
     seq1[2] <- paste0("-", seq1)
     seq1Char <- unlist(base::strsplit(seq1[2], ""))
 
@@ -511,9 +416,14 @@ getMatches <-  function(seq1, seq2, isSeed = TRUE) {
         i <- i + 1
     }
 
-    # Initialize the dataframe
-    # cwcm stands for continuous watson-crik matches
-    # tm stands for total matches
+    # Compare the 2 sequences and store the results in matches data frame
+    matches <- fillMatches(seq1, seq2)
+    return(matches)
+}
+
+# Create matches data frame
+createMatchesDF <- function(seq1, seq2){
+    # cwcm stands for continuous watson-crik matches tm stands for total matches
     # ncm stands for non canonical matches
     matches <-  data.frame(matrix(nrow = 1 + ((length(
         seq1
@@ -521,74 +431,61 @@ getMatches <-  function(seq1, seq2, isSeed = TRUE) {
         seq2
     ) - 2)), ncol = 3))
     colnames(matches) <- c("cwcm", "tm", "ncm")
+    return(matches)
+}
 
-
-    # Compare the 2 sequences
-    # n is a non canonical pair
-    # w is a watson- crick match
-    # m is a mistmatch
-    comparedSeq <-
-        compareSequences(seq1[1], seq2[1], isGUMatch = FALSE)
-    continuousMatches <-
-        max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
+# Compare the 2 sequences and find the max number of total matches and the
+# max number of continuous matches beteeen the seed region and the seed site
+# considering also the presence of a buldge within the seed region of the miR
+# sequence or the target sequences. Store the information of each iteration
+# matches data frame.
+fillMatches<- function(seq1, seq2){
+    matches <- createMatchesDF(seq1, seq2)
+    # n is a non canonical pair, w is a  watson- crick match, m is a mistmatch
+    comparedSeq <- compareSequences(seq1[1], seq2[1], isGUMatch = FALSE)
+    continuousMatches <- max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
     matches$cwcm[1] <- continuousMatches
 
-    comparedSeq <-
-        compareSequences(seq1[1], seq2[1], isGUMatch = TRUE)
-    totalMatches <-
-        stringr::str_count(comparedSeq, "w") +
+    comparedSeq <- compareSequences(seq1[1], seq2[1], isGUMatch = TRUE)
+    totalMatches <- stringr::str_count(comparedSeq, "w") +
         stringr::str_count(comparedSeq, "n")
     nonCanonicalpairs <- stringr::str_count(comparedSeq, "n")
     matches$tm[1] <- totalMatches
     matches$ncm[1] <- nonCanonicalpairs
 
     # Find the max number of total matches and the max number of continuous
-    # matches beteeen the seed region and the seed site considering also the
-    # presence of a buldge within the seed region of the mir sequence
+    # matches considering also the presence of a buldge
     i <- 2
     k <- 2
     while (i < length(seq1)) {
-        comparedSeq <-
-            compareSequences(seq1[2], seq2[i + 1], isGUMatch = FALSE)
-        continuousMatches <-
-            max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
+        comparedSeq <- compareSequences(seq1[2], seq2[i + 1], isGUMatch = FALSE)
+        continuousMatches <- max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
         matches$cwcm[k] <- continuousMatches
 
-        comparedSeq <-
-            compareSequences(seq1[2], seq2[i + 1], isGUMatch = TRUE)
-        totalMatches <-
-            stringr::str_count(comparedSeq, "w") + stringr::str_count(comparedSeq, "n")
+        comparedSeq <- compareSequences(seq1[2], seq2[i + 1], isGUMatch = TRUE)
+        totalMatches <- stringr::str_count(comparedSeq, "w") + stringr::str_count(comparedSeq, "n")
         matches$tm[k] <- totalMatches
         nonCanonicalpairs <- stringr::str_count(comparedSeq, "n")
         matches$ncm[k] <- nonCanonicalpairs
-
         i <- i + 1
         k <- k + 1
     }
-
-    # Find the max number of total matches and the max number of continuous
-    # matches beteeen the seed region and the seed site considering also
-    # the presence of a buldge within the seed site of the target sequence.
+    # Find the max number of total matches and continuous matches considering
+    # also  the presence of a buldge within the seed site of the target sequence.
     i <- 2
     while (i < length(seq2)) {
-        comparedSeq <-
-            compareSequences(seq2[2], seq1[i + 1], isGUMatch = FALSE)
-        continuousMatches <-
-            max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
+        comparedSeq <- compareSequences(seq2[2], seq1[i + 1], isGUMatch = FALSE)
+        continuousMatches <- max(nchar(base::strsplit(comparedSeq, "m")[[1]]))
         matches$cwcm[k] <- continuousMatches
 
-        comparedSeq <-
-            compareSequences(seq1[2], seq2[i + 1], isGUMatch = TRUE)
-        totalMatches <-
-            stringr::str_count(comparedSeq, "w") + stringr::str_count(comparedSeq, "n")
+        comparedSeq <- compareSequences(seq1[2], seq2[i + 1], isGUMatch = TRUE)
+        totalMatches <- stringr::str_count(comparedSeq, "w") + stringr::str_count(comparedSeq, "n")
         matches$tm[k] <- totalMatches
         nonCanonicalpairs <- stringr::str_count(comparedSeq, "n")
         matches$ncm[k] <- nonCanonicalpairs
-
         i <- i + 1
         k <- k + 1
     }
-
     return(matches)
 }
 
@@ -857,7 +754,7 @@ fillMiRsites <- function(miRsites, rowId, mirId, tempDF) {
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #'
-#' #miRsites <- getMiRsites(
+#' # miRsites <- getMiRsites(
 #' #    targets,
 #' #    miRspeciesCode = "hsa",
 #' #    miRBaseLatestRelease = TRUE,
@@ -877,35 +774,26 @@ rearrangeMiRres <- function(miRsites) {
     rearragedMiRres <- vector("list", nrow(miRsites$targets))
     for (i in seq_along(rearragedMiRres)) {
         rearragedMiRres[[i]] <- vector("list", 2)
-
         # First dataframe is filled with the target information
-        rearragedMiRres[[i]][[1]] <-
-            data.frame(matrix(
+        rearragedMiRres[[i]][[1]] <- data.frame(matrix(
                 nrow = 1,
                 ncol = length(getTargetsColNames())
             ))
-        colnames(rearragedMiRres[[i]][[1]]) <-
-            colnames(miRsites$targets)
+        colnames(rearragedMiRres[[i]][[1]]) <- colnames(miRsites$targets)
         rearragedMiRres[[i]][[1]] <- miRsites$targets[i,]
-
         # Second dataframe is filled with the results
-        rearragedMiRres[[i]][[2]] <-
-            data.frame(matrix(
+        rearragedMiRres[[i]][[2]] <- data.frame(matrix(
                 nrow = nrow(miRsites$microRNAs),
                 ncol = 3 + length(names(miRsites)[3:9])
             ))
         colnames(rearragedMiRres[[i]][[2]]) <-
             c("miRid", "miRseq", "miRseqRev", names(miRsites)[3:9])
 
-
         rearragedMiRres[[i]][[2]]$miRid <- miRsites$microRNAs$id
-        rearragedMiRres[[i]][[2]]$miRseq <-
-            miRsites$microRNAs$seq
-        rearragedMiRres[[i]][[2]]$miRseqRev <-
-            miRsites$microRNAs$seqRev
+        rearragedMiRres[[i]][[2]]$miRseq <-miRsites$microRNAs$seq
+        rearragedMiRres[[i]][[2]]$miRseqRev <- miRsites$microRNAs$seqRev
 
         idM <- miRsites$microRNAs$id
-
         counts <- as.character(miRsites$counts[i, idM])
         counts[which(is.na(miRsites$counts[i, idM]))] <- 0
         rearragedMiRres[[i]][[2]]$counts <- as.numeric(counts)
@@ -919,8 +807,7 @@ rearrangeMiRres <- function(miRsites) {
         rearragedMiRres[[i]][[2]]$seedLocation <-
             as.character(miRsites$seedLocation[i, idM])
 
-        rearragedMiRres[[i]][[2]]$t1 <-
-            as.character(miRsites$t1[i, idM])
+        rearragedMiRres[[i]][[2]]$t1 <- as.character(miRsites$t1[i, idM])
 
         rearragedMiRres[[i]][[2]]$totMatchesInCentral <-
             as.character(miRsites$totMatchesInCentral[i, idM])
@@ -936,11 +823,9 @@ rearrangeMiRres <- function(miRsites) {
             as.character(miRsites$localAUcontent[i, idM])
 
         #Remove miR with no counts
-        rearragedMiRres[[i]][[2]] <-
-            rearragedMiRres[[i]][[2]] %>%
+        rearragedMiRres[[i]][[2]] <- rearragedMiRres[[i]][[2]] %>%
             dplyr::filter(counts  != 0)
     }
-
     return(rearragedMiRres)
 }
 

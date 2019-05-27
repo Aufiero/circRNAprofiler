@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2019-05-26" />
+<meta name="date" content="2019-05-27" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circRNA molecules</title>
 
@@ -192,7 +192,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circRNA molecules</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2019-05-26</h4>
+<h4 class="date">2019-05-27</h4>
 
 </div>
 
@@ -496,9 +496,6 @@ library(gridExtra)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">ENST00000514743.1</td>
-</tr>
-<tr class="even">
-<td align="left">ENST00000357552.3</td>
 </tr>
 </tbody>
 </table>
@@ -918,20 +915,20 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                 id   gene strand chrom startUpBSE
-## 1  EXOC6B:-:chr2:73053134:72742172 EXOC6B      -  chr2   73053134
-## 2   TTN:-:chr2:179695529:179690040    TTN      -  chr2  179695529
-## 3     MB:-:chr22:36033998:36033153     MB      - chr22   36033998
-## 4  GUSBP9:-:chr5:70585611:70518122 GUSBP9      -  chr5   70585611
-## 5 PICALM:-:chr11:85780853:85742511 PICALM      - chr11   85780853
-## 6  EXOC6B:-:chr2:72562149:72411204 EXOC6B      -  chr2   72562149
+##                                  id    gene strand chrom startUpBSE
+## 1  INO80C:-:chr18:33077943:33058959  INO80C      - chr18   33077943
+## 2  INO80C:-:chr18:33077955:33060417  INO80C      - chr18   33077955
+## 3 N4BP2L2:-:chr13:33112962:33110564 N4BP2L2      - chr13   33112962
+## 4  PICALM:-:chr11:85780026:85723324  PICALM      - chr11   85780026
+## 5    LGMN:-:chr14:93183804:93182530    LGMN      - chr14   93183804
+## 6  PICALM:-:chr11:85726006:85722073  PICALM      - chr11   85726006
 ##   endDownBSE
-## 1   72742172
-## 2  179690040
-## 3   36033153
-## 4   70518122
-## 5   85742511
-## 6   72411204</code></pre>
+## 1   33058959
+## 2   33060417
+## 3   33110564
+## 4   85723324
+## 5   93182530
+## 6   85722073</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>

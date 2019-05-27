@@ -18,7 +18,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 BiocManager::install("devtools")
 library(devtools)
-devtools::install_github("Aufiero/circRNAprofiler", build_vignettes = TRUE)
+devtools::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
 ```
 
 Documentation

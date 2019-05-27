@@ -36,9 +36,13 @@
 #' @param pathToMotifs A string containing the path to the motifs.txt
 #' file. The file motifs.txt contains motifs/regular expressions specified
 #' by the user. It must have 3 columns with headers:
+#'
 #' - id (1st column): name of the motif. - e.g. RBM20 or motif1.
+#'
 #' - motif (2nd column): motif/pattern to search.
+#'
 #' - length (3rd column): length of the motif.
+#'
 #' By default pathToMotifs is set to NULL and the file it is searched in the
 #' working directory. If motifs.txt is located in a different directory then
 #' the path needs to be specified. If this file is absent or empty only the
@@ -80,10 +84,13 @@
 #'     rbp = TRUE,
 #'     reverse = FALSE)
 #'
+#' @importFrom readr read_tsv
+#' @importFrom utils download.file
+#' @importFrom rlang .data
+#' @importFrom IRanges reverse
 #' @importFrom stringr str_count
 #' @importFrom stringr str_extract
 #' @importFrom stringi stri_locate_all
-#' @importFrom Biostrings RNAStringSet
 #' @importFrom Biostrings RNAStringSet
 #' @importFrom Biostrings oligonucleotideFrequency
 #' @import dplyr
@@ -96,62 +103,27 @@ getMotifs <-
         rbp = TRUE,
         reverse = FALSE,
         pathToMotifs = NULL) {
-        # Compute all motifs of a given length (width) and keep the ones
-        # present at least one time in the target sequences
-
+        if (width < 4 | width > 20) {
+            stop("width must be an integer between 4 and 20")
+        }
+        # Compute all motifs of a given length (width)
         computedMotifs <- computeMotifs(targets, width)
-
         # Filter motifs matching with RBPs
         filteredMotifs <-
             filterMotifs(computedMotifs, species, rbp, reverse, pathToMotifs)
-
-        # Crete list to store motif reults
+        # Create list to store motif reults
         motifs <- createMotifsList(targets, filteredMotifs)
-
         for (i in seq_along(motifs)) {
-            # Put the string NA so that the we do not get error when calling
-            # RNAStringSet
-            motifs[[i]]$targets$seq[is.na(motifs[[i]]$targets$seq)] <-
-                "NA"
-
-            # Adjust sequences - (!!! See also computeMotifs())
-            if (names(motifs)[1] == "circ") {
-                # We adjust the length of circ seqs  based on the length of
-                # the motifs and remove the first 30 nucleotides since
-                # they are analyzed at the end with together with
-                # the BSJs (see getCircSeq() function)
-                ss <- base::substring(motifs[[i]]$targets$seq, 30,
-                    ((motifs[[i]]$targets$length + 30) + (width - 1)))
-
-                # Put the string NA so that we do not get error when
-                # calling RNAStringSet
-                ss[is.na(ss)] <- "NA"
-                rnaSS <- Biostrings::RNAStringSet(ss)
-
-            } else if (names(motifs)[1] == "bsj") {
-                # We adjust the length of BSJ seqs  based on the length of
-                # the motifs in a way that the motifs must have at least
-                # 1 nucleotide crossing the BSJ.
-                r1 <-
-                    (base::nchar(motifs[[i]]$targets$seq) / 2) - (width - 2)
-                r2 <-
-                    (base::nchar(motifs[[i]]$targets$seq) / 2) + (width - 1)
-                rnaSS <-
-                    Biostrings::RNAStringSet(base::substring(motifs[[i]]$targets$seq, r1, r2))
-
-            } else{
-                rnaSS <- Biostrings::RNAStringSet(motifs[[i]]$targets$seq)
-            }
+            targetsToAnalyze <- motifs[[i]]$targets
+            # Get sequences in RNAStringSet format
+            rnaSS <- getRNAss(targetsToAnalyze, width)
 
             # Count occurence and location of the filtered motifs
-
             for (j in seq_along(motifs[[i]]$motif$motif)) {
                 stringMotif <- motifs[[i]]$motif$motif[j]
-                # Find location. Consider also overlapping
-                # patterns (?=pattern)
-                locations <-
-                    stringi::stri_locate_all(rnaSS,
-                        regex = paste("(?=", stringMotif, ")", sep = ""))
+                # Find location. Consider also overlapping patterns (?=pattern)
+                locations <- stringi::stri_locate_all(rnaSS,
+                    regex = paste("(?=", stringMotif, ")", sep = ""))
 
                 if (names(motifs)[1] == "circ") {
                     motifs[[i]]$locations[stringMotif] <-
@@ -168,17 +140,11 @@ getMotifs <-
                                 paste(locations[, 1], collapse = ",")
                         ))
                 }
-
                 # Count occurences
                 motifs[[i]]$counts[stringMotif] <-
                     stringr::str_count(rnaSS,
                         paste("(?=", stringMotif, ")", sep = ""))
-
             }
-            # Put 0 count where the string "NA" is found
-            #index <- which(motifs[[i]]$targets$seq == "NA")
-            #motifs[[i]]$counts[index,-1] <- 0
-
         }
         return(motifs)
     }
@@ -187,43 +153,12 @@ getMotifs <-
 # The function computeMotifs() first computes all possible motifs
 computeMotifs <-
     function(targets, width = 6) {
-        if (width < 4 | width > 20) {
-            stop("width must be an integer between 4 and 20")
-        }
         # Compute all motifs of length width
         computedMotifs <- as.character()
         for (i in seq_along(targets)) {
-            # Put the string NA so that the we do not get error when calling
-            # RNAStringSet
-            targets[[i]]$seq[is.na(targets[[i]]$seq)] <- "NA"
-
-            # Adjust sequences
-            if (names(targets)[1] == "circ") {
-                # We adjust the length of circ seqs  based on the length of
-                # the motifs and remove the first 30 nucleotides since
-                # they are analyzed at the end together with
-                # the BSJs (see getCircSeq() function)
-                ss <- base::substring(targets[[i]]$seq, 30,
-                    ((targets[[i]]$length + 30) + (width - 1)))
-
-                # Put the string NA so that we do not get error when
-                # calling RNAStringSet
-                ss[is.na(ss)] <- "NA"
-                rnaSS <- Biostrings::RNAStringSet(ss)
-
-            } else if (names(targets)[1] == "bsj") {
-                # We adjust the length of BSJ seqs  based on the length of
-                # the motifs in a way that the motifs must have at least
-                # 1 nucleotide crossing the BSJ.
-                r1 <-
-                    (base::nchar(targets[[i]]$seq) / 2) - (width - 2)
-                r2 <-
-                    (base::nchar(targets[[i]]$seq) / 2) + (width - 1)
-                rnaSS <- Biostrings::RNAStringSet(base::substring(targets[[i]]$seq, r1, r2))
-
-            } else{
-                rnaSS <- Biostrings::RNAStringSet(targets[[i]]$seq)
-            }
+            targetsToAnalyze <- targets[[i]]
+            # Get sequences in RNAStringSet format
+            rnaSS <- getRNAss(targetsToAnalyze, width)
 
             computedMotifs <- c(
                 computedMotifs,
@@ -238,45 +173,44 @@ computeMotifs <-
     }
 
 
-#' @title Retrieve ATtRACT motifs
-#'
-#' @description The function getUserAttractMotifs() reads the user motifs
-#' in motifs.txt and retrieves the motifs deposited in the ATtRACT database
-#' (\url{http://attract.cnic.es}).
-#'
-#' @param species A string specifying the species of the RBP motifs to use.
-#' Type data(attractSpecies) to see the possible options.
-#' Default value is "Hsapiens".
-#'
-#' @param reverse A logical specifying whether to reverse the motifs collected
-#' from ATtRACT database and from motifs.txt. If TRUE is specified all the
-#' motifs are reversed and analyzed together with the direct motifs as they are
-#' reported in the ATtRACT db and motifs.txt. Default value is FALSE.
-#'
-#' @param pathToMotifs A string containing the path to the motifs.txt
-#' file. The file motifs.txt contains motifs/regular expressions specified
-#' by the user. It must have 3 columns with headers:
-#' - id (1st column): name of the motif. - e.g. RBM20 or motif1.
-#' - motif (2nd column): motif/pattern to search.
-#' - length (3rd column): length of the motif.
-#' By default pathToMotifs is set to NULL and the file it is searched in the
-#' working directory. If motifs.txt is located in a different directory then
-#' the path needs to be specified. If this file is absent or empty only the
-#' motifs of RNA Binding Proteins in the ATtRACT database are considered in
-#' the motifs analysis.
-#'
-#' @return A data frame.
-#'
-#' @examples
-#' # Inner function
-#' userAttractMotifs <- getUserAttractMotifs(species = "Hsapiens",
-#'     reverse = FALSE)
-#'
-#' @importFrom readr read_tsv
-#' @importFrom utils download.file
-#' @importFrom rlang .data
-#' @importFrom IRanges reverse
-#' @export
+
+
+
+# retrieve target sequence to analyze in RNAStringSet format
+getRNAss <- function(targetsToAnalyze, width = 6) {
+    # Put NA to avoid error when calling RNAStringSet
+    targetsToAnalyze$seq[is.na(targetsToAnalyze$seq)] <- "NA"
+
+    # Adjust sequences
+    if (names(targetsToAnalyze)[1] == "circ") {
+        # Adjust the length of circ seqs
+        ss <- base::substring(targetsToAnalyze$seq, 30,
+            ((targetsToAnalyze$length + 30) + (width - 1)))
+
+        # Put NA to avoid error when calling RNAStringSet
+        ss[is.na(ss)] <- "NA"
+        rnaSS <- Biostrings::RNAStringSet(ss)
+
+    } else if (names(targetsToAnalyze)[1] == "bsj") {
+        # We adjust the length of BSJ seqs. Motifs must have at least
+        # 1 nucleotide crossing the BSJ.
+        r1 <-
+            (base::nchar(targetsToAnalyze$seq) / 2) - (width - 2)
+        r2 <-
+            (base::nchar(targetsToAnalyze$seq) / 2) + (width - 1)
+        rnaSS <-
+            Biostrings::RNAStringSet(base::substring(targetsToAnalyze$seq, r1, r2))
+
+    } else{
+        rnaSS <- Biostrings::RNAStringSet(targetsToAnalyze$seq)
+    }
+    return(rnaSS)
+}
+
+
+# The function getUserAttractMotifs() reads the user motifs
+# in motifs.txt and retrieves the motifs deposited in the ATtRACT database
+# (\url{http://attract.cnic.es}).
 getUserAttractMotifs <-
     function(species  = "Hsapiens",
         reverse = FALSE,
@@ -287,6 +221,12 @@ getUserAttractMotifs <-
         attractRBPmotifs <- getAttractRBPMotifs(species)
         # Read motifs.txt
         motifsFromFile <- readMotifs(pathToMotifs)
+
+        if (nrow(motifsFromFile) == 0) {
+            cat("motifs.txt is empty or absent. Only
+            ATtRACT motifs will be analyzed")
+        }
+
 
         # we reverse the motifs so that they can be analyzed also
         # in the other orientation
@@ -328,9 +268,10 @@ filterMotifs <-
         userATtRACTmotifs <-
             getUserAttractMotifs(species, reverse, pathToMotifs)
 
-         # Check whether the motifs matches with or it is contanined within
+        # Check whether the motifs matches with or it is contanined within
         # any RBP motifs
-        filteredMotifs <- matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
+        filteredMotifs <-
+            matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
 
         # Filter
         if (rbp) {
@@ -348,7 +289,7 @@ filterMotifs <-
     }
 
 # Create filteredMotifs data frame
-createFilteredMotifsDF <- function(computedMotifs){
+createFilteredMotifsDF <- function(computedMotifs) {
     filteredMotifs <-
         data.frame(matrix(nrow = length(computedMotifs),
             ncol = 2))
@@ -361,43 +302,46 @@ createFilteredMotifsDF <- function(computedMotifs){
 
 # Check whether the motifs matches with or it is contanined within
 # any RBP motifs
-matchWithKnowRBPs <- function(filteredMotifs, userATtRACTmotifs, computedMotifs){
-    widthCompMotifs <- nchar(computedMotifs[1])
-    for (j in seq_along(filteredMotifs$motif)) {
-        # Grep do not work with pattern. In motifs.txt the user can reports
-        # patterns.
-        # By using grep there is a hit if there is a perfect match between
-        # 2 strings or the first string it is contained as substring within
-        # the second
-        grepedM <-
-            userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif),] %>%
-            dplyr::mutate(motif = as.character(.data$motif),
-                id = as.character(.data$id))
+matchWithKnowRBPs <-
+    function(filteredMotifs,
+        userATtRACTmotifs,
+        computedMotifs) {
+        widthCompMotifs <- nchar(computedMotifs[1])
+        for (j in seq_along(filteredMotifs$motif)) {
+            # Grep do not work with pattern. In motifs.txt the user can reports
+            # patterns.
+            # By using grep there is a hit if there is a perfect match between
+            # 2 strings or the first string it is contained as substring within
+            # the second
+            grepedM <-
+                userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif), ] %>%
+                dplyr::mutate(motif = as.character(.data$motif),
+                    id = as.character(.data$id))
 
-        # str_extract works with pattern. In motifs.txt the user can reports
-        # patterns.
-        extractedM <-
-            base::cbind(
-                stringr::str_extract(filteredMotifs$motif[j], userATtRACTmotifs$motif),
-                userATtRACTmotifs$id
-            ) %>%
-            magrittr::set_colnames(c("motif", "id")) %>%
-            as.data.frame() %>%
-            dplyr::select(.data$id, .data$motif) %>%
-            dplyr::filter(!is.na(.data$motif)) %>%
-            dplyr::mutate(motif = as.character(.data$motif),
-                id = as.character(.data$id)) %>%
-            dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
+            # str_extract works with pattern. In motifs.txt the user can reports
+            # patterns.
+            extractedM <-
+                base::cbind(
+                    stringr::str_extract(filteredMotifs$motif[j], userATtRACTmotifs$motif),
+                    userATtRACTmotifs$id
+                ) %>%
+                magrittr::set_colnames(c("motif", "id")) %>%
+                as.data.frame() %>%
+                dplyr::select(.data$id, .data$motif) %>%
+                dplyr::filter(!is.na(.data$motif)) %>%
+                dplyr::mutate(motif = as.character(.data$motif),
+                    id = as.character(.data$id)) %>%
+                dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
 
-        joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
-            dplyr::filter(!duplicated(.))
+            joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
+                dplyr::filter(!duplicated(.))
 
-        if (nrow(joinedM) > 0) {
-            filteredMotifs$id[j] <- paste(unique(joinedM$id), collapse = ",")
+            if (nrow(joinedM) > 0) {
+                filteredMotifs$id[j] <- paste(unique(joinedM$id), collapse = ",")
+            }
         }
+        return(filteredMotifs)
     }
-    return(filteredMotifs)
-}
 
 
 # Create list to store motif results
@@ -609,12 +553,12 @@ reshapeCounts <- function(counts) {
 # in motifs[[1]]$motif.
 splitRBPs <- function(motifsToSplit) {
     toSplit <-
-        motifsToSplit[base::grep(",", motifsToSplit$id),]
+        motifsToSplit[base::grep(",", motifsToSplit$id), ]
 
     if (nrow(toSplit) >= 1) {
         # Remove motifs shared by multiple RBPs
         cleanedMotifs <-
-            motifsToSplit[-base::grep(",", motifsToSplit$id),]
+            motifsToSplit[-base::grep(",", motifsToSplit$id), ]
 
         # Ducplicate motifs
         rbpsWithSharedMotifs <-
@@ -704,39 +648,6 @@ getAttractRBPMotifs <- function(species) {
 
 
 
-# get motifs.txt
-readMotifs <- function(pathToMotifs = NULL) {
-    if (is.null(pathToMotifs)) {
-        pathToMotifs <- "motifs.txt"
-    }
-
-    if (file.exists(pathToMotifs)) {
-        # Read file containing user given patterns
-        motifsFromFile <-
-            utils::read.table(
-                pathToMotifs,
-                stringsAsFactors = FALSE,
-                header = TRUE,
-                sep = "\t"
-            )
-        # colnames(motifsFromFile) <-
-        #     c("id", "motif", "length")
-
-    } else{
-        motifsFromFile <- data.frame(matrix(nrow = 0, ncol = 3))
-        colnames(motifsFromFile) <- c("id", "motif", "length")
-    }
-
-    if (nrow(motifsFromFile) == 0) {
-        cat("motifs.txt is empty or absent. Only
-            ATtRACT motifs will be analyzed")
-    }
-
-    return(motifsFromFile)
-}
-
-
-
 # get reverse motifs from file
 getReverseMotifsFromFile <- function(motifsFromFile) {
     # reverse motifs given in input
@@ -768,7 +679,7 @@ getReverseAttractRBPmotifs <- function(attractRBPmotifs) {
     newAttractRBPmotifs <-
         dplyr::bind_rows(attractRBPmotifs, reverseAttractRBPmotifs)
     newAttractRBPmotifs <-
-        newAttractRBPmotifs[!duplicated(newAttractRBPmotifs), ]
+        newAttractRBPmotifs[!duplicated(newAttractRBPmotifs),]
 
     return(newAttractRBPmotifs)
 }

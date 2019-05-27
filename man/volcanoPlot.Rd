@@ -58,7 +58,7 @@ filterdCirc <- filterCirc(
 
 # Find differentially expressed circRNAs
  deseqResBvsA <- getDeseqRes(
-    mergedBSJunctions,
+    filterdCirc,
     condition = "A-B",
     pAdjustMethod = "BH",
     pathToExperiment)

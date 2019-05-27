@@ -1,8 +1,9 @@
 #' @title LiftOver back-spliced junction coordinates
 #'
-#' @description The function liftBSJCoords() converts back-spliced junction
+#' @description The function liftBSJCoords() maps back-spliced junction
 #' coordinates between species ad genome assemblies by using the liftOver utility
-#' from UCSC.
+#' from UCSC. Only back-spliced junction coordinates where the mapping was
+#' successful are reported.
 #'
 #' @param backSplicedJunctions A data frame containing the back-spliced junction
 #' coordinates (predicted or randomly selected).

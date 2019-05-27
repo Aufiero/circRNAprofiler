@@ -32,10 +32,10 @@ text-align: justify}
 
 ## Introduction
 
-circRNAprofiler, an R-based computational framework that runs after circRNAs 
+circRNAprofiler, an R-based computational framework runs after circRNAs 
 have been identified. It allows to combine circRNAs detected by multiple 
-publicly available circRNA detection tools and analyze their expression, 
-evolutionary conservation, biogenesis and putative functions.
+publicly available annotation-based circRNA detection tools and analyze 
+their expression, evolutionary conservation, biogenesis and putative functions.
 
 ```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
 
@@ -394,13 +394,11 @@ antisense if the strand from which the circRNA arises (i.e. reported in the
 prediction results) is different from the strand where the gene is transcribed 
 (i.e. reported in the genome annotation file). This might be explained by 
 technical artifacts or by the presence of a gene transcribed from the opposite 
-strand that is not yet annotated and which exon coordinates overlap with the 
-exon coordinates of the gene on the opposite strand. Due to the ambiguous nature
-of these predictions the antisense circRNAs (if any) are removed from the 
-dataset and if specified by the user they can be exported in a file 
-(i.e. antisenseCircRNAs.txt) for user consultation. 
-Modules in circRNAprofiler are specific for the analysis of circRNAs that derive
-from the sense strand of the corresponding gene.
+strand that is not annotated. Due to the ambiguous nature of these predictions 
+the antisense circRNAs (if any) are removed from the dataset and if specified 
+by the user they can be exported in a file (i.e. antisenseCircRNAs.txt) for user
+consultation. Modules in circRNAprofiler are specific for the analysis of 
+circRNAs that derive from the sense strand of the corresponding gene.
 
 ```{r}
 # Load object containing the merged back-spliced junctions
@@ -606,15 +604,15 @@ convert the hg19 (Human GRCh37) coordinates to mm9 (Mouse GRCm37).
 
 NOTE:
 Only back-spliced junction coordinates where the mapping was successful 
-are reported. For all the other not reported the conversion failed, meaning that
-the exons that are back-spliced in human might be not conserved to mouse.
+are reported. Back-spliced junction coordinates that could not be 
+mapped might be not conserved between the analyzed species.
 
 ```{r, eval = FALSE}
 liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
                                  annotationHubID = "AH14155")
 ```
 
-### Module 7 - Annotate circRNAs internal structure and the flanking introns   
+### Module 7 - Annotate circRNAs internal structure and flanking introns   
 
 #### _annotateBSJs()_
 
@@ -787,7 +785,6 @@ p4 <-
 # Position of back-spliced exons within the host transcripts
 p5 <-
     plotExPosition(annotatedBSJs,
-        flip = FALSE,
         n = 1,
         title = "Position back-spliced exons in the transcripts")
 
@@ -887,7 +884,7 @@ targetsFTS_bsj <-
 
 ```
 
-### Module 11 - Retrieve intronic sequences flanking the BSJs
+### Module 11 - Retrieve sequences flanking the BSJs
 
 #### _getSeqsFromGRs()_
 
@@ -995,7 +992,7 @@ ggarrange(p[[1]],
 
 ```
 
-```{r, echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."}
+```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."}
 knitr::include_graphics("./images/image4.png")
 ```
 
@@ -1211,11 +1208,12 @@ in the regions flanking the back-spliced junctions of each circRNA. SNPs informa
 including the corresponding genomic coordinates are retrieved from the GWAs catalog
 database. The genomic coordinates of the GWAS SNPs are overlapped with the 
 genomic coordinates of the target sequences. This is possible only for the human
-genome.
+genome. An empty list is returned if none overlapping SNPs are found.
 
 ```{r, eval = FALSE}
-snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19")
-
+snpsGWAS <-
+    annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19", makeCurrent = TRUE)
+    
 ```
 
 ### Module 15 - Annotate repetitive elements
@@ -1233,7 +1231,8 @@ Repetitive elements are provided by AnnotationHub storage which
 collected repeats from RepeatMasker database. Type data(ahRepeatMasker) to see 
 all possibile options for annotationHubID. If "AH5122" is
 specified, repetitve elements from Homo sapiens, genome hg19 will be
-downloaded and annotated.
+downloaded and annotated. 
+An empty list is returned if none overlapping repeats are found.
 
 ```{r, eval = FALSE}
 repeats <-

@@ -524,7 +524,7 @@ plotTotExons <-
 #'
 #' # Find differentially expressed circRNAs
 #'  deseqResBvsA <- getDeseqRes(
-#'     mergedBSJunctions,
+#'     filterdCirc,
 #'     condition = "A-B",
 #'     pAdjustMethod = "BH",
 #'     pathToExperiment)
@@ -607,19 +607,7 @@ volcanoPlot <- function(res,
         )
 
     if (gene) {
-        p <- p +
-            geom_text(
-                data = diffExpCirc,
-                aes(
-                    x = log2FC,
-                    y = -log10(padj),
-                    label = .data$gene
-                ),
-                size = 3,
-                colour = "black",
-                hjust = 0.5,
-                vjust = -0.3
-            )
+        p <- addGeneName(p, diffExpCirc, log2FC, padj)
     }
     return(p)
 }
@@ -659,6 +647,24 @@ setxyLim <- function(setxLim = FALSE,
     xyLim$ymax <- ymax
 
     return(xyLim)
+}
+
+# Add gene names to the volcano plot
+addGeneName <- function(p, diffExpCirc, log2FC, padj){
+    p <- p +
+        geom_text(
+            data = diffExpCirc,
+            aes(
+                x = log2FC,
+                y = -log10(padj),
+                label = .data$gene
+            ),
+            size = 3,
+            colour = "black",
+            hjust = 0.5,
+            vjust = -0.3
+        )
+    return(p)
 }
 
 
@@ -791,9 +797,9 @@ plotMotifs <-
             getMergedMotifsAll(
                 mergedMotifsFTS,
                 mergedMotifsBTS,
-                log2FC = 1,
-                nf1 = 1,
-                nf2 = 1
+                log2FC,
+                nf1,
+                nf2
             )
         p <- list()
         p[[1]] <-  mergedMotifsAll %>%
@@ -952,7 +958,7 @@ plotMiR <-
         color = "blue",
         miRid = FALSE,
         id = 1) {
-        topMir <- getTopMir(rearragedMiRres, id = 1, n = 40)
+        topMir <- getTopMir(rearragedMiRres, id, n)
         p <-  rearragedMiRres[[id]][[2]] %>%
             dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", "")) %>%
             dplyr::filter(!is.na(.data$counts)) %>%
@@ -980,23 +986,31 @@ plotMiR <-
             ) +
             expand_limits(y = 0)
         if (miRid) {
-            p <- p +
-                geom_text(
-                    data = topMir,
-                    aes(
-                        x = .data$miRid,
-                        y = .data$counts,
-                        label = .data$miRid
-                    ),
-                    size = 4,
-                    colour = "black",
-                    hjust = 0.5,
-                    vjust = -0.3
-                    #angle = 90
-                )
+            p <- addMiRid(p, topMir )
         }
         return(p)
     }
+
+
+# add miR ids to the miR plot
+addMiRid <- function(p, topMir){
+    p <- p +
+        geom_text(
+            data = topMir,
+            aes(
+                x = .data$miRid,
+                y = .data$counts,
+                label = .data$miRid
+            ),
+            size = 4,
+            colour = "black",
+            hjust = 0.5,
+            vjust = -0.3
+            #angle = 90
+        )
+    return(p)
+}
+
 
 
 # Get miRNAs with a number of binding sites higher than n
