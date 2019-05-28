@@ -95,22 +95,22 @@ getEdgerRes <-
 
             # Creates a DGEList object
             dge <-
-                DGEList(counts = backSplicedJunctions[, experiment$label],
+                edgeR::DGEList(counts = backSplicedJunctions[, experiment$label],
                     group = experiment$condition)
 
             # Calculate normalization factors to scale the raw library sizes
             dge <-
-                calcNormFactors(dge, method = normMethod, na.rm = TRUE)
+                edgeR::calcNormFactors(dge, method = normMethod, na.rm = TRUE)
 
             # Estimate common dispersion
-            dge <- estimateCommonDisp(dge)
+            dge <- edgeR::estimateCommonDisp(dge)
 
             # Estimates tagwise dispersion
-            dge <- estimateTagwiseDisp(dge)
+            dge <- edgeR::estimateTagwiseDisp(dge)
 
             # Compute genewise exact tests
             statistics <-
-                topTags(
+                edgeR::topTags(
                     exactTest(dge),
                     n = nrow(dge$counts),
                     adjust.method = pAdjustMethod,

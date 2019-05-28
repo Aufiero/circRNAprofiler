@@ -327,7 +327,6 @@ head(randomBSJunctions)
 #  # Position of back-spliced exons within the host transcripts
 #  p5 <-
 #      plotExPosition(annotatedBSJs,
-#          flip = FALSE,
 #          n = 1,
 #          title = "Position back-spliced exons in the transcripts")
 #  
@@ -438,7 +437,7 @@ genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #            nrow = 1)
 #  
 
-## ---- echo=FALSE, out.width='80%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."----
+## ---- echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs."----
 knitr::include_graphics("./images/image4.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
@@ -500,7 +499,8 @@ knitr::include_graphics("./images/image4.png")
 #  p
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  snpsGWAS <- annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19")
+#  snpsGWAS <-
+#      annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19", makeCurrent = TRUE)
 #  
 
 ## ---- eval = FALSE-------------------------------------------------------

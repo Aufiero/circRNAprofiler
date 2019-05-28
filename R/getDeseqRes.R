@@ -90,7 +90,7 @@ getDeseqRes <-
 
             # Analysis with DESeq2
             dds <-
-                DESeqDataSetFromMatrix(
+                DESeq2::DESeqDataSetFromMatrix(
                     countData = backSplicedJunctions[, experiment$label],
                     colData =
                         experiment[,-which(names(experiment) %in% "fileName")],
@@ -98,8 +98,8 @@ getDeseqRes <-
                 )
 
             # Differential expression analysis - standard analysis
-            dds <- DESeq(dds, ...)
-            statistics <- results(dds, pAdjustMethod)
+            dds <- DESeq2::DESeq(dds, ...)
+            statistics <- DESeq2::results(dds, pAdjustMethod = pAdjustMethod)
 
             # Get deseqRes data frame
             deseqRes <- getDeseqResDF(backSplicedJunctions,

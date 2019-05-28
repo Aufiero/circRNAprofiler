@@ -17,9 +17,9 @@ is hg38. If hg19 is specified SNPs coordinates are realtime liftOver to
 hg19 coordinates.}
 
 \item{makeCurrent}{A logical specifying whether to download the
-current image of the GWAS catalog.  If FALSE is specified, the function
+current image of the GWAS catalog.  If TRUE is specified, the function
 \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
-package is used to get the more recent image. If TRUE is specified the
+package is used to get the more recent image. If FALSE is specified the
 image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.}
 
 \item{pathToTraits}{A string containing the path to the traits.txt
@@ -41,6 +41,7 @@ retrived from the GWAs catalog database.
 The user can restric the analysis to specific traits/diseases. These must go
 in the file traits.txt. If this file is absent or empty, all traits in the
 GWAS catalog are considered in the analysis.
+An empty list is returned if none overlapping SNPs are found.
 }
 \examples{
 # Load data frame containing detected back-spliced junctions

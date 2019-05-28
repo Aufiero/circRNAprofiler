@@ -28,9 +28,10 @@ be used to convert the hg19 (Human GRCh37) coordinates to mm10
 a data frame.
 }
 \description{
-The function liftBSJCoords() converts back-spliced junction
+The function liftBSJCoords() maps back-spliced junction
 coordinates between species ad genome assemblies by using the liftOver utility
-from UCSC.
+from UCSC. Only back-spliced junction coordinates where the mapping was
+successful are reported.
 }
 \examples{
 # Load a data frame containing detected back-spliced junctions

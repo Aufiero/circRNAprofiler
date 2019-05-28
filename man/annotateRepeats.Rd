@@ -30,6 +30,7 @@ located in the region flanking the back-spliced junctions of each circRNA.
 Repetitive elements are provided by AnnotationHub storage which
 collected repeats from RepeatMasker database. See \code{\link{AnnotationHub}}
 and \url{http://www.repeatmasker.org} for more details.
+An empty list is returned if none overlapping repeats  are found.
 }
 \examples{
 # Load data frame containing detected back-spliced junctions

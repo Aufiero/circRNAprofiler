@@ -66,9 +66,9 @@ can be installed with:
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("devtools")
-library(devtools)
-devtools::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
+BiocManager::install("remotes")
+library(remotes)
+remotes::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
 ```
 
 ## Load the package
@@ -1244,9 +1244,7 @@ repeats <-
 
 We work hard to ensure that circRNAprofiler is a powerful tool empowering your
 research. However, no software is free of bugs and issues, therefore we would 
-love to get feedback from our users. We intend to add more modules in
-the future in order to provide a comprehensive R package and also encourage users
-to contribute modules to circRNAprofiler.
+love to get feedback from our users. 
 
 ## Acknowledgement
 
