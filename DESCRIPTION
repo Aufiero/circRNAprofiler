@@ -5,10 +5,11 @@ Version: 0.1.1
 Author: Simona Aufiero
 Maintainer: Simona Aufiero <simo.aufiero@gmail.com>
 Description: R-based computational framework for a comprehensive in silico 
-    analysis of circRNAs. It allows to combine circRNAs detected by multiple 
-    publicly available annotation-based circRNA detection tools and to analyze
-    their expression, genomic context, evolutionary conservation, biogenesis 
-    and putative functions.
+    analysis of circRNAs. This computational framework allows to combine and 
+    analyze circRNAs previously detected by multiple publicly available 
+    annotation-based circRNA detection tools. It covers different aspects of 
+    circRNAs analysis from differential expression analysis, evolutionary 
+    conservation, biogenesis to functional analysis.
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
@@ -30,6 +31,7 @@ Suggests:
     BSgenome.Mmusculus.UCSC.mm9,
     BSgenome.Hsapiens.UCSC.hg38,
     BSgenome.Mmusculus.UCSC.mm10,
+    remotes,
 Imports:
     dplyr,
     magrittr,

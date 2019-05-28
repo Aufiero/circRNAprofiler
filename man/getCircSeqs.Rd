@@ -24,7 +24,10 @@ A list.
 \description{
 The function getCircSeqs() retrieves the circRNA
 sequences. The circRNA sequence is given by the sequences of the exons
-in between the back-spliced-junctions.
+in between the back-spliced-junctions.The exon sequences are retrieved and
+then concatenated together to recreate the circRNA sequence. To recreate
+the back-spliced junction sequence 50 nucleotides are taken from the 5'
+head and attached at the 3' tail of each circRNA sequence.
 }
 \examples{
 # Load a data frame containing detected back-spliced junctions

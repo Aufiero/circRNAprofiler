@@ -1,5 +1,5 @@
 ---
-title: 'circRNAprofiler: An R-based computational framework for the downstream analysis of circRNA molecules'
+title: 'circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
@@ -32,12 +32,17 @@ text-align: justify}
 
 ## Introduction
 
-circRNAprofiler, an R-based computational framework runs after circRNAs 
-have been identified. It allows to combine circRNAs detected by multiple 
-publicly available annotation-based circRNA detection tools and analyze 
-their expression, evolutionary conservation, biogenesis and putative functions.
+circRNAprofiler is an R-based framework that only requires an R installation
+and offers 15 modules for a comprehensive in silico analysis of circRNAs. 
+This computational framework allows to combine and analyze circRNAs previously
+detected by multiple publicly available annotation-based circRNA detection tools.
+It covers different aspects of circRNAs analysis from differential expression
+analysis, evolutionary conservation, biogenesis to functional analysis. The 
+pipeline used by circRNAprofiler is highly automated and customizable. 
+Furthermore, circRNAprofiler includes additional functions for data 
+visualization which facilitate the interpretation of the results.
 
-```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
+```{r, echo=FALSE, out.width='60%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
 
 knitr::include_graphics("./images/image1.png")
 ```
@@ -94,7 +99,7 @@ available in the package. The project folder should be structured as in the
 example Figure 2 if seven detection tools are used to detect circRNAs in 
 6 samples.
 
-```{r, echo=FALSE, out.width='50%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"}
+```{r, echo=FALSE, out.width='45%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"}
 knitr::include_graphics("./images/image2.png")
 ```
 
