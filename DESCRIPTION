@@ -1,7 +1,7 @@
 Package: circRNAprofiler
 Type: Package
 Title: circRNAprofiler: An R-Based Computational Framework for the Downstream Analysis of Circular RNAs
-Version: 0.1.1
+Version: 0.99.0
 Author: Simona Aufiero
 Maintainer: Simona Aufiero <simo.aufiero@gmail.com>
 Description: R-based computational framework for a comprehensive in silico 
@@ -13,7 +13,8 @@ Description: R-based computational framework for a comprehensive in silico
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
-biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, GenomeAssembly
+biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, 
+    GenomeAssembly, DifferentialExpression
 Depends: 
     R(>= 3.6.0), 
     gwascat
