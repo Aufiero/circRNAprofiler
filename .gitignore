@@ -4,6 +4,4 @@ doc
 .RData
 .Ruserdata
 inst/doc
-.Rproj.user
-.Rproj
-.Rproj.user/
+*.Rproj
