@@ -29,37 +29,37 @@ test_that("annotateRepeats() generates the correct data structure", {
         )
 
     # Retrieve overlapping repeats
-    repeats <-
-        annotateRepeats(
-            targets,
-            annotationHubID  = "AH6075",
-            complementary = TRUE
-        )
-
-    expect_is(repeats, "list")
-    expect_equal(length(repeats), 2)
-
-
-    # Retrieve sequences type = "fi"
-    targets <-
-        getSeqsFromGRs(
-            annotatedBSJs,
-            genome,
-            lIntron = 500,
-            lExon = 10,
-            type = "fi"
-        )
-
-    # Retrieve overlapping repeats
-    repeats <-
-        annotateRepeats(
-            targets,
-            annotationHubID  = "AH6075",
-            complementary = TRUE
-        )
-
-    expect_is(repeats, "list")
-    expect_equal(length(repeats), 2)
+    # repeats <-
+    #     annotateRepeats(
+    #         targets,
+    #         annotationHubID  = "AH6075",
+    #         complementary = TRUE
+    #     )
+    #
+    # expect_is(repeats, "list")
+    # expect_equal(length(repeats), 2)
+    #
+    #
+    # # Retrieve sequences type = "fi"
+    # targets <-
+    #     getSeqsFromGRs(
+    #         annotatedBSJs,
+    #         genome,
+    #         lIntron = 500,
+    #         lExon = 10,
+    #         type = "fi"
+    #     )
+    #
+    # # Retrieve overlapping repeats
+    # repeats <-
+    #     annotateRepeats(
+    #         targets,
+    #         annotationHubID  = "AH6075",
+    #         complementary = TRUE
+    #     )
+    #
+    # expect_is(repeats, "list")
+    # expect_equal(length(repeats), 2)
 
 
 })
