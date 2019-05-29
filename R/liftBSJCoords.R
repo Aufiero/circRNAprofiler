@@ -28,7 +28,7 @@
 #' data("mergedBSJunctions")
 #'
 #' # LifOver the first 10 back-spliced junction coordinates
-#' liftedBSJCoords <- liftBSJCoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
+#' # liftedBSJCoords <- liftBSJCoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
 #'
 #' @importFrom IRanges IRanges
 #' @importFrom rtracklayer import.chain
