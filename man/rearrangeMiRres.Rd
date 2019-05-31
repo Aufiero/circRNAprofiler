@@ -15,8 +15,9 @@ A list.
 }
 \description{
 The function rearrangeMiRres() rearranges the results of the
-getMiRsites() function. Each element of the list contains the miR resutls
-relative to one circRNA.
+getMiRsites() function. Each element of the list contains the miR results
+relative to one circRNA. For each circRNA only miRNAs for which at least 1
+miRNA binding site is found are reported.
 }
 \examples{
 # Load data frame containing predicted back-spliced junctions

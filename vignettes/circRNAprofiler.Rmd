@@ -1146,10 +1146,12 @@ miRsites <-
   
 ```
 
-#### _rearrageMiRresults()_
+#### _rearrageMiRres()_
 
-The function rearrangeMirResults() rearranges the results of the getMiRsites() 
-function.
+The function rearrangeMirRes() rearranges the results of the getMiRsites() 
+function. Each element of the list contains the miR results relative to one 
+circRNA. For each circRNA only miRNAs for which at least 1 miRNA
+binding site is found are reported.
 
 ```{r,eval = FALSE}
 rearragedMiRres <-

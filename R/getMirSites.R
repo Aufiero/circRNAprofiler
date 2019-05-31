@@ -722,8 +722,9 @@ fillMiRsites <- function(miRsites, rowId, mirId, tempDF) {
 #' @title Rearrange miR results
 #'
 #' @description The function rearrangeMiRres() rearranges the results of the
-#' getMiRsites() function. Each element of the list contains the miR resutls
-#' relative to one circRNA.
+#' getMiRsites() function. Each element of the list contains the miR results
+#' relative to one circRNA. For each circRNA only miRNAs for which at least 1
+#' miRNA binding site is found are reported.
 #'
 #' @param  miRsites A list containing the miR sites found in the RNA
 #' target sequence. it can be generated with \code{\link{getMiRsites}}.
