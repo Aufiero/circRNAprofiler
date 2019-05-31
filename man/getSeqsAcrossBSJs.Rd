@@ -34,8 +34,8 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Annotate the first 10 back-spliced junctions
-annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
+# Annotate the first back-spliced junctions
+annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get genome
 genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")

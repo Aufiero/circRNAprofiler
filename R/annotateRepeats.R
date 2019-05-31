@@ -29,9 +29,8 @@
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#' isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -46,8 +45,8 @@
 #'     )
 #'
 #' # Annotate repeats
-#' repeats <-
-#' annotateRepeats(targets, annotationHubID  = "AH5122", complementary = TRUE)
+#' # repeats <-
+#' # annotateRepeats(targets, annotationHubID  = "AH5122", complementary = TRUE)
 #'
 #' @import dplyr
 #' @import AnnotationHub

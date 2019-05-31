@@ -30,14 +30,13 @@
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#' isRandom = FALSE)
+#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Get random back-spliced junctions
 #' randomBSJunctions <- getRandomBSJunctions( gtf, n = 10, f = 10)
 #'
 #' # Annotate random back-spliced junctions
-#' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = FALSE)
+#' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 #'
 #' # Plot
 #' p <- plotLenIntrons(
@@ -139,13 +138,13 @@ plotLenIntrons <-
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Get random back-spliced junctions
 #' randomBSJunctions <- getRandomBSJunctions(n = 10, f = 10, gtf)
 #'
 #' # Annotate random back-spliced junctions
-#' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = FALSE)
+#' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 #'
 #' # Plot
 #' p <- plotLenBSEs(
@@ -235,7 +234,7 @@ plotLenBSEs <-
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Plot
 #' p <- plotHostGenes(annotatedBSJs, title = "")
@@ -293,7 +292,7 @@ plotHostGenes <-
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Plot
 #' p <- plotExPosition(annotatedBSJs, title = "", n = 0, flip = FALSE)
@@ -374,8 +373,7 @@ plotExPosition <-
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#'     isRandom = FALSE)
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Plot
 #' p <- plotExBetweenBSEs(annotatedBSJs, title = "")
@@ -433,8 +431,7 @@ plotExBetweenBSEs <-
 #' data("gtf")
 #'
 #' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#'     isRandom = FALSE)
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 #'
 #' # Plot
 #' p <- plotTotExons(annotatedBSJs, title = "")
@@ -721,11 +718,11 @@ addGeneName <- function(p, diffExpCirc, log2FC, padj){
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 10 back-spliced junctions
-#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get random back-spliced junctions
-#' randomBSJunctions <- getRandomBSJunctions(gtf, n = 10, f = 10)
+#' randomBSJunctions <- getRandomBSJunctions(gtf, n = 1, f = 10)
 #'
 #' # Annotate random back-spliced junctions
 #' annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
@@ -752,33 +749,33 @@ addGeneName <- function(p, diffExpCirc, log2FC, padj){
 #'    )
 #'
 #' # Get motifs
-#' motifsFTS <- getMotifs(
-#'     targetsFTS,
-#'     width = 6,
-#'     species = "Hsapiens",
-#'     rbp = TRUE,
-#'     reverse = FALSE)
+#'  motifsFTS <- getMotifs(
+#'      targetsFTS,
+#'      width = 6,
+#'      species = "Hsapiens",
+#'      rbp = TRUE,
+#'      reverse = FALSE)
 #'
 #' motifsBTS <- getMotifs(
-#'     targetsBTS,
-#'     width = 6,
-#'     species = "Hsapiens",
-#'     rbp = TRUE,
-#'     reverse = FALSE)
+#'      targetsBTS,
+#'      width = 6,
+#'      species = "Hsapiens",
+#'      rbp = TRUE,
+#'      reverse = FALSE)
 #'
 #' # Merge motifs
-#' mergedMotifsFTS <- mergeMotifs(motifsFTS)
-#' mergedMotifsBTS <- mergeMotifs(motifsBTS)
+#'  mergedMotifsFTS <- mergeMotifs(motifsFTS)
+#'  mergedMotifsBTS <- mergeMotifs(motifsBTS)
 #'
 #' # Plot
-#' p <- plotMotifs(
-#'     mergedMotifsFTS,
-#'     mergedMotifsBTS,
-#'     log2FC = 2,
-#'     nf1 = nrow(annotatedFBSJs),
-#'     nf2 = nrow(annotatedBBSJs),
-#'     df1Name = "foreground",
-#'     df2Name = "background")
+#'  p <- plotMotifs(
+#'      mergedMotifsFTS,
+#'      mergedMotifsBTS,
+#'      log2FC = 2,
+#'      nf1 = nrow(annotatedFBSJs),
+#'      nf2 = nrow(annotatedBBSJs),
+#'      df1Name = "foreground",
+#'      df2Name = "background")
 #'
 #' @importFrom rlang .data
 #' @import ggplot2
@@ -911,9 +908,8 @@ getMergedMotifsAll <- function(mergedMotifsFTS,
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 3 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-#'     isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -927,25 +923,25 @@ getMergedMotifsAll <- function(mergedMotifsFTS,
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 #'
-#' miRsites <- getMiRsites(
-#'     targets,
-#'     miRspeciesCode = "hsa",
-#'     miRBaseLatestRelease = TRUE,
-#'     totalMatches = 6,
-#'     maxNonCanonicalMatches = 1,
-#'     pathToMiRs)
+#' # miRsites <- getMiRsites(
+#' #     targets,
+#' #     miRspeciesCode = "hsa",
+#' #     miRBaseLatestRelease = TRUE,
+#' #     totalMatches = 6,
+#' #     maxNonCanonicalMatches = 1,
+#' #     pathToMiRs)
 #'
 #' # Rearrange miR results
-#' rearragedMiRres <- rearrangeMiRres(miRsites)
+#' # rearragedMiRres <- rearrangeMiRres(miRsites)
 #'
 #' # Plot
-#' p <- plotMiR(
-#'     rearragedMiRres,
-#'     n = 20,
-#'     color = "blue",
-#'     miRid = TRUE,
-#'     id = 3)
-#' p
+#' # p <- plotMiR(
+#' #     rearragedMiRres,
+#' #     n = 20,
+#' #     color = "blue",
+#' #     miRid = TRUE,
+#' #     id = 3)
+#' # p
 #'
 #' @importFrom rlang .data
 #' @import ggplot2

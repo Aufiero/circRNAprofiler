@@ -59,11 +59,11 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Annotate the first 10 back-spliced junctions
-annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+# Annotate the first back-spliced junctions
+annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get random back-spliced junctions
-randomBSJunctions <- getRandomBSJunctions(gtf, n = 10, f = 10)
+randomBSJunctions <- getRandomBSJunctions(gtf, n = 1, f = 10)
 
 # Annotate random back-spliced junctions
 annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
@@ -90,32 +90,32 @@ targetsBTS <- getSeqsFromGRs(
    )
 
 # Get motifs
-motifsFTS <- getMotifs(
-    targetsFTS,
-    width = 6,
-    species = "Hsapiens",
-    rbp = TRUE,
-    reverse = FALSE)
+ motifsFTS <- getMotifs(
+     targetsFTS,
+     width = 6,
+     species = "Hsapiens",
+     rbp = TRUE,
+     reverse = FALSE)
 
 motifsBTS <- getMotifs(
-    targetsBTS,
-    width = 6,
-    species = "Hsapiens",
-    rbp = TRUE,
-    reverse = FALSE)
+     targetsBTS,
+     width = 6,
+     species = "Hsapiens",
+     rbp = TRUE,
+     reverse = FALSE)
 
 # Merge motifs
-mergedMotifsFTS <- mergeMotifs(motifsFTS)
-mergedMotifsBTS <- mergeMotifs(motifsBTS)
+ mergedMotifsFTS <- mergeMotifs(motifsFTS)
+ mergedMotifsBTS <- mergeMotifs(motifsBTS)
 
 # Plot
-p <- plotMotifs(
-    mergedMotifsFTS,
-    mergedMotifsBTS,
-    log2FC = 2,
-    nf1 = nrow(annotatedFBSJs),
-    nf2 = nrow(annotatedBBSJs),
-    df1Name = "foreground",
-    df2Name = "background")
+ p <- plotMotifs(
+     mergedMotifsFTS,
+     mergedMotifsBTS,
+     log2FC = 2,
+     nf1 = nrow(annotatedFBSJs),
+     nf2 = nrow(annotatedBBSJs),
+     df1Name = "foreground",
+     df2Name = "background")
 
 }

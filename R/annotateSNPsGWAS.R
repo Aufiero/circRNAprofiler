@@ -40,9 +40,8 @@
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 10 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-#' isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -135,6 +134,7 @@ getGWAS <- function(assembly = "hg19",
             #Load lifted over image
             utils::data(ebicat37)
             gwas <- ebicat37
+            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
 
     } else if (assembly == "hg38") {
@@ -155,6 +155,7 @@ getGWAS <- function(assembly = "hg19",
             # Load image dated 3 August 2015
             utils::data(ebicat38)
             gwas <- ebicat38
+            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
 
     } else {

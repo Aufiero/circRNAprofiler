@@ -40,9 +40,8 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Annotate the first 3 back-spliced junctions
-annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-    isRandom = FALSE)
+# Annotate the first back-spliced junctions
+annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get genome
 genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -56,24 +55,24 @@ targets <- getCircSeqs(
 # Screen target sequence for miR binding sites.
 pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 
-miRsites <- getMiRsites(
-    targets,
-    miRspeciesCode = "hsa",
-    miRBaseLatestRelease = TRUE,
-    totalMatches = 6,
-    maxNonCanonicalMatches = 1,
-    pathToMiRs)
+# miRsites <- getMiRsites(
+#     targets,
+#     miRspeciesCode = "hsa",
+#     miRBaseLatestRelease = TRUE,
+#     totalMatches = 6,
+#     maxNonCanonicalMatches = 1,
+#     pathToMiRs)
 
 # Rearrange miR results
-rearragedMiRres <- rearrangeMiRres(miRsites)
+# rearragedMiRres <- rearrangeMiRres(miRsites)
 
 # Plot
-p <- plotMiR(
-    rearragedMiRres,
-    n = 20,
-    color = "blue",
-    miRid = TRUE,
-    id = 3)
-p
+# p <- plotMiR(
+#     rearragedMiRres,
+#     n = 20,
+#     color = "blue",
+#     miRid = TRUE,
+#     id = 3)
+# p
 
 }

@@ -34,7 +34,7 @@ data("mergedBSJunctions")
 data("gtf")
 
 # Annotate the first 10 back-spliced junctions
-annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 
 # Plot
 p <- plotExPosition(annotatedBSJs, title = "", n = 0, flip = FALSE)

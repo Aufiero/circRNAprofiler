@@ -40,14 +40,13 @@ data("mergedBSJunctions")
 data("gtf")
 
 # Annotate the first 10 back-spliced junctions
-annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf,
-isRandom = FALSE)
+annotatedFBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf)
 
 # Get random back-spliced junctions
 randomBSJunctions <- getRandomBSJunctions( gtf, n = 10, f = 10)
 
 # Annotate random back-spliced junctions
-annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = FALSE)
+annotatedBBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 
 # Plot
 p <- plotLenIntrons(

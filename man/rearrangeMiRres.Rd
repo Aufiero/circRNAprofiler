@@ -25,9 +25,8 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Annotate the first 3 back-spliced junctions
-annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-    isRandom = FALSE)
+# Annotate the first back-spliced junctions
+annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get genome
 genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -50,7 +49,7 @@ pathToMiRs <- system.file("extdata", "miRs.txt",package="circRNAprofiler")
 #    pathToMiRs)
 
 # Rearrange miR results
-#rearragedMiRres <- rearrangeMiRres(miRsites)
+# rearragedMiRres <- rearrangeMiRres(miRsites)
 
 
 }

@@ -61,8 +61,8 @@
 #' # Example with the first back-spliced junctions.
 #' # Multiple back-spliced junctions can also be analyzed at the same time.
 #'
-#' # Annotate detected back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:10, ], gtf, isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")

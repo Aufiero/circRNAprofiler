@@ -54,9 +54,8 @@
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 3 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-#'     isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -738,9 +737,8 @@ fillMiRsites <- function(miRsites, rowId, mirId, tempDF) {
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Annotate the first 3 back-spliced junctions
-#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1:3, ], gtf,
-#'     isRandom = FALSE)
+#' # Annotate the first back-spliced junctions
+#' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -763,7 +761,7 @@ fillMiRsites <- function(miRsites, rowId, mirId, tempDF) {
 #' #    pathToMiRs)
 #'
 #' # Rearrange miR results
-#' #rearragedMiRres <- rearrangeMiRres(miRsites)
+#' # rearragedMiRres <- rearrangeMiRres(miRsites)
 #'
 #'
 #' @import dplyr
@@ -822,7 +820,7 @@ rearrangeMiRres <- function(miRsites) {
         rearragedMiRres[[i]][[2]]$localAUcontent <-
             as.character(miRsites$localAUcontent[i, idM])
 
-        #Remove miR with no counts
+        #Remove miR with zero counts
         rearragedMiRres[[i]][[2]] <- rearragedMiRres[[i]][[2]] %>%
             dplyr::filter(counts  != 0)
     }
