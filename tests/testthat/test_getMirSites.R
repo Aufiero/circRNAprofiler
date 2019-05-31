@@ -9,7 +9,7 @@ test_that("getMiRsites() generates the correct data structure", {
     mergedBSJunctions <- mergeBSJunctions(backSplicedJunctions, gtf)
 
     # Retrive the genomic features
-    annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
+    annotatedBSJs <- annotateBSJs(mergedBSJunctions[9, ], gtf)
 
     if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
         install.packages("BSgenome.Mmusculus.UCSC.mm10")
@@ -18,7 +18,7 @@ test_that("getMiRsites() generates the correct data structure", {
     genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
 
     # Retrieve the target sequences
-    targets <- getCircSeqs(annotatedBSJs[1, ],
+    targets <- getCircSeqs(annotatedBSJs,
         gtf,
         genome
         )
@@ -74,7 +74,7 @@ test_that("getMiRsites() retrieves the correct matches", {
     mergedBSJunctions <- mergeBSJunctions(backSplicedJunctions, gtf)
 
     # Retrive the genomic features
-    annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
+    annotatedBSJs <- annotateBSJs(mergedBSJunctions[11, ], gtf)
 
     if (!requireNamespace("BSgenome.Mmusculus.UCSC.mm10", quietly = TRUE))
         install.packages("BSgenome.Mmusculus.UCSC.mm10")
@@ -83,10 +83,15 @@ test_that("getMiRsites() retrieves the correct matches", {
     genome <- BSgenome::getBSgenome("BSgenome.Mmusculus.UCSC.mm10")
 
     # Retrieve the target sequences (Arhgap5:+:chr12:52516079:52542636)
-    targets <- getCircSeqs(annotatedBSJs[11,],
+    targets <- getCircSeqs(annotatedBSJs,
         gtf,
         genome
         )
+
+
+    # We modifie the seq so that the miR analysis is faster
+    targets$circ$seq <- as.character(Biostrings::RNAStringSet(base::substring(targets$circ$seq, 3839, 4089)))
+    targets$circ$length <- 200
 
     # miR analysis
     miRsites <- getMiRsites(
@@ -103,13 +108,26 @@ test_that("getMiRsites() retrieves the correct matches", {
     expect_equal(miRsites$counts[1, 2], 1)
     expect_equal(miRsites$totMatchesInSeed[1, 2], "7")
     expect_equal(miRsites$cwcMatchesInSeed[1, 2], "7mer")
-    expect_equal(miRsites$seedLocation[1, 2], "4061")
+    expect_equal(miRsites$seedLocation[1, 2], "223")
     expect_equal(miRsites$totMatchesInCentral[1, 2], "4")
     expect_equal(miRsites$cwcMatchesInCentral[1, 2], "4")
     expect_equal(miRsites$totMatchesInCompensatory[1, 2], "4")
     expect_equal(miRsites$cwcMatchesInCompensatory[1, 2], "4")
     expect_equal(miRsites$localAUcontent[1, 2], "0.6")
     expect_equal(miRsites$t1[1, 2], "A")
+
+
+
+
+    # Retrieve the target sequences (Arhgap5:+:chr12:52516079:52542636)
+    targets <- getCircSeqs(annotatedBSJs,
+        gtf,
+        genome
+    )
+
+    # We modifie the seq so that the miR analysis is faster
+    targets$circ$seq <- as.character(Biostrings::RNAStringSet(base::substring(targets$circ$seq, 101, 300)))
+    targets$circ$length <- 150
 
 
     # miR analysis
@@ -127,7 +145,7 @@ test_that("getMiRsites() retrieves the correct matches", {
     expect_equal(miRsites$counts[1, 4], 1)
     expect_equal(miRsites$totMatchesInSeed[1, 4], "6")
     expect_equal(miRsites$cwcMatchesInSeed[1, 4], "4mer")
-    expect_equal(miRsites$seedLocation[1, 4], "260")
+    expect_equal(miRsites$seedLocation[1, 4], "160")
     expect_equal(miRsites$totMatchesInCentral[1, 4], "1")
     expect_equal(miRsites$cwcMatchesInCentral[1, 4], "1")
     expect_equal(miRsites$totMatchesInCompensatory[1, 4], "2")
