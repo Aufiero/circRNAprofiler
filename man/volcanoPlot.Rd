@@ -6,7 +6,7 @@
 \usage{
 volcanoPlot(res, log2FC = 1, padj = 0.05, title = "", gene = FALSE,
   setxLim = FALSE, xlim = c(-8, 8), setyLim = FALSE, ylim = c(0,
-  5))
+  5), color = "blue")
 }
 \arguments{
 \item{res}{A data frame containing the the differential expression resuls.
@@ -34,6 +34,9 @@ If TRUE the value in ylim will be used. Deafult value is FALSE.}
 
 \item{ylim}{An integer specifying the lower and upper y axis limits
 Deafult values are c(0, 5).}
+
+\item{color}{A string specifying the color of the differentially expressed
+circRNAs. Default value is "blue".}
 }
 \value{
 A ggplot object.

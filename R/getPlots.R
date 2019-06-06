@@ -101,7 +101,7 @@ plotLenIntrons <-
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_text(hjust = 0.5)) +
-            scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
+            scale_fill_grey(name = "circRNA", labels = c(df2Name, df1Name))
         return(p)
     }
 
@@ -210,7 +210,7 @@ plotLenBSEs <-
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
                 axis.text.x = element_text(hjust = 0.5)) +
-            scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
+            scale_fill_grey(name = "circRNA", labels = c(df2Name, df1Name))
         return(p)
     }
 
@@ -503,6 +503,9 @@ plotTotExons <-
 #' @param ylim An integer specifying the lower and upper y axis limits
 #' Deafult values are c(0, 5).
 #'
+#' @param color A string specifying the color of the differentially expressed
+#' circRNAs. Default value is "blue".
+#'
 #' @return A ggplot object.
 #'
 #' @examples
@@ -550,7 +553,8 @@ volcanoPlot <- function(res,
     setxLim = FALSE,
     xlim = c(-8 , 8),
     setyLim = FALSE,
-    ylim = c(0, 5)) {
+    ylim = c(0, 5),
+    color = "blue") {
     res <- stats::na.omit(res)
     diffExpCirc <- stats::na.omit(res[abs(res$log2FC) >= log2FC &
             res$padj <= padj, ])
@@ -571,7 +575,7 @@ volcanoPlot <- function(res,
         geom_point(
             data = diffExpCirc,
             aes(x = log2FC, y = -log10(padj)),
-            color = "blue",
+            color = color,
             size = 3,
             na.rm = TRUE
         ) +
@@ -826,7 +830,7 @@ plotMotifs <-
             coord_flip() +
             theme_classic() +
             theme(plot.title = element_text(angle = 90, hjust = 0.5)) +
-            scale_fill_discrete(name = "circRNA", labels = c(df1Name, df2Name))
+            scale_fill_grey(name = "circRNA", labels = c(df1Name, df2Name))
 
         p[[3]] <- mergedMotifsAll %>%
             dplyr::arrange(desc(.data$log2FC))
