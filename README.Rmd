@@ -42,7 +42,7 @@ remotes::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
 ```
 
 ## Documentation
-Detiled information on using this package can be found in the package vignettes:
+Detailed information on using this package can be found in the package vignettes:
 
 ```{r, eval = FALSE}
 browseVignettes("circRNAprofiler")
