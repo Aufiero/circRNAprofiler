@@ -7,7 +7,7 @@ if (getRversion() >= "3.1.0")
 #'
 #' @description The function formatGTF() formats the given annotation file.
 #'
-#' @param pathToGTF A string containing the path to the the GTF file.
+#' @param pathToGTF A string containing the path to the GTF file.
 #' Use the same annotation file used during the RNA-seq mapping procedure.
 #'
 #' @return A data frame.
