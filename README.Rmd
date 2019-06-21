@@ -29,17 +29,19 @@ facilitate the interpretation of the results.
 
 ## Installation
 
-You can install the released version of circRNAprofiler using the devtools
-package. To do so:
-
+You can install circRNAprofiler using:
 ```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("remotes")
-library(remotes)
-remotes::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
+BiocManager::install("circRNAprofiler")
 ```
+
+To download the development version on github use:
+```{r, eval = FALSE}
+BiocManager::install("Aufiero/circRNAprofiler")
+```
+
 
 ## Documentation
 Detailed information on using this package can be found in the package vignettes:

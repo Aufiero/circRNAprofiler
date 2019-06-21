@@ -10,21 +10,25 @@ circRNAprofiler is an R-based framework that only requires an R installation and
 Installation
 ------------
 
-You can install the released version of circRNAprofiler using the devtools package. To do so:
+You can install circRNAprofiler using:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("remotes")
-library(remotes)
-remotes::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
+BiocManager::install("circRNAprofiler")
+```
+
+To download the development version on github use:
+
+``` r
+BiocManager::install("Aufiero/circRNAprofiler")
 ```
 
 Documentation
 -------------
 
-Detiled information on using this package can be found in the package vignettes:
+Detailed information on using this package can be found in the package vignettes:
 
 ``` r
 browseVignettes("circRNAprofiler")
