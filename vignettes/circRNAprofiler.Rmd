@@ -64,16 +64,17 @@ PRJNA533243.
 
 ## Install the package
 
-The latest version of the circRNprofiler package is available on github and it 
-can be installed with:
-
-```{r, eval = FALSE }
+You can install circRNAprofiler using:
+```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("remotes")
-library(remotes)
-remotes::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
+BiocManager::install("circRNAprofiler")
+```
+
+To download the development version on github use:
+```{r, eval = FALSE}
+BiocManager::install("Aufiero/circRNAprofiler")
 ```
 
 ## Load the package
@@ -176,7 +177,7 @@ It is suggested to use the same annotation file used during the read mapping
 procedure. 
 
 The file **motifs.txt (optional)** contains motifs/regular expressions specified by the user.
-It must have 3 columns with headers:
+It must have 3 columns with header:
 
 - id (1st column): name of the motif. - e.g. RBM20 or motif1.
  
@@ -298,7 +299,7 @@ The coordinates for startUpBSE and endDownBSE are relative to the reference
 strand, i.e. if strand is positive startUpBSE < endDownBSE, if strand is 
 negative startUpBSE > endDownBSE.
 
-The circRNAprofiler package is designed to be extended in the future with
+The circRNAprofiler package can be extended in the future with
 further import functions specifically designed to import the output files of
 the different circRNA detection tools. At the moment only import functions for
 circRNA detection from annotation-based circRNA detection tools (e.g. MapSplice2,
