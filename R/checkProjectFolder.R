@@ -79,7 +79,6 @@ checkProjectFolder <-
         pathToMiRs = NULL,
         pathToTranscripts = NULL,
         pathToTraits = NULL) {
-
         # Check optional files
         checkMotifs(pathToMotifs)
         checkTraits(pathToTraits)
@@ -104,9 +103,10 @@ checkMotifs <- function(pathToMotifs = NULL) {
     # check motifs.txt
     motifsFromFile <- readMotifs(pathToMotifs)
 
-    if (nrow(motifsFromFile)>0) {
+    if (nrow(motifsFromFile) > 0) {
         cnm <- c("id", "motif", "length")
-        if (!all(colnames(motifsFromFile) %in%  cnm)) {
+
+        if (!all(cnm %in% colnames(motifsFromFile))) {
             missingNamesId <- which(!cnm %in%
                     colnames(motifsFromFile))
             cat(
@@ -115,16 +115,18 @@ checkMotifs <- function(pathToMotifs = NULL) {
                 "\n"
             )
 
+        } else if (ncol(motifsFromFile) != 3) {
+            cat("(!) motifs.txt must have 3 column with header id, motif and length\n")
         }
 
     } else{
         cat(
             "Missing or empty motifs.txt file.
-                Optional file. If absent or empty only
-                ATtRACT motifs will be analyzed\n"
+            Optional file. If absent or empty only
+            ATtRACT motifs will be analyzed\n"
         )
     }
-}
+    }
 
 
 # check traits.txt
@@ -133,39 +135,44 @@ checkTraits <- function(pathToTraits = NULL) {
     traitsFromFile <- readTraits(pathToTraits)
     # Check if there there are traits
     if (nrow(traitsFromFile) > 0) {
-
-        if (!all(colnames(traitsFromFile) %in%  "id")) {
-            cat("(!) missing or wrong column names in traits.txt: id\n ")
+        # Check if column id
+        if (!"id" %in% colnames(traitsFromFile)) {
+            cat("(!) missing or wrong column name in traits.txt: id\n ")
+        } else if (ncol(traitsFromFile) != 1) {
+            cat("(!) traits.txt must have 1 column with header id\n ")
         }
+
 
     } else {
         cat(
             "Missing or empty traits.txt file.
-                Optional file. If absent or empty all
-                traits in the GWAS catalog will be analyzed\n"
+            Optional file. If absent or empty all
+            traits in the GWAS catalog will be analyzed\n"
         )
     }
-}
+    }
 
 # check miRs.txt
 checkMiRs <- function(pathToMiRs = NULL) {
     # Read miRs.txt
     miRsFromFile <- readMiRs(pathToMiRs)
 
-    if (nrow(miRsFromFile)>0) {
-
-        if (!all(colnames(miRsFromFile) %in%  "id")) {
-            cat("(!): missing or wrong column names in miRs.txt: id\n")
+    if (nrow(miRsFromFile) > 0) {
+        # Check if column id
+        if (!"id" %in% colnames(miRsFromFile)) {
+            cat("(!) missing or wrong column name in traits.txt: id\n ")
+        } else if (ncol(miRsFromFile) != 1) {
+            cat("(!) miRs.txt must have 1 column with header id\n ")
         }
 
     } else{
         cat(
             "Missing miRs.txt file.
-                Optional file. If absent or empty all miRNAs of the
-                specified species will be analyzed\n"
+            Optional file. If absent or empty all miRNAs of the
+            specified species will be analyzed\n"
         )
     }
-}
+    }
 
 # check transcripts.txt
 checkTranscripts <- function(pathToTranscripts = NULL) {
@@ -173,18 +180,21 @@ checkTranscripts <- function(pathToTranscripts = NULL) {
     transcriptsFromFile <- readTranscripts(pathToTranscripts)
 
     if (nrow(transcriptsFromFile) > 0) {
-        if (!all(colnames(transcriptsFromFile) %in%  "id")) {
-            cat("(!) missing or wrong column names in transcripts.txt: id\n")
+        # Check if column id
+        if (!"id" %in% colnames(transcriptsFromFile)) {
+            cat("(!) missing or wrong column name in traits.txt: id\n ")
+        } else if (ncol(transcriptsFromFile) != 1) {
+            cat("(!) transcripts.txt must have 1 column with header id\n ")
         }
 
     } else{
         cat(
             "Missing or empty transcripts.txt.
-                Optional file. If absent or empty the longest
-                transcripts for all circRNAs will be analyzed\n"
+            Optional file. If absent or empty the longest
+            transcripts for all circRNAs will be analyzed\n"
         )
     }
-}
+    }
 
 
 # Check GTF file
@@ -213,13 +223,15 @@ checkExperiment <- function(pathToExperiment = NULL) {
     experiment <- readExperiment(pathToExperiment)
     if (nrow(experiment) > 0) {
         cne <- c("label", "fileName", "condition")
-        if (!all(colnames(experiment) %in%  cne)) {
-            missingNamesId <- which(!cne %in%  colnames(experiment))
+        if (!all(cne %in%  colnames(experiment))) {
+            missingNamesId <- which(!cne %in% colnames(experiment))
             cat(
                 "(!): missing or wrong column names in experiment.txt: ",
                 paste(cne[missingNamesId], collapse = " \t", "\n")
             )
             check <- check + 1
+        }else if (ncol(experiment) != 3) {
+            cat("(!) experiment must have 3 column with header label, fileName and condition\n")
         }
 
         # check folder with circRNA predictions
@@ -249,7 +261,8 @@ checkExperiment <- function(pathToExperiment = NULL) {
 
         } else {
             cat("(!): missing folders containing circRNA predictions\n")
-            cat("Folders containing .txt files with circRNA predictions
+            cat(
+                "Folders containing .txt files with circRNA predictions
                 must be present in the wd\n"
             )
             check <- check + 1
@@ -259,7 +272,7 @@ checkExperiment <- function(pathToExperiment = NULL) {
         check <- check + 1
     }
     return(check)
-}
+    }
 
 
 # If the function you are looking for is not here check supportFunction.R
