@@ -54,10 +54,10 @@ importMapSplice <- function(pathToFile) {
             gene = unlist(lapply(.data$gene, function(x)
                 base::strsplit(x, ",")[[1]][1]))
         )
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
+
     # Merge duplicated
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
@@ -71,6 +71,9 @@ importMapSplice <- function(pathToFile) {
             .data$endDownBSE
         ) %>%
         dplyr::summarise(coverage = sum(.data$coverage))
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
     return(adaptedPatientCircTable)
 }
 
@@ -162,15 +165,18 @@ importNCLscan <- function(pathToFile) {
             .data$coverage
         )
 
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
+
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
         dplyr::select(.data$id, everything())
 
     return(adaptedPatientCircTable)
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
 }
 
 # Get NCLscan column names
@@ -264,8 +270,6 @@ importCircExplorer2 <- function(pathToFile) {
             coverage = .data$readNumber
         )
 
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
 
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
@@ -275,6 +279,9 @@ importCircExplorer2 <- function(pathToFile) {
         dplyr::select(.data$id, everything())
 
     return(adaptedPatientCircTable)
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
 }
 
 # Get circExplorer column names
@@ -374,8 +381,6 @@ importKnife <- function(pathToFile) {
             # back-spliced junction coordinate
             coverage = .data$readNumber
         )
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
 
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
@@ -385,6 +390,9 @@ importKnife <- function(pathToFile) {
         dplyr::select(.data$id, everything())
 
     return(adaptedPatientCircTable)
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
 }
 
 getKnColNames <- function(){
@@ -556,10 +564,10 @@ importCircMarker <- function(pathToFile, gtf) {
             # back-spliced junction coordinate
             .data$coverage
         )
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
+
     # Merge duplicated
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
@@ -573,6 +581,8 @@ importCircMarker <- function(pathToFile, gtf) {
             .data$endDownBSE
         ) %>%
         dplyr::summarise(coverage = sum(.data$coverage))
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
     return(adaptedPatientCircTable)
 }
 
@@ -634,9 +644,6 @@ importUroborus <- function(pathToFile) {
             coverage = .data$read_counts
         )
 
-    # Fix coordinates
-    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
-
     # Generate a unique identifier
     id <- getID(adaptedPatientCircTable)
 
@@ -645,6 +652,9 @@ importUroborus <- function(pathToFile) {
         dplyr::select(.data$id, everything())
 
     return(adaptedPatientCircTable)
+    # Fix coordinates
+    adaptedPatientCircTable <- fixCoords(adaptedPatientCircTable)
+
 }
 
 

@@ -23,8 +23,8 @@
 #' package is used to get the more recent image. If FALSE is specified the
 #' image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.
 #'
-#' @param pathToTraits A string containing the path to the traits.txt
-#' file. contains diseases/traits specified by the user. It must
+#' @param pathToTraits A string containing the path to the traits.txt file.
+#' The file traits.txt contains diseases/traits specified by the user. It must
 #' have one column with header id. By default pathToTraits is set to NULL and
 #' the file it is searched in the working directory. If traits.txt is located
 #' in a different directory then the path needs to be specified. If this file is
