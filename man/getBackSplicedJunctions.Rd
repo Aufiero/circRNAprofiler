@@ -13,16 +13,15 @@ generated with \code{\link{formatGTF}}.}
 \item{pathToExperiment}{A string containing the path to the experiment.txt
 file. The file experiment.txt contains the experiment design information.
 It must have at least 3 columns with headers:
+\describe{
+\item{label:}{(1st column) - unique names of the samples (short but informative).}
+\item{fileName:}{(2nd column) - name of the input files - e.g. circRNAs_X.txt, where
+x can be can be 001, 002 etc.}
+\item{group:}{ (3rd column) - biological conditions - e.g. A or B; healthy or diseased
+if you have only 2 conditions.}
+}
 
-- label (1st column): unique names of the samples (short but informative).
-
-- fileName (2nd column): name of the input files - e.g. circRNAs_X.txt, where
-x can be can be 001, 002 etc.
-
-- group (3rd column): biological conditions - e.g. A or B; healthy or
-diseased if you have only 2 conditions.
-
-By default pathToExperiment i set to NULL and the file it is searched in
+By default pathToExperiment is set to NULL and the file it is searched in
 the working directory. If experiment.txt is located in a different directory
 then the path needs to be specified.}
 }

@@ -32,12 +32,11 @@ reported in the ATtRACT db and motifs.txt. Default value is FALSE.}
 \item{pathToMotifs}{A string containing the path to the motifs.txt
 file. The file motifs.txt contains motifs/regular expressions specified
 by the user. It must have 3 columns with headers:
-
-- id (1st column): name of the motif. - e.g. RBM20 or motif1.
-
-- motif (2nd column): motif/pattern to search.
-
-- length (3rd column): length of the motif.
+\describe{
+\item{id:}{ (1st column) - name of the motif. - e.g. RBM20 or motif1).}
+\item{motif:}{(2nd column) -motif/pattern to search.}
+\item{length:}{(3rd column) - length of the motif.}
+}
 
 By default pathToMotifs is set to NULL and the file it is searched in the
 working directory. If motifs.txt is located in a different directory then

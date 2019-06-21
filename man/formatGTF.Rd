@@ -7,7 +7,7 @@
 formatGTF(pathToGTF = NULL)
 }
 \arguments{
-\item{pathToGTF}{A string containing the path to the the GTF file.
+\item{pathToGTF}{A string containing the path to the GTF file.
 Use the same annotation file used during the RNA-seq mapping procedure.}
 }
 \value{
