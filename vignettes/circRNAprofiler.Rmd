@@ -1155,14 +1155,7 @@ circRNA. For each circRNA only miRNAs for which at least 1 miRNA
 binding site is found are reported.
 
 ```{r,eval = FALSE}
-rearragedMiRres <-
-    rearrangeMiRres(
-        miRsites,
-        n = 40,
-        color = "blue",
-        miRid = TRUE,
-        id = 1
-    )
+rearragedMiRres <- rearrangeMiRres(miRsites)
 ```
 
 Store results in an excel file
