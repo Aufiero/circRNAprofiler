@@ -32,7 +32,6 @@ Suggests:
     BSgenome.Mmusculus.UCSC.mm9,
     BSgenome.Hsapiens.UCSC.hg38,
     BSgenome.Mmusculus.UCSC.mm10,
-    remotes,
 Imports:
     dplyr,
     magrittr,
