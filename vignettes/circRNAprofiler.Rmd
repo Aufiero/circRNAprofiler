@@ -124,7 +124,7 @@ filled with the appropriate information (see files description below).
 If only MapSplice is used for the circRNA detection run the following command:
 
 ```{r, eval = FALSE }
-initCircRNAprofiler(projectFolderName = "circRNAprofilerX", detectionTools =
+initCircRNAprofiler(projectFolderName = "circRNAprofiler", detectionTools =
                       "mapsplice")
 ```
 
