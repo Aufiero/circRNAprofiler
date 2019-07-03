@@ -601,7 +601,7 @@ head(edgerResCvsA)
 
 ### Module 6 - Map BSJ coordinates between species and genome assemblies
 
-#### _liftBSJCoords()_
+#### _liftBSJcoords()_
 
 The function liftBSJCoords() maps back-spliced junction coordinates between
 different species and genome assemblies by using the liftOver utility from UCSC.
@@ -615,7 +615,7 @@ are reported. Back-spliced junction coordinates that could not be
 mapped might be not conserved between the analyzed species.
 
 ```{r, eval = FALSE}
-liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
+liftedBSJcoords <- liftBSJcoords(filteredCirc, map = "hg19ToMm9",
                                  annotationHubID = "AH14155")
 ```
 

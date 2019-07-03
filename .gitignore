@@ -5,3 +5,4 @@ doc
 .Ruserdata
 inst/doc
 *.Rproj
+.Rproj.user

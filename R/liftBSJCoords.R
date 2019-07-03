@@ -1,6 +1,6 @@
 #' @title LiftOver back-spliced junction coordinates
 #'
-#' @description The function liftBSJCoords() maps back-spliced junction
+#' @description The function liftBSJcoords() maps back-spliced junction
 #' coordinates between species ad genome assemblies by using the liftOver utility
 #' from UCSC. Only back-spliced junction coordinates where the mapping was
 #' successful are reported.
@@ -28,7 +28,7 @@
 #' data("mergedBSJunctions")
 #'
 #' # LifOver the first 10 back-spliced junction coordinates
-#' # liftedBSJCoords <- liftBSJCoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
+#' # liftedBSJcoords <- liftBSJcoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
 #'
 #' @importFrom IRanges IRanges
 #' @importFrom rtracklayer import.chain
@@ -39,7 +39,7 @@
 #' @import AnnotationHub
 #'
 #' @export
-liftBSJCoords <-
+liftBSJcoords <-
     function(backSplicedJunctions,
         map = "hg19ToMm9",
         annotationHubID = "AH14155") {
@@ -150,7 +150,9 @@ upperHuman <- function(species, backSplicedJunctions){
     if (grepl("Hg", species)) {
         gene <- toupper(backSplicedJunctions$gene)
     } else{
-        gene <- backSplicedJunctions$gene
+        x <- tolower(backSplicedJunctions$gene)
+        substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+        gene <- x
     }
     return(gene)
 }
