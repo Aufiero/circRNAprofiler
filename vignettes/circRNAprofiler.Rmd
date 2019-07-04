@@ -90,7 +90,7 @@ library(gridExtra)
 
 ## Running circRNAprofiler
 
-### Module 1 - set up project folder
+### Module 1 - Set up project folder
 
 #### _initCircRNAprofiler()_
 
@@ -1004,7 +1004,7 @@ knitr::include_graphics("./images/image4.png")
 ```
 
 ```{r, eval = FALSE}
-# Type p[[3]] to get table
+# Type p[[3]] to get the table
 head(p[[3]])
 ```
 

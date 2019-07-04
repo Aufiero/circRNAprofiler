@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2019-07-03" />
+<meta name="date" content="2019-07-04" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -192,7 +192,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2019-07-03</h4>
+<h4 class="date">2019-07-04</h4>
 
 </div>
 
@@ -205,7 +205,7 @@ $(document).ready(function () {
 <li><a href="#load-the-package">Load the package</a></li>
 <li><a href="#running-circrnaprofiler">Running circRNAprofiler</a>
 <ul>
-<li><a href="#module-1---set-up-project-folder">Module 1 - set up project folder</a>
+<li><a href="#module-1---set-up-project-folder">Module 1 - Set up project folder</a>
 <ul>
 <li><a href="#_initcircrnaprofiler()_"><em>initCircRNAprofiler()</em></a></li>
 <li><a href="#_checkprojectfolder()_"><em>checkProjectFolder()</em></a></li>
@@ -318,7 +318,7 @@ library(gridExtra)</code></pre>
 <div id="running-circrnaprofiler" class="section level2">
 <h2>Running circRNAprofiler</h2>
 <div id="module-1---set-up-project-folder" class="section level3">
-<h3>Module 1 - set up project folder</h3>
+<h3>Module 1 - Set up project folder</h3>
 <div id="initcircrnaprofiler" class="section level4">
 <h4><em>initCircRNAprofiler()</em></h4>
 <p>An important step of the analysis workflow is to initialize the project folder, which can be done with the helper function initCircRNAprofiler() available in the package. The project folder should be structured as in the example Figure 2 if seven detection tools are used to detect circRNAs in 6 samples.</p>
@@ -915,20 +915,20 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                 id   gene strand chrom startUpBSE
-## 1 INO80C:-:chr18:33077955:33048297 INO80C      - chr18   33077955
-## 2  SLC8A1:-:chr2:40657411:40391994 SLC8A1      -  chr2   40657411
-## 3 PICALM:-:chr11:85688048:85669854 PICALM      - chr11   85688048
-## 4 PICALM:-:chr11:85693228:85692227 PICALM      - chr11   85693228
-## 5  UBE3A:-:chr15:25601977:25599675  UBE3A      - chr15   25601977
-## 6   LGMN:-:chr14:93199160:93176017   LGMN      - chr14   93199160
+##                                  id    gene strand chrom startUpBSE
+## 1   SLC8A1:-:chr2:40679209:40404892  SLC8A1      -  chr2   40679209
+## 2 N4BP2L2:-:chr13:33112962:33112755 N4BP2L2      - chr13   33112962
+## 3    TECRL:-:chr4:65275116:65188405   TECRL      -  chr4   65275116
+## 4  PICALM:-:chr11:85712184:85692172  PICALM      - chr11   85712184
+## 5   ALPK2:-:chr18:56246256:56212246   ALPK2      - chr18   56246256
+## 6   ZNF91:-:chr19:23557566:23556544   ZNF91      - chr19   23557566
 ##   endDownBSE
-## 1   33048297
-## 2   40391994
-## 3   85669854
-## 4   85692227
-## 5   25599675
-## 6   93176017</code></pre>
+## 1   40404892
+## 2   33112755
+## 3   65188405
+## 4   85692172
+## 5   56212246
+## 6   23556544</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>
@@ -1105,7 +1105,7 @@ ggarrange(p[[1]],
  Bar chart showing the log2FC (cut-off = 1) and the normalized counts of the RBP motifs found in the region flanking the predicted back-spliced junction of circALPK2 compared to the remaining subset of 1457 filtered circRNAs.
 </p>
 </div>
-<pre class="r"><code># Type p[[3]] to get table
+<pre class="r"><code># Type p[[3]] to get the table
 head(p[[3]])</code></pre>
 <p>The data frame contains the following columns:</p>
 <ul>
