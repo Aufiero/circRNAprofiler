@@ -39,7 +39,7 @@
 #' @import AnnotationHub
 #'
 #' @export
-liftBSJcoords <-
+liftBSJcoordsTest <-
     function(backSplicedJunctions,
         map = "hg19ToMm9",
         annotationHubID = "AH14155") {
