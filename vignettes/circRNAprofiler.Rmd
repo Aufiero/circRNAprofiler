@@ -353,7 +353,7 @@ content and generates a unique data frame with the circRNAs detected by each
 detection tool and the occurrences found in each sample. 
 
 
-```{r, eval= FALSE}
+```{r}
 # Load the object containing the detected circRNAs
 data("backSplicedJunctions")
 head(backSplicedJunctions)
