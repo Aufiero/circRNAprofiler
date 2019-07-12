@@ -7,7 +7,7 @@ source("render_toc.R")
 ## ---- toc, echo = FALSE--------------------------------------------------
 render_toc("circRNAprofiler.Rmd")
 
-## ---- echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."----
+## ---- echo=FALSE, out.width='60%', fig.align="center", fig.cap="\\label{fig:figs} Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."----
 
 knitr::include_graphics("./images/image1.png")
 
@@ -15,9 +15,10 @@ knitr::include_graphics("./images/image1.png")
 #  if (!requireNamespace("BiocManager", quietly = TRUE))
 #      install.packages("BiocManager")
 #  
-#  BiocManager::install("devtools")
-#  library(devtools)
-#  devtools::install_github("Aufiero/circRNAprofiler", build_opts = c(""))
+#  BiocManager::install("circRNAprofiler")
+
+## ---- eval = FALSE-------------------------------------------------------
+#  BiocManager::install("Aufiero/circRNAprofiler")
 
 ## ------------------------------------------------------------------------
 library(circRNAprofiler)
@@ -28,17 +29,17 @@ library(ggplot2)
 library(VennDiagram)
 library(gridExtra)
 
-## ---- echo=FALSE, out.width='50%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"----
+## ---- echo=FALSE, out.width='45%', fig.align="center", fig.cap="\\label{fig:figs} Example of a project folder structure"----
 knitr::include_graphics("./images/image2.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  initCircRNAprofiler(projectFolderName = "circRNAprofiler", predictionTools =
+#  initCircRNAprofiler(projectFolderName = "circRNAprofiler", detectionTools =
 #                        "mapsplice")
 
 ## ---- eval = FALSE-------------------------------------------------------
 #  initCircRNAprofiler(
 #      projectFolderName = "circRNAprofiler",
-#      predictionTools = c("mapsplice", "nclscan", "circmarker")
+#      detectionTools = c("mapsplice", "nclscan", "circmarker")
 #  )
 
 ## ---- echo=FALSE---------------------------------------------------------
@@ -114,13 +115,13 @@ head(gtf)
 # Alternatively put the gtf file in the project folder, then run:
 # gtf <- formatGTF(pathToGTF = "gencode.V19.annotation.gtf")
 
-## ---- eval= FALSE--------------------------------------------------------
-#  # Load the object containing the detected circRNAs
-#  data("backSplicedJunctions")
-#  head(backSplicedJunctions)
-#  
-#  # Alternatively run:
-#  # backSplicedJunctions <- getBackSplicedJunctions(gtf)
+## ------------------------------------------------------------------------
+# Load the object containing the detected circRNAs
+data("backSplicedJunctions")
+head(backSplicedJunctions)
+
+# Alternatively run:
+# backSplicedJunctions <- getBackSplicedJunctions(gtf)
 
 ## ---- fig.align="center", fig.width = 10, fig.height = 3-----------------
 # Plot
@@ -190,6 +191,7 @@ p <- VennDiagram::draw.triple.venn(
     lty = "blank",
     fill = c("skyblue", "pink1", "mediumorchid")
 )
+
 
 
 ## ------------------------------------------------------------------------
@@ -270,7 +272,7 @@ ggarrange(p1,
 #  head(edgerResCvsA)
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  liftedBSJCoords <- liftBSJCoords(filteredCirc, map = "hg19ToMm9",
+#  liftedBSJcoords <- liftBSJcoords(filteredCirc, map = "hg19ToMm9",
 #                                   annotationHubID = "AH14155")
 
 ## ------------------------------------------------------------------------
@@ -441,7 +443,7 @@ genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 knitr::include_graphics("./images/image4.png")
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  # Type p[[3]] to get table
+#  # Type p[[3]] to get the table
 #  head(p[[3]])
 
 ## ----eval = FALSE--------------------------------------------------------
@@ -456,14 +458,7 @@ knitr::include_graphics("./images/image4.png")
 #  
 
 ## ----eval = FALSE--------------------------------------------------------
-#  rearragedMiRres <-
-#      rearrangeMiRres(
-#          miRsites,
-#          n = 40,
-#          color = "blue",
-#          miRid = TRUE,
-#          id = 1
-#      )
+#  rearragedMiRres <- rearrangeMiRres(miRsites)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  # If multiple circRNAs have been anlyzed for the presence of miR binding sites
