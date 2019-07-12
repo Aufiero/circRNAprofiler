@@ -3,7 +3,7 @@
 
 
 # The function getBasicColNames() returns the basic column names.
-getBasicColNames <- function() {
+.getBasicColNames <- function() {
     basicColumns <- c("id",
         "gene",
         "strand",
@@ -17,7 +17,7 @@ getBasicColNames <- function() {
 
 # The function checkBSJsDF() verifies that the functions to import
 # the detected circRNAs generate the correct data structure and content.
-checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
+.checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
 
     # Remove rows where strand is not available.
     # (Note: This step is done if the backSplicedJunctions data frame
@@ -26,7 +26,7 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
     # conversion failed)
     backSplicedJunctions <- backSplicedJunctions[!is.na(backSplicedJunctions$strand),]
 
-    colNames <- c(getBasicColNames(), addColNames)
+    colNames <- c(.getBasicColNames(), addColNames)
 
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
         missingNamesId <-
@@ -69,7 +69,7 @@ checkBSJsDF <- function(backSplicedJunctions, addColNames = NULL) {
 
 
 # The function getTargetsColNames() returns the column names.
-getTargetsColNames <- function() {
+.getTargetsColNames <- function() {
     colNames <- c(
         "id",
         "gene",
@@ -87,19 +87,19 @@ getTargetsColNames <- function() {
 }
 
 # create target data frame
-getTargetsDF <- function(annotatedBSJs){
+.getTargetsDF <- function(annotatedBSJs){
     targets <- data.frame(matrix(
         nrow = nrow(annotatedBSJs),
-        ncol = length(getTargetsColNames())
+        ncol = length(.getTargetsColNames())
     ))
-    colnames(targets) <- getTargetsColNames()
+    colnames(targets) <- .getTargetsColNames()
     return(targets)
 
 }
 
 
 # get exon sequences from BS genome
-getExonSeqs <- function(transcript, genome) {
+.getExonSeqs <- function(transcript, genome) {
 
     exonSeqs <- as.character()
     for (i in seq_along(transcript$exon_number)) {
@@ -121,7 +121,7 @@ getExonSeqs <- function(transcript, genome) {
 # Generate a unique identifier by combining the values of the following
 # columns: gene, strand, chrom, endDownBSE and startUpBSE.
 # The values are separated by a semicolumns (:)
-getID <- function(circTable) {
+.getID <- function(circTable) {
     # Generate a unique identifier by combining the values of the following
     # columns: gene, strand, chrom, endDownBSE and startUpBSE.
     # The values are separated by a semicolumns (:)
@@ -143,7 +143,7 @@ getID <- function(circTable) {
 # coordinates of the upstream exon in the pre-mRNA have to be greater
 # than the coordinates of downstream exon. The "for" statment swithces
 # the coordinates.
-fixCoords <- function(circTable) {
+.fixCoords <- function(circTable) {
     for (i in seq_along(circTable$id)) {
          if (!is.na(circTable$strand[i])  &
                 !is.na(circTable$chrom[i]) &
@@ -174,7 +174,7 @@ fixCoords <- function(circTable) {
 }
 
 # Read experiments.txt
-readExperiment <- function(pathToExperiment = NULL) {
+.readExperiment <- function(pathToExperiment = NULL) {
     if (is.null(pathToExperiment)) {
         pathToExperiment <- "experiment.txt"
     }
@@ -194,7 +194,7 @@ readExperiment <- function(pathToExperiment = NULL) {
 }
 
 # Read traits.txt
-readTraits <- function(pathToTraits = NULL) {
+.readTraits <- function(pathToTraits = NULL) {
     if (is.null(pathToTraits)) {
         pathToTraits <- "traits.txt"
     }
@@ -215,7 +215,7 @@ readTraits <- function(pathToTraits = NULL) {
 }
 
 # get motifs.txt
-readMotifs <- function(pathToMotifs = NULL) {
+.readMotifs <- function(pathToMotifs = NULL) {
     if (is.null(pathToMotifs)) {
         pathToMotifs <- "motifs.txt"
     }
@@ -238,7 +238,7 @@ readMotifs <- function(pathToMotifs = NULL) {
 }
 
 # Read pathToTranscript.txt
-readTranscripts <-
+.readTranscripts <-
     function(pathToTranscripts = NULL, isRandom = FALSE) {
         if (is.null(pathToTranscripts)) {
             pathToTranscripts <- "transcripts.txt"
@@ -261,7 +261,7 @@ readTranscripts <-
     }
 
 # Read miRs.txt
-readMiRs <- function(pathToMiRs = NULL){
+.readMiRs <- function(pathToMiRs = NULL){
     if (is.null(pathToMiRs)) {
         pathToMiRs <- "miRs.txt"
     }
@@ -283,7 +283,7 @@ readMiRs <- function(pathToMiRs = NULL){
 # Clean targets dataframe by removing the rows with NA values to avoid
 # getting errors with the makeGRangesFromDataFrame function that does
 # not handle NA values
-cleanTargets <- function(targets) {
+.cleanTargets <- function(targets) {
     index1 <- which(
         !is.na(targets[[1]]$transcript) &
             !is.na(targets[[1]]$startGR) &

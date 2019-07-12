@@ -53,7 +53,7 @@ getSeqsAcrossBSJs <-
         names(targets)[1] <- "bsj"
 
         # Create an empty data frame
-        targets[[1]] <- getTargetsDF(annotatedBSJs)
+        targets[[1]] <- .getTargetsDF(annotatedBSJs)
 
         # Fill the data frame with the needed information
         targets[[1]]$id <- annotatedBSJs$id
@@ -89,7 +89,7 @@ getSeqsAcrossBSJs <-
                         .data$exon_number %in% exonsToSelect
                     )
 
-                bsjSeq <- recreateBSJseq(transcript, genome)
+                bsjSeq <- .recreateBSJseq(transcript, genome)
                 targets[[1]]$length[i] <- nchar(bsjSeq)
                 targets[[1]]$seq[i] <- bsjSeq
 
@@ -100,12 +100,12 @@ getSeqsAcrossBSJs <-
 
 
 # recreate BSJ sequence
-recreateBSJseq <- function(transcript, genome) {
+.recreateBSJseq <- function(transcript, genome) {
     if (transcript$strand[1] == "-") {
         transcript <- transcript  %>%
             dplyr::arrange(desc(.data$exon_number))
         # Get exons sequences
-        exonSeqs <- getExonSeqs(transcript, genome)
+        exonSeqs <- .getExonSeqs(transcript, genome)
         # Join sequences
         joinedExonSeqs <- paste(exonSeqs, collapse = "")
         # Recreate bsj seq
@@ -126,7 +126,7 @@ recreateBSJseq <- function(transcript, genome) {
         transcript <- transcript  %>%
             dplyr::arrange(.data$exon_number)
         # Get exons sequences
-        exonSeqs <- getExonSeqs(transcript, genome)
+        exonSeqs <- .getExonSeqs(transcript, genome)
         # Join sequences
         joinedExonSeqs <- paste(exonSeqs, collapse = "")
         # Recreate bsj seq

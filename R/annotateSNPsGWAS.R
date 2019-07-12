@@ -79,11 +79,11 @@ annotateSNPsGWAS <-
         options(readr.num_columns = 0)
 
         # Create a snpsGWAS list
-        snpsGWAS <- createSNPsGWASlist(targets)
+        snpsGWAS <- .createSNPsGWASlist(targets)
         # Retrieve SNPs from the GWAS catalog
-        gwas <- getGWAS(assembly, makeCurrent)
+        gwas <- .getGWAS(assembly, makeCurrent)
         # Read traits.txt
-        traitsFromFile <- readTraits(pathToTraits)
+        traitsFromFile <- .readTraits(pathToTraits)
         # Check if there there are traits
         if (nrow(traitsFromFile) > 0) {
             gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
@@ -93,7 +93,7 @@ annotateSNPsGWAS <-
                 traits in the GWAS catalog will be analyzed")
         }
         # Clean targets from NA value
-        targets <- cleanTargets(targets)
+        targets <- .cleanTargets(targets)
 
         for (i in seq_along(snpsGWAS)) {
             # Create an empty list of 2 elements to store the extracted
@@ -103,7 +103,7 @@ annotateSNPsGWAS <-
             names(snpsGWAS[[i]])[2] <- "snps"
 
             targetsToAnalyze <- targets[[i]]
-            overlaps <- findOverlappingSNPs(gwas, targetsToAnalyze)
+            overlaps <- .findOverlappingSNPs(gwas, targetsToAnalyze)
             snpsGWAS[[i]]$targets <- overlaps$targets
             snpsGWAS[[i]]$snps <- overlaps$snps
 
@@ -114,7 +114,7 @@ annotateSNPsGWAS <-
 
 
 # Get GWAS SNPs
-getGWAS <- function(assembly = "hg19",
+.getGWAS <- function(assembly = "hg19",
     makeCurrent = FALSE) {
     if (assembly == "hg19") {
         if (makeCurrent) {
@@ -167,7 +167,7 @@ getGWAS <- function(assembly = "hg19",
 
 
 # Create a snpsGWAS list
-createSNPsGWASlist <- function(targets) {
+.createSNPsGWASlist <- function(targets) {
     if (length(targets) == 2 &
             names(targets)[[1]] == "upGR") {
         # Create an empty list of 2 elements
@@ -187,7 +187,7 @@ createSNPsGWASlist <- function(targets) {
 
 
 # get SNPsGWAS column names
-getSNPsGWASColNames <- function() {
+.getSNPsGWASColNames <- function() {
     colNames <- c(
         "id",
         "snp",
@@ -206,7 +206,7 @@ getSNPsGWASColNames <- function() {
 }
 
 # Select the needed column and rename snps data frame
-renameSNPsGWAS <- function(snps){
+.renameSNPsGWAS <- function(snps){
     snps <- snps %>%
         dplyr::select(
             .data$id,
@@ -241,7 +241,7 @@ renameSNPsGWAS <- function(snps){
 
 
 # Find the overlapping gwas snps
-findOverlappingSNPs <- function(gwas, targetsToAnalyze) {
+.findOverlappingSNPs <- function(gwas, targetsToAnalyze) {
 
      # Make GR objects
     genRanges <- GenomicRanges::makeGRangesFromDataFrame(
@@ -262,14 +262,14 @@ findOverlappingSNPs <- function(gwas, targetsToAnalyze) {
     if (length(overlappingGRs) == 0) {
         # No genomic ranges in common
         snps <-  data.frame(matrix(nrow = 0, ncol = 11))
-        colnames(snps) <- getSNPsGWASColNames()
+        colnames(snps) <- .getSNPsGWASColNames()
 
         targets <- targetsToAnalyze[NULL, ]
 
     } else{
         snps <- data.frame(genRanges[S4Vectors::subjectHits(overlappingGRs)],
                 gwas[S4Vectors::queryHits(overlappingGRs)])
-        snps <- renameSNPsGWAS(snps)
+        snps <- .renameSNPsGWAS(snps)
 
         # Keep only targets where a hit is found
         targets <- targetsToAnalyze[S4Vectors::subjectHits(overlappingGRs), ] %>%

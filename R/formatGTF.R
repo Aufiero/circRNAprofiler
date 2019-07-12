@@ -25,9 +25,9 @@ if (getRversion() >= "3.1.0")
 formatGTF <- function(pathToGTF = NULL) {
     if (!is.null(pathToGTF)) {
         # Read GTF file
-        gtf <- readGTF(pathToGTF)
+        gtf <- .readGTF(pathToGTF)
         # Get needed column in the GTF file
-        needColumns <- getNeededColumn()
+        needColumns <- .getNeededColumn()
 
         # For UCSC and Ncbi the exon_number column needs to be added
         if (!("exon_number" %in% colnames(gtf))) {
@@ -70,7 +70,7 @@ formatGTF <- function(pathToGTF = NULL) {
 
 
 # Read GTF file
-readGTF<- function(pathToGTF = NULL){
+.readGTF<- function(pathToGTF = NULL){
     # suppress warning for closing unused connection
     gtf <- suppressWarnings(rtracklayer::import(pathToGTF)) %>%
         as.data.frame()
@@ -86,7 +86,7 @@ readGTF<- function(pathToGTF = NULL){
 }
 
 # get needed column in the GTF file
-getNeededColumn<- function(){
+.getNeededColumn<- function(){
     needColumns <-
         c(
             "chrom",

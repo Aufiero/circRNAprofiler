@@ -27,10 +27,10 @@
 #' @export
 getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
      # Create an empty data frame
-    randomBSJunctions <-createRandomBSJunctionsDF(n)
+    randomBSJunctions <-.createRandomBSJunctionsDF(n)
 
    # Select random BSEs from gtf
-    allBSEs <- selectRandomBSEs(gtf, n, f)
+    allBSEs <- .selectRandomBSEs(gtf, n, f)
 
     # For negative strand
     allBSEsNeg <- allBSEs[allBSEs$strand == "-",]
@@ -63,14 +63,14 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
     }
 
     # Generate a unique identifier
-    randomBSJunctions$id <- getID(randomBSJunctions)
+    randomBSJunctions$id <- .getID(randomBSJunctions)
     return(randomBSJunctions)
 }
 
 
 # Create randomBSJunctions data frame
-createRandomBSJunctionsDF <- function(n){
-    basicColumns <- getBasicColNames()
+.createRandomBSJunctionsDF <- function(n){
+    basicColumns <- .getBasicColNames()
 
     # Create an empty data frame
     randomBSJunctions <-
@@ -81,7 +81,7 @@ createRandomBSJunctionsDF <- function(n){
 
 
 # Select random BSEs from gtf file
-selectRandomBSEs<- function(gtf, n, f ){
+.selectRandomBSEs<- function(gtf, n, f ){
     # calculate the percentage of back-spliced junctions from sigle exons
     c <- round((n / 100) * f, 0)
 

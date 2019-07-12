@@ -79,8 +79,8 @@ getDeseqRes <-
         pathToExperiment = NULL,
         ...) {
         # Read experiment.txt
-        experiment <- readExperiment(pathToExperiment)
-        if (nrow(experiment) > 0) {
+        experiment <- .readExperiment(pathToExperiment)
+        if (nrow(experiment)) {
             cond <- strsplit(condition, "-")[[1]]
             experiment <-
                 experiment[experiment$condition %in% cond,]
@@ -101,7 +101,7 @@ getDeseqRes <-
             statistics <- DESeq2::results(dds, pAdjustMethod = pAdjustMethod)
 
             # Get deseqRes data frame
-            deseqRes <- getDeseqResDF(backSplicedJunctions,
+            deseqRes <- .getDeseqResDF(backSplicedJunctions,
                 statistics,
                 dds)
         } else{
@@ -114,7 +114,7 @@ getDeseqRes <-
 
 
 # get deseqRes data frame
-getDeseqResDF <-
+.getDeseqResDF <-
     function(backSplicedJunctions,
         statistics, dds) {
         deseqRes <-

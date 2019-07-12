@@ -109,13 +109,13 @@ getMotifs <-
         computedMotifs <- computeMotifs(targets, width)
         # Filter motifs matching with RBPs
         filteredMotifs <-
-            filterMotifs(computedMotifs, species, rbp, reverse, pathToMotifs)
+            .filterMotifs(computedMotifs, species, rbp, reverse, pathToMotifs)
         # Create list to store motif reults
-        motifs <- createMotifsList(targets, filteredMotifs)
+        motifs <- .createMotifsList(targets, filteredMotifs)
         for (i in seq_along(motifs)) {
             targetsToAnalyze <- motifs[[i]]$targets
             # Get sequences in RNAStringSet format
-            rnaSS <- getRNAss(targetsToAnalyze, width)
+            rnaSS <- .getRNAss(targetsToAnalyze, width)
 
             # Count occurence and location of the filtered motifs
             for (j in seq_along(motifs[[i]]$motif$motif)) {
@@ -157,7 +157,7 @@ computeMotifs <-
         for (i in seq_along(targets)) {
             targetsToAnalyze <- targets[[i]]
             # Get sequences in RNAStringSet format
-            rnaSS <- getRNAss(targetsToAnalyze, width)
+            rnaSS <- .getRNAss(targetsToAnalyze, width)
 
             computedMotifs <- c(
                 computedMotifs,
@@ -176,7 +176,7 @@ computeMotifs <-
 
 
 # retrieve target sequence to analyze in RNAStringSet format
-getRNAss <- function(targetsToAnalyze, width = 6) {
+.getRNAss <- function(targetsToAnalyze, width = 6) {
     # Put NA to avoid error when calling RNAStringSet
     targetsToAnalyze$seq[is.na(targetsToAnalyze$seq)] <- "NA"
 
@@ -210,16 +210,16 @@ getRNAss <- function(targetsToAnalyze, width = 6) {
 # The function getUserAttractMotifs() reads the user motifs
 # in motifs.txt and retrieves the motifs deposited in the ATtRACT database
 # (\url{http://attract.cnic.es}).
-getUserAttractMotifs <-
+.getUserAttractMotifs <-
     function(species  = "Hsapiens",
         reverse = FALSE,
         pathToMotifs = NULL) {
         options(readr.num_columns = 0)
 
         # Get motifs from attract data base
-        attractRBPmotifs <- getAttractRBPMotifs(species)
+        attractRBPmotifs <- .getAttractRBPMotifs(species)
         # Read motifs.txt
-        motifsFromFile <- readMotifs(pathToMotifs)
+        motifsFromFile <- .readMotifs(pathToMotifs)
 
         if (nrow(motifsFromFile) == 0) {
             cat("motifs.txt is empty or absent. Only
@@ -234,10 +234,10 @@ getUserAttractMotifs <-
             if (nrow(motifsFromFile) > 0) {
                 # reverse motifs given in input
                 newMotifsFromFile <-
-                    getReverseMotifsFromFile(motifsFromFile)
+                    .getReverseMotifsFromFile(motifsFromFile)
             }
             newAttractRBPmotifs <-
-                getReverseAttractRBPmotifs(attractRBPmotifs)
+                .getReverseAttractRBPmotifs(attractRBPmotifs)
         } else{
             newMotifsFromFile <- motifsFromFile
             newAttractRBPmotifs <- attractRBPmotifs
@@ -254,23 +254,23 @@ getUserAttractMotifs <-
 # of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database and
 # with motifs specified by the user reported in motifs.txt. Subsequently,
 # they are filtered based on the value of rbp argument.
-filterMotifs <-
+.filterMotifs <-
     function(computedMotifs,
         species  = "Hsapiens",
         rbp = TRUE,
         reverse = FALSE,
         pathToMotifs = NULL) {
         # Identify motifs matching with RBPs
-        filteredMotifs <- createFilteredMotifsDF(computedMotifs)
+        filteredMotifs <- .createFilteredMotifsDF(computedMotifs)
 
         # Get user and ATtRACT RBP motifs
         userATtRACTmotifs <-
-            getUserAttractMotifs(species, reverse, pathToMotifs)
+            .getUserAttractMotifs(species, reverse, pathToMotifs)
 
         # Check whether the motifs matches with or it is contanined within
         # any RBP motifs
         filteredMotifs <-
-            matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
+            .matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
 
         # Filter
         if (rbp) {
@@ -288,7 +288,7 @@ filterMotifs <-
     }
 
 # Create filteredMotifs data frame
-createFilteredMotifsDF <- function(computedMotifs) {
+.createFilteredMotifsDF <- function(computedMotifs) {
     filteredMotifs <-
         data.frame(matrix(nrow = length(computedMotifs),
             ncol = 2))
@@ -301,7 +301,7 @@ createFilteredMotifsDF <- function(computedMotifs) {
 
 # Check whether the motifs matches with or it is contanined within
 # any RBP motifs
-matchWithKnowRBPs <-
+.matchWithKnowRBPs <-
     function(filteredMotifs,
         userATtRACTmotifs,
         computedMotifs) {
@@ -344,7 +344,7 @@ matchWithKnowRBPs <-
 
 
 # Create list to store motif results
-createMotifsList <-
+.createMotifsList <-
     function(targets, filteredMotifs) {
         if (length(targets) == 2 & names(targets)[[1]] == "upGR") {
             # Create an empty list of 2 elements
@@ -474,7 +474,7 @@ mergeMotifs <- function(motifs) {
         for (i in seq_along(motifs)) {
             # Reshape the data frame
             counts <- motifs[[i]]$counts
-            mergedMotifs[[i]] <- reshapeCounts(counts)
+            mergedMotifs[[i]] <- .reshapeCounts(counts)
         }
 
         # For the up and the down sequences motifs[[1]]$motifs and
@@ -485,7 +485,7 @@ mergeMotifs <- function(motifs) {
         # Check whether a same motif is shared by multiple RBPs.
         # If so retrive and duplicate those motifs by reporting one
         # RBP name.
-        splittedRBPs <- splitRBPs(motifsToSplit)
+        splittedRBPs <- .splitRBPs(motifsToSplit)
 
         if (length(mergedMotifs) == 2) {
             mergedMotifsAll <-
@@ -530,7 +530,7 @@ mergeMotifs <- function(motifs) {
 
 
 # Reshape the data frame
-reshapeCounts <- function(counts) {
+.reshapeCounts <- function(counts) {
     reshapedCounts <- counts %>%
         reshape2::melt(
             id.vars = c("id"),
@@ -550,7 +550,7 @@ reshapeCounts <- function(counts) {
 # For the up and the down sequences motifs[[1]]$motifs and
 # motifs[[2]]$motifs are the same, so we use the motifs reported
 # in motifs[[1]]$motif.
-splitRBPs <- function(motifsToSplit) {
+.splitRBPs <- function(motifsToSplit) {
     toSplit <-
         motifsToSplit[base::grep(",", motifsToSplit$id), ]
 
@@ -593,7 +593,7 @@ splitRBPs <- function(motifsToSplit) {
 
 
 # Get RBP motifs from attract data base
-getAttractRBPMotifs <- function(species) {
+.getAttractRBPMotifs <- function(species) {
     # Create a temporary directory
     td = tempdir()
     # Create the placeholder file
@@ -648,7 +648,7 @@ getAttractRBPMotifs <- function(species) {
 
 
 # get reverse motifs from file
-getReverseMotifsFromFile <- function(motifsFromFile) {
+.getReverseMotifsFromFile <- function(motifsFromFile) {
     # reverse motifs given in input
     reversedMotifsFromFile <- motifsFromFile
 
@@ -670,7 +670,7 @@ getReverseMotifsFromFile <- function(motifsFromFile) {
 
 
 # Reverse motifs from attract data base
-getReverseAttractRBPmotifs <- function(attractRBPmotifs) {
+.getReverseAttractRBPmotifs <- function(attractRBPmotifs) {
     reverseAttractRBPmotifs <- attractRBPmotifs
     reverseAttractRBPmotifs$motif <-
         IRanges::reverse(reverseAttractRBPmotifs$motif)

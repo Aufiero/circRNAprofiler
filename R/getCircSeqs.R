@@ -55,7 +55,7 @@ getCircSeqs <-
         names(targets)[1] <- "circ"
 
         # Create an empty data frame
-        targets[[1]] <- getTargetsDF(annotatedBSJs)
+        targets[[1]] <- .getTargetsDF(annotatedBSJs)
 
         # Fill the data frame with the needed information
         targets[[1]]$id <- annotatedBSJs$id
@@ -92,7 +92,7 @@ getCircSeqs <-
                         .data$exon_number %in% exonsToSelect
                     )
 
-                joinedExonSeqsWithBSJ <- recreateCircSeq(transcript, genome)
+                joinedExonSeqsWithBSJ <- .recreateCircSeq(transcript, genome)
                 targets[[1]]$seq[i] <- joinedExonSeqsWithBSJ
             }
         }
@@ -100,12 +100,12 @@ getCircSeqs <-
     }
 
 # Recreate circRNA sequence including the bsj
-recreateCircSeq <- function(transcript, genome){
+.recreateCircSeq <- function(transcript, genome){
     if (transcript$strand[1] == "-") {
         transcript <- transcript  %>%
             dplyr::arrange(desc(.data$exon_number))
         # Get exons sequences
-        exonSeqs <- getExonSeqs(transcript, genome)
+        exonSeqs <- .getExonSeqs(transcript, genome)
         # Join sequences
         joinedExonSeqs <- paste(exonSeqs, collapse = "")
         # Recreate bsj seq
@@ -127,7 +127,7 @@ recreateCircSeq <- function(transcript, genome){
         transcript <- transcript  %>%
             dplyr::arrange(.data$exon_number)
         # Get exon sequences
-        exonSeqs <- getExonSeqs(transcript, genome)
+        exonSeqs <- .getExonSeqs(transcript, genome)
         # Join sequencs
         joinedExonSeqs <- paste(exonSeqs, collapse = "")
         # Recreate bsj seq

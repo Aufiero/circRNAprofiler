@@ -63,11 +63,11 @@ filterCirc <- function(backSplicedJunctions,
     pathToExperiment = NULL) {
 
     # Read experiment.txt
-    experiment <- readExperiment(pathToExperiment)
+    experiment <- .readExperiment(pathToExperiment)
     if (nrow(experiment)) {
 
         # Get colum names
-        colNames <- c(getBasicColNames(), experiment$label)
+        colNames <- c(.getBasicColNames(), experiment$label)
         # Create the data frame that will be filled with the circRNA prediction
         # perfomed by the prediction tools used.
         filteredCirc <-

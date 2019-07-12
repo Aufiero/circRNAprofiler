@@ -54,24 +54,24 @@ initCircRNAprofiler <-
         }
 
         # Create a template for the experiment.txt
-        getExperimentTemplate(projectFolderName)
+        .getExperimentTemplate(projectFolderName)
 
         # Create a template for the motifs.txt
-        getMotifsTemplate(projectFolderName)
+        .getMotifsTemplate(projectFolderName)
 
         # Create a template for the traits.txt
-        getTraitsTemplate(projectFolderName)
+        .getTraitsTemplate(projectFolderName)
 
 
         # Create a template for the miRs.txt
-        getMiRsTemplate(projectFolderName)
+        .getMiRsTemplate(projectFolderName)
 
         # Create a template for the transcripts.txt
-        getTranscriptsTemplate(projectFolderName)
+        .getTranscriptsTemplate(projectFolderName)
     }
 
 # Experiment template
-getExperimentTemplate <- function(projectFolderName) {
+.getExperimentTemplate <- function(projectFolderName) {
     experiment <-
         data.frame(matrix(nrow = 0, ncol = 3))
     colnames(experiment) <-
@@ -88,7 +88,7 @@ getExperimentTemplate <- function(projectFolderName) {
 
 
 # Create a template for the motifs.txt
-getMotifsTemplate <- function(projectFolderName) {
+.getMotifsTemplate <- function(projectFolderName) {
     motifs <-
         data.frame(matrix(nrow = 0, ncol = 3))
     colnames(motifs) <- c("id", "motif", "length")
@@ -103,7 +103,7 @@ getMotifsTemplate <- function(projectFolderName) {
 }
 
 # Create a template for the traits.txt
-getTraitsTemplate <- function(projectFolderName) {
+.getTraitsTemplate <- function(projectFolderName) {
     traits <-
         data.frame(matrix(nrow = 0, ncol = 1))
     colnames(traits) <- c("id")
@@ -117,7 +117,7 @@ getTraitsTemplate <- function(projectFolderName) {
 }
 
 # Create a template for the miRs.txt
-getMiRsTemplate <- function(projectFolderName) {
+.getMiRsTemplate <- function(projectFolderName) {
     miRs <-
         data.frame(matrix(nrow = 0, ncol = 1))
     colnames(miRs) <- c("id")
@@ -131,7 +131,7 @@ getMiRsTemplate <- function(projectFolderName) {
 }
 
 # Create a template for the transcripts.txt
-getTranscriptsTemplate <- function(projectFolderName) {
+.getTranscriptsTemplate <- function(projectFolderName) {
     transcripts <-
         data.frame(matrix(nrow = 0, ncol = 1))
     colnames(transcripts) <- c("id")

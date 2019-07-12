@@ -80,16 +80,16 @@ checkProjectFolder <-
         pathToTranscripts = NULL,
         pathToTraits = NULL) {
         # Check optional files
-        checkMotifs(pathToMotifs)
-        checkTraits(pathToTraits)
-        checkMiRs(pathToMiRs)
-        checkTranscripts(pathToTranscripts)
+        .checkMotifs(pathToMotifs)
+        .checkTraits(pathToTraits)
+        .checkMiRs(pathToMiRs)
+        .checkTranscripts(pathToTranscripts)
 
         # Check mandatory files
         # Check GTF
-        check1 <- checkGTF(pathToGTF)
+        check1 <- .checkGTF(pathToGTF)
         # check experiment.txt and prediction results
-        check2 <- checkExperiment(pathToExperiment)
+        check2 <- .checkExperiment(pathToExperiment)
 
         checks <- check1 + check2
         return(checks)
@@ -98,10 +98,10 @@ checkProjectFolder <-
 
 
 # Check motifs.txt
-checkMotifs <- function(pathToMotifs = NULL) {
+.checkMotifs <- function(pathToMotifs = NULL) {
     # Check  optional files
     # check motifs.txt
-    motifsFromFile <- readMotifs(pathToMotifs)
+    motifsFromFile <- .readMotifs(pathToMotifs)
 
     if (nrow(motifsFromFile) > 0) {
         cnm <- c("id", "motif", "length")
@@ -130,9 +130,9 @@ checkMotifs <- function(pathToMotifs = NULL) {
 
 
 # check traits.txt
-checkTraits <- function(pathToTraits = NULL) {
+.checkTraits <- function(pathToTraits = NULL) {
     # Read traits.txt
-    traitsFromFile <- readTraits(pathToTraits)
+    traitsFromFile <- .readTraits(pathToTraits)
     # Check if there there are traits
     if (nrow(traitsFromFile) > 0) {
         # Check if column id
@@ -153,9 +153,9 @@ checkTraits <- function(pathToTraits = NULL) {
     }
 
 # check miRs.txt
-checkMiRs <- function(pathToMiRs = NULL) {
+.checkMiRs <- function(pathToMiRs = NULL) {
     # Read miRs.txt
-    miRsFromFile <- readMiRs(pathToMiRs)
+    miRsFromFile <- .readMiRs(pathToMiRs)
 
     if (nrow(miRsFromFile) > 0) {
         # Check if column id
@@ -175,9 +175,9 @@ checkMiRs <- function(pathToMiRs = NULL) {
     }
 
 # check transcripts.txt
-checkTranscripts <- function(pathToTranscripts = NULL) {
+.checkTranscripts <- function(pathToTranscripts = NULL) {
     # check transcripts.txt
-    transcriptsFromFile <- readTranscripts(pathToTranscripts)
+    transcriptsFromFile <- .readTranscripts(pathToTranscripts)
 
     if (nrow(transcriptsFromFile) > 0) {
         # Check if column id
@@ -198,7 +198,7 @@ checkTranscripts <- function(pathToTranscripts = NULL) {
 
 
 # Check GTF file
-checkGTF <- function(pathToGTF = NULL) {
+.checkGTF <- function(pathToGTF = NULL) {
     fileNames <- list.files()
     check <- 0
     # check GTF file
@@ -216,11 +216,11 @@ checkGTF <- function(pathToGTF = NULL) {
 }
 
 # check experiment.txt and prediction results
-checkExperiment <- function(pathToExperiment = NULL) {
+.checkExperiment <- function(pathToExperiment = NULL) {
     fileNames <- list.files()
     check <- 0
     # Read experiment.txt
-    experiment <- readExperiment(pathToExperiment)
+    experiment <- .readExperiment(pathToExperiment)
     if (nrow(experiment) > 0) {
         cne <- c("label", "fileName", "condition")
         if (!all(cne %in%  colnames(experiment))) {

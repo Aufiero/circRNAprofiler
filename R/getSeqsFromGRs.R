@@ -68,9 +68,9 @@ getSeqsFromGRs <-
         # Retrieve the coordinates from whcih to extract the sequences.
         grCoords <- switch(
             type,
-            bse = getBSEcoords(annotatedBSJs),
-            fi = getFIcoords(annotatedBSJs),
-            ie = getIECoords(annotatedBSJs, lIntron, lExon)
+            bse = .getBSEcoords(annotatedBSJs),
+            fi = .getFIcoords(annotatedBSJs),
+            ie = .getIECoords(annotatedBSJs, lIntron, lExon)
         )
         # Create a list with 2 elements to store the sequences extracted from
         # the upstream and downstream genomic ranges
@@ -80,7 +80,7 @@ getSeqsFromGRs <-
 
         for (i in seq_along(targets)) {
             # Create an empty list of data frames
-            targets[[i]] <- getTargetsDF(annotatedBSJs)
+            targets[[i]] <- .getTargetsDF(annotatedBSJs)
 
             if (i == 1) {
                 indexStart <- which(colnames(grCoords) == "startUpGR")
@@ -105,7 +105,7 @@ getSeqsFromGRs <-
                 endGR <- targets[[i]]$endGR[j]
                 strand <- targets[[i]]$strand[j]
                 seq <-
-                    getSeqFromBSgenome(genome, chrom, startGR, endGR)
+                    .getSeqFromBSgenome(genome, chrom, startGR, endGR)
 
                 # Check coordinates and retrieve the seq
                 if (strand == "-" &
@@ -139,7 +139,7 @@ getSeqsFromGRs <-
 # genomic ranges defined by the values of the arguments lIntron and lExon.
 # The start point are the back-spliced junction coordinates reported in the
 # annotateBSJs data frame.
-getIECoords <- function(annotatedBSJs,
+.getIECoords <- function(annotatedBSJs,
     lIntron = 100,
     lExon = 10) {
     # lIntron and lExon must be positive numbers
@@ -150,7 +150,7 @@ getIECoords <- function(annotatedBSJs,
         stop("lExon must be a positive number")
     }
     # Create an empty dataframe
-    grCoords <- getGRcoordsDF(annotatedBSJs)
+    grCoords <- .getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -166,7 +166,7 @@ getIECoords <- function(annotatedBSJs,
             # for POSITIVE STRAND
             if (annotatedBSJsToAnalyze$strand == "+") {
                 grCoordsToAnalyze <-
-                    grCoordsForPositive(annotatedBSJsToAnalyze, lIntron, lExon)
+                    .grCoordsForPositive(annotatedBSJsToAnalyze, lIntron, lExon)
                 grCoords$startUpGR[i] <- grCoordsToAnalyze$startUpGR
                 grCoords$endUpGR[i] <- grCoordsToAnalyze$endUpGR
                 grCoords$startDownGR[i] <-
@@ -178,7 +178,7 @@ getIECoords <- function(annotatedBSJs,
             # for NEGATIVE STRAND
             if (annotatedBSJsToAnalyze$strand == "-") {
                 grCoordsToAnalyze <-
-                    grCoordsForNegative(annotatedBSJsToAnalyze, lIntron, lExon)
+                    .grCoordsForNegative(annotatedBSJsToAnalyze, lIntron, lExon)
                 grCoords$startUpGR[i] <- grCoordsToAnalyze$startUpGR
                 grCoords$endUpGR[i] <- grCoordsToAnalyze$endUpGR
                 grCoords$startDownGR[i] <-
@@ -191,12 +191,12 @@ getIECoords <- function(annotatedBSJs,
 }
 
 # Get upstream and dowstream genomic ranges coordinates for positive strand
-grCoordsForPositive <-
+.grCoordsForPositive <-
     function(annotatedBSJsToAnalyze,
         lIntron = 100,
         lExon = 10) {
         # Create an empty dataframe
-        grCoords <- getGRcoordsDF(annotatedBSJsToAnalyze)
+        grCoords <- .getGRcoordsDF(annotatedBSJsToAnalyze)
         # When the BSEs are NOT the FIRST and LAST of the transcript
         if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
                 !is.na(annotatedBSJsToAnalyze$startDownIntron)) {
@@ -271,12 +271,12 @@ grCoordsForPositive <-
 
 
 # Get startUpGR and endUpGR for negative strand
-grCoordsForNegative <-
+.grCoordsForNegative <-
     function(annotatedBSJsToAnalyze,
         lIntron = 100,
         lExon = 10) {
         # Create an empty dataframe
-        grCoords <- getGRcoordsDF(annotatedBSJsToAnalyze)
+        grCoords <- .getGRcoordsDF(annotatedBSJsToAnalyze)
         # When the back-spliced exons are NOT the FIRST and LAST of the
         # transcript
         if (!is.na(annotatedBSJsToAnalyze$endUpIntron) &
@@ -352,9 +352,9 @@ grCoordsForNegative <-
 
 
 # The function getBSEcoords() retrieves the coordinates of the
-getBSEcoords <- function(annotatedBSJs) {
+.getBSEcoords <- function(annotatedBSJs) {
     # Create an empty dataframe
-    grCoords <- getGRcoordsDF(annotatedBSJs)
+    grCoords <- .getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -395,9 +395,9 @@ getBSEcoords <- function(annotatedBSJs) {
 
 #The function getFIcoords() retrieves the coordinates of
 # the introns flanking the back-spliced exons from the annotateBSJs data frame.
-getFIcoords <- function(annotatedBSJs) {
+.getFIcoords <- function(annotatedBSJs) {
     # Create an empty dataframe
-    grCoords <- getGRcoordsDF(annotatedBSJs)
+    grCoords <- .getGRcoordsDF(annotatedBSJs)
 
     for (i in seq_along(annotatedBSJs$id)) {
         grCoords$id[i] <- annotatedBSJs$id[i]
@@ -441,7 +441,7 @@ getFIcoords <- function(annotatedBSJs) {
 
 
 # The function getGRcolNames() returns the column names
-getGRcolNames <- function() {
+.getGRcolNames <- function() {
     grColNames <- c(
         "id",
         "gene",
@@ -457,19 +457,19 @@ getGRcolNames <- function() {
 }
 
 # Create grCoords data frame
-getGRcoordsDF <- function(annotatedBSJs) {
+.getGRcoordsDF <- function(annotatedBSJs) {
     grCoords <-
         data.frame(matrix(
             nrow = nrow(annotatedBSJs),
-            ncol = length(getGRcolNames())
+            ncol = length(.getGRcolNames())
         ))
-    colnames(grCoords) <- getGRcolNames()
+    colnames(grCoords) <- .getGRcolNames()
     return(grCoords)
 }
 
 
 # get sequences from BS genome
-getSeqFromBSgenome <- function(genome, chrom, startGR, endGR) {
+.getSeqFromBSgenome <- function(genome, chrom, startGR, endGR) {
     seq <- BSgenome::getSeq(genome,
         names = chrom,
         startGR,

@@ -13,6 +13,7 @@
 #' @examples
 #' regextPattern <- getRegexPattern("CGUKMBVNN", isDNA = FALSE)
 #'
+#' @importFrom utils data
 #' @export
 getRegexPattern <- function(iupacSeq, isDNA = FALSE) {
     # Convert the sequence to UPPER CASE
@@ -25,7 +26,8 @@ getRegexPattern <- function(iupacSeq, isDNA = FALSE) {
     }
 
     # get IUPAC code and the corresponding regular expressions
-    iupac <- circRNAprofiler::iupac
+    iupac <- NULL
+    data("iupac", package= "circRNAprofiler", envir = environment())
     mt <-
         match(base::strsplit(iupacSeq, "")[[1]], iupac$code)
     regexPattern <- paste(iupac[mt, col], collapse = "")

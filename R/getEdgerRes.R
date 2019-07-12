@@ -83,8 +83,8 @@ getEdgerRes <-
         pAdjustMethod = "BH",
         pathToExperiment = NULL) {
         # Read experiment.txt
-        experiment <- readExperiment(pathToExperiment)
-        if (nrow(experiment) > 0) {
+        experiment <- .readExperiment(pathToExperiment)
+        if (nrow(experiment)) {
             # Read from path given in input
 
             match.arg(normMethod, c("TMM", "RLE", "upperquartile", "none"))
@@ -116,7 +116,7 @@ getEdgerRes <-
                     sort.by = "none"
                 )
             # Get edgerRes data frame
-            edgerRes <- getEdgerResDF(backSplicedJunctions,
+            edgerRes <- .getEdgerResDF(backSplicedJunctions,
                 statistics, dge)
 
         } else{
@@ -128,7 +128,7 @@ getEdgerRes <-
     }
 
 # Get edgerRes data frame
-getEdgerResDF <- function(backSplicedJunctions,
+.getEdgerResDF <- function(backSplicedJunctions,
     statistics, dge) {
     edgerRes <-
         dplyr::bind_cols(
@@ -151,8 +151,6 @@ getEdgerResDF <- function(backSplicedJunctions,
             gene = as.character(.data$gene))
     return(edgerRes)
 }
-
-
 
 
 # If the function you are looking for is not here check supportFunction.R

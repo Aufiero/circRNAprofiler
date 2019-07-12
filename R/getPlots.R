@@ -559,7 +559,7 @@ volcanoPlot <- function(res,
     diffExpCirc <- stats::na.omit(res[abs(res$log2FC) >= log2FC &
             res$padj <= padj, ])
 
-    xyLim <- setxyLim(setxLim, xlim, setyLim, ylim, res)
+    xyLim <- .setxyLim(setxLim, xlim, setyLim, ylim, res)
     xmin <- xyLim$xmin
     xmax <- xyLim$xmax
     ymin <- xyLim$ymin
@@ -608,13 +608,13 @@ volcanoPlot <- function(res,
         )
 
     if (gene) {
-        p <- addGeneName(p, diffExpCirc, log2FC, padj)
+        p <- .addGeneName(p, diffExpCirc, log2FC, padj)
     }
     return(p)
 }
 
 # Set xyLim
-setxyLim <- function(setxLim = FALSE,
+.setxyLim <- function(setxLim = FALSE,
     xlim = c(-8 , 8),
     setyLim = FALSE,
     ylim = c(0, 5),
@@ -651,7 +651,7 @@ setxyLim <- function(setxLim = FALSE,
 }
 
 # Add gene names to the volcano plot
-addGeneName <- function(p, diffExpCirc, log2FC, padj){
+.addGeneName <- function(p, diffExpCirc, log2FC, padj){
     p <- p +
         geom_text(
             data = diffExpCirc,
@@ -795,7 +795,7 @@ plotMotifs <-
         df1Name = "foreground",
         df2Name = "background") {
         mergedMotifsAll <-
-            getMergedMotifsAll(
+            .getMergedMotifsAll(
                 mergedMotifsFTS,
                 mergedMotifsBTS,
                 log2FC,
@@ -839,7 +839,7 @@ plotMotifs <-
 
 
 # get mergedMotifsAll data frame
-getMergedMotifsAll <- function(mergedMotifsFTS,
+.getMergedMotifsAll <- function(mergedMotifsFTS,
     mergedMotifsBTS,
     log2FC = 1,
     nf1 = 1,
@@ -958,7 +958,7 @@ plotMiR <-
         color = "blue",
         miRid = FALSE,
         id = 1) {
-        topMir <- getTopMir(rearragedMiRres, id, n)
+        topMir <- .getTopMir(rearragedMiRres, id, n)
         p <-  rearragedMiRres[[id]][[2]] %>%
             dplyr::mutate(miRid = stringr::str_replace(.data$miRid, ">", "")) %>%
             dplyr::filter(!is.na(.data$counts)) %>%
@@ -986,14 +986,14 @@ plotMiR <-
             ) +
             expand_limits(y = 0)
         if (miRid) {
-            p <- addMiRid(p, topMir )
+            p <- .addMiRid(p, topMir )
         }
         return(p)
     }
 
 
 # add miR ids to the miR plot
-addMiRid <- function(p, topMir){
+.addMiRid <- function(p, topMir){
     p <- p +
         geom_text(
             data = topMir,
@@ -1014,7 +1014,7 @@ addMiRid <- function(p, topMir){
 
 
 # Get miRNAs with a number of binding sites higher than n
-getTopMir <- function(rearragedMiRres,
+.getTopMir <- function(rearragedMiRres,
     id = 1,
     n = 40) {
     topMir <- rearragedMiRres[[id]][[2]] %>%

@@ -47,7 +47,7 @@
 #' @export
 getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
     # Read experiment.txt
-    experiment <- readExperiment(pathToExperiment)
+    experiment <- .readExperiment(pathToExperiment)
     if (nrow(experiment)) {
         fileNames <- list.files()
         # Retrieve the code for each circRNA prediction tool
@@ -58,10 +58,10 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
         if (nrow(detectionToolsUsed) > 0) {
             # Create backSplicedJunctions data frame
             backSplicedJunctions <-
-                createBackSplicedJunctionsDF(addColNames = "tool")
+                .createBackSplicedJunctionsDF(addColNames = "tool")
             for (j in seq_along(detectionToolsUsed$name)) {
                 # data frame to store circRNA prediction
-                backSplicedJunctionsTool <- createBackSplicedJunctionsDF()
+                backSplicedJunctionsTool <- .createBackSplicedJunctionsDF()
 
                 for (i in seq_along(experiment$fileName)) {
                     # Read the file contaning the prediction one at the time
@@ -71,18 +71,18 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                     nameTool <- detectionToolsUsed$name[j]
                     # A specific import function is called
                     adaptedPatientBSJunctions <-
-                        getAdaptedPatientBSJunctions(nameTool, pathToFile, gtf)
+                        .getAdaptedPatientBSJunctions(nameTool, pathToFile, gtf)
 
                     # Check validity of adaptedPatientBSJunctions.
                     adaptedPatientBSJunctions <-
-                        checkBSJsDF(adaptedPatientBSJunctions, addColNames = "coverage")
+                        .checkBSJsDF(adaptedPatientBSJunctions, addColNames = "coverage")
 
                     patientBSJunctions <- adaptedPatientBSJunctions
                     indexCoverage <- which(colnames(patientBSJunctions) == "coverage")
                     colnames(patientBSJunctions)[indexCoverage] <- experiment$label[i]
 
                     # Merge circRNAs
-                   basicColumns <- getBasicColNames()
+                   basicColumns <- .getBasicColNames()
                     backSplicedJunctionsTool <- base::merge(
                         backSplicedJunctionsTool,
                         patientBSJunctions,
@@ -231,7 +231,7 @@ mergeBSJunctions <-
         pathToExperiment = NULL,
         exportAntisense = FALSE) {
         # Read experiment.txt
-        experiment <- readExperiment(pathToExperiment)
+        experiment <- .readExperiment(pathToExperiment)
         if (nrow(experiment) > 0) {
             # Find and merge commonly identified back-spliced junctions
             mergedBSJunctions <- backSplicedJunctions %>%
@@ -260,7 +260,7 @@ mergeBSJunctions <-
 
             # Identified antisense circRNAs
             antisenseCircRNAs <-
-                getAntisenseCircRNAs(mergedBSJunctions, gtf, exportAntisense)
+                .getAntisenseCircRNAs(mergedBSJunctions, gtf, exportAntisense)
             # Remove from the dataframe the antisense circRNAs
             mergedBSJunctionsClenead <- mergedBSJunctions %>%
                 dplyr::filter(!(mergedBSJunctions$id %in% antisenseCircRNAs$id))
@@ -275,9 +275,9 @@ mergeBSJunctions <-
 
 
 # Create backSplicedJunctions data frame
-createBackSplicedJunctionsDF <- function(addColNames = NULL) {
+.createBackSplicedJunctionsDF <- function(addColNames = NULL) {
     # Get basic colum names
-    basicColumns <- getBasicColNames()
+    basicColumns <- .getBasicColNames()
     # Create the data frame that will be filled with the circRNA prediction
     # perfomed by the prediction tools used.
     backSplicedJunctions <-
@@ -295,7 +295,7 @@ createBackSplicedJunctionsDF <- function(addColNames = NULL) {
 
 
 # Get the adaptedPatientBSJunctions data frame with circRNA predictions
-getAdaptedPatientBSJunctions <-
+.getAdaptedPatientBSJunctions <-
     function(nameTool, pathToFile, gtf) {
         # A specific import function is called
         adaptedPatientBSJunctions <-
@@ -316,7 +316,7 @@ getAdaptedPatientBSJunctions <-
 # For some circRNAs the strand reported in prediction results is
 # sometimes different from the strand reported in the gtf file.
 # With this function we identified the antisense circRNAs
-getAntisenseCircRNAs <-
+.getAntisenseCircRNAs <-
     function(mergedBSJunctions, gtf, exportAntisense = FALSE) {
         shrinkedGTF <- gtf %>%
             dplyr::select(.data$gene_name, .data$strand) %>%

@@ -47,14 +47,14 @@ liftBSJcoords <-
         species2 <- base::strsplit(map, "To")[[1]][2]
 
         # Create an empty data frame
-        liftedBSJCoords <- createLiftedBSJCoordsDF(backSplicedJunctions, species1)
+        liftedBSJCoords <- .createLiftedBSJCoordsDF(backSplicedJunctions, species1)
         # Capitalize gene name if species is human
-        liftedBSJCoords$gene <- upperHuman(species2, backSplicedJunctions)
+        liftedBSJCoords$gene <- .upperHuman(species2, backSplicedJunctions)
 
         options(warn = -1)    # warning is ignored
-        chain <- getChain(annotationHubID)
+        chain <- .getChain(annotationHubID)
         # Create GR objects
-        genRanges <- createGRsForLift(backSplicedJunctions)
+        genRanges <- .createGRsForLift(backSplicedJunctions)
         grStartUpBSE <- genRanges$grStartUpBSE
         grEndDownBSE <- genRanges$grEndDownBSE
         # Lift Over coordinates
@@ -72,7 +72,7 @@ liftBSJcoords <-
         liftedBSJCoords$endDownBSE <- liftedOverEndDownBSE$end[mtEnd]
 
         # Get basic colum names
-        basicColumns <- getBasicColNames()
+        basicColumns <- .getBasicColNames()
         liftedBSJCoords[, paste(basicColumns[1], species1, sep = "_")] <-
             backSplicedJunctions$id
 
@@ -80,20 +80,20 @@ liftBSJcoords <-
         liftedBSJCoords <- liftedBSJCoords[!is.na(liftedBSJCoords$strand),]
         # A gene can be located on different strands in different species
         # Fix (if necessary) the coordinates.
-        liftedBSJCoords <- fixCoords(liftedBSJCoords)
+        liftedBSJCoords <- .fixCoords(liftedBSJCoords)
 
         # Generate a unique identifier
-        id <- getID(liftedBSJCoords)
+        id <- .getID(liftedBSJCoords)
         liftedBSJCoords$id <- id
         return(liftedBSJCoords)
     }
 
 
 # Create liftedBSJCoords data frame
-createLiftedBSJCoordsDF <- function(backSplicedJunctions, species1){
+.createLiftedBSJCoordsDF <- function(backSplicedJunctions, species1){
 
     # Get basic colum names
-    basicColumns <- getBasicColNames()
+    basicColumns <- .getBasicColNames()
 
     # Create an empty data frame
     liftedBSJCoords <-
@@ -110,7 +110,7 @@ createLiftedBSJCoordsDF <- function(backSplicedJunctions, species1){
 
 
 # Get chain file from AnnotationHub
-getChain <- function(annotationHubID){
+.getChain <- function(annotationHubID){
     ah <- AnnotationHub::AnnotationHub()
 
     # Import chain. file
@@ -119,7 +119,7 @@ getChain <- function(annotationHubID){
 }
 
 # Create GR objects
-createGRsForLift <- function(backSplicedJunctions){
+.createGRsForLift <- function(backSplicedJunctions){
     # Create GR objects
     grStartUpBSE <- GenomicRanges::GRanges(
         seqnames = backSplicedJunctions$chrom,
@@ -146,7 +146,7 @@ createGRsForLift <- function(backSplicedJunctions){
 
 
 # Capitalize gene name if species is human
-upperHuman <- function(species, backSplicedJunctions){
+.upperHuman <- function(species, backSplicedJunctions){
     if (grepl("Hg", species)) {
         gene <- toupper(backSplicedJunctions$gene)
     } else{
