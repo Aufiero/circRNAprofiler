@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getMotifs() function works correctly")
 test_that("getMotifs() and mergeMotifs() generate the correct data structure

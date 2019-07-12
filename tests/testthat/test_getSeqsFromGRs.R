@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getSeqsFromGRs() function works correctly")
 test_that("getSeqsFromGRs() generates the correct data structure",

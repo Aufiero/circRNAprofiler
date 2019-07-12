@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 context("Test that annotateBSJs() function works correctly")
 
 test_that(
@@ -15,7 +15,7 @@ test_that(
         annotatedBSJs <- annotateBSJs(mergedBSJunctions, gtf)
         expect_is(annotatedBSJs, "data.frame")
 
-        annotatedBSJsColNames <- getAnnotatedBSJsColNames()
+        annotatedBSJsColNames <- .getAnnotatedBSJsColNames()
         expect_equal(colnames(annotatedBSJs), annotatedBSJsColNames)
 
         expect_equal(nrow(annotatedBSJs), 11) # there is 1 antisense circRNA
@@ -85,7 +85,7 @@ test_that(
         expect_is(annotatedBSJs, "data.frame")
 
 
-        annotatedBSJsColNames <- getAnnotatedBSJsColNames()
+        annotatedBSJsColNames <- .getAnnotatedBSJsColNames()
         expect_equal(colnames(annotatedBSJs), annotatedBSJsColNames)
 
         expect_equal(nrow(annotatedBSJs), nrow(randomBSJunctions))

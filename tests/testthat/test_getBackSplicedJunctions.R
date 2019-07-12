@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata",  sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 context("Test that getBackSplicedJunctions() function works correctly")
 
 test_that("getBackSplicedJunctions() generates the correct data structure", {
@@ -13,7 +13,7 @@ test_that("getBackSplicedJunctions() generates the correct data structure", {
 
               backSplicedJunctions <- getBackSplicedJunctions(gtf)
 
-              basicColumns <- getBasicColNames()
+              basicColumns <- .getBasicColNames()
 
               expect_is(backSplicedJunctions, "data.frame")
 

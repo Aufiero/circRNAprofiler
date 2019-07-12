@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("test that the import functions work correctly")
 test_that("importMapSplice() generate the correct data structure with
@@ -21,7 +21,7 @@ test_that("importMapSplice() generate the correct data structure with
     expect_is(adaptedPatientBSJunctions, "data.frame")
 
     #check 1 step
-    column <- c(getBasicColNames(), "coverage")
+    column <- c(.getBasicColNames(), "coverage")
     expect_identical(colnames(adaptedPatientBSJunctions), column)
 
     # check 2 step
@@ -51,7 +51,7 @@ test_that("importOther() generate the correct data structure with
     # TODO: consider to include a test to check the content of the needed columns
 
     #check 1 step
-    column <- c(getBasicColNames(), "coverage")
+    column <- c(.getBasicColNames(), "coverage")
     expect_identical(colnames(adaptedPatientBSJunctions), column)
 
     # check 2 step

@@ -1,5 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
-
+setwd(file.path(getwd(), "testdata"))
 context("Test that formatGTF() function works correctly")
 test_that("formatGTF() generates the correct data structure", {
     needColumns <-

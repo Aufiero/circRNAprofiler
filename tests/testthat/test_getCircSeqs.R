@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getCircSeqs() function works correctly")
 test_that("getCircSeqs() generate the correct data structure", {

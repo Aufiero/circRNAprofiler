@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata" , sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that annotateRepeats() function works correctly")
 test_that("annotateRepeats() generates the correct data structure", {

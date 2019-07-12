@@ -1,5 +1,3 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
-
 context("Test that getRegexPattern() function works correctly")
 test_that("getRegexPattern() generates the correct regex pattern", {
     iupacSeq <- "ATCGTWWRRDHS"

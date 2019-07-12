@@ -1,6 +1,5 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 context("Test that filterCirc() function works correctly")
-
 test_that("filterCirc() filters the data frame containing circRNA counts", {
 
               gtf <- formatGTF(pathToGTF = "gencodeVM16.gtf")

@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getMiRsites() function works correctly")
 test_that("getMiRsites() generates the correct data structure", {
@@ -55,7 +55,7 @@ test_that("getMiRsites() generates the correct data structure", {
 
     expect_equal(length(miRsites), 12)
 
-    expect_equal(names(miRsites$targets), getTargetsColNames())
+    expect_equal(names(miRsites$targets), .getTargetsColNames())
     expect_equal(names(miRsites$microRNAs),
         c("id", "length", "seq", "seqRev"))
 
@@ -89,7 +89,7 @@ test_that("getMiRsites() retrieves the correct matches", {
         )
 
 
-    # We modifie the seq so that the miR analysis is faster
+    # We modify the seq so that the miR analysis is faster
     targets$circ$seq <- as.character(Biostrings::RNAStringSet(base::substring(targets$circ$seq, 3839, 4089)))
     targets$circ$length <- 200
 
@@ -236,16 +236,5 @@ test_that(" rearrangeMiRres() rearranges correctly the miRresults", {
         as.character(miRsites$localAUcontent[1, col]),
         rearrangedMiRres[[1]][[2]]$localAUcontent
     )
-
-})
-
-
-test_that(" compareSequences() works correctly ", {
-    comparedSeq <-
-        compareSequences("AUCCGU", "UAGCUU", isGUMatch = TRUE)
-    expect_equal(comparedSeq, "wwwmnm")
-    comparedSeq <-
-        compareSequences("AUCCGU", "UAGCUU", isGUMatch = FALSE)
-    expect_equal(comparedSeq, "wwwmmm")
 
 })

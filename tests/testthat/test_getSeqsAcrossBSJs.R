@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getSeqsAcrossBSJs() function works correctly")
 test_that("getSeqsAcrossBSJs() retrieves the correct sequences", {

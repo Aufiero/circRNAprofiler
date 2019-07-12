@@ -1,4 +1,4 @@
-setwd(paste(getwd(), "testdata", sep = "/"))
+setwd(file.path(getwd(), "testdata"))
 
 context("Test that getRandomBSJunctions() function works correctly")
 test_that("getRandomBSJunctions() generate the correct data
@@ -14,7 +14,7 @@ test_that("getRandomBSJunctions() generate the correct data
               expect_equal(nrow(randomBSJunctions), n)
 
               # Check columns
-              basicColumns <- getBasicColNames()
+              basicColumns <- .getBasicColNames()
               expect_equal(colnames(randomBSJunctions), basicColumns)
 
           })
