@@ -66,6 +66,24 @@
 "iupac"
 
 
+#' memeDB
+#'
+#' A dataframe containing the file paths of the files containing the RBP motifs
+#' in meme format available in MEME db. See also \url{http://meme-suite.org/doc/download.html}.
+#' File paths extracted from RNA folder of motif_databases.12.19.tgz
+#' (Motif Databases updated 28 Oct 2019)
+#'
+#' @format A character vector with 25 rows ans 2 columns
+#' \describe{
+#'     \item{path}{is the file path }
+#'     \item{index}{index of the file path }
+#' }
+#'
+#' @examples
+#' data(memeDB)
+#'
+"memeDB"
+
 #' attractSpecies
 #'
 #' A data frame containing the species for which RBP motifs are available

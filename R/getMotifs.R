@@ -3,12 +3,13 @@
 #' @description The function getMotifs() scans the target sequences for the
 #' presence of recurrent motifs of a specific length defined in input.
 #' By setting rbp equals to TRUE, the identified motifs are matched with motifs
-#' of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database
-#' (\url{http://attract.cnic.es}) and with motifs specified by the user.
+#' of known RNA Binding Proteins (RBPs) deposited in the ATtRACT
+#' (\url{http://attract.cnic.es}) or MEME database (\url{http://meme-suite.org/})
+#' and with motifs specified by the user.
 #' The user motifs must go in the file motifs.txt. If this file is absent or
-#' empty, only motifs from the ATtRACT database are considered in the analysis.
+#' empty, only motifs from the ATtRACT or MEME database are considered in the analysis.
 #' By setting rbp equals to FALSE, only motifs that do not match with any motifs
-#' deposited in the ATtRACT database or user motifs are reported in the final
+#' deposited in the databases or user motifs are reported in the final
 #' output. Location of the selected motifs is also reported. This corresponds
 #' to the start position of the motif within the sequence (1-index based).
 #'
@@ -19,9 +20,17 @@
 #' @param width An integer specifying the length of all possible motifs to
 #' extract from the target sequences. Default value is 6.
 #'
-#' @param species A string specifying the species of the RBP motifs to use.
-#' Type data(attractSpecies) to see the possible options.
+#' @param database A string specifying the RBP database to use. Possible options
+#' are ATtRACT or MEME. Default database is "ATtRACT".
+#'
+#' @param species A string specifying the species of the ATtRACT RBP motifs to
+#' use. Type data(attractSpecies) to see the possible options.
 #' Default value is "Hsapiens".
+#'
+#' @param memeIndexFilePath An integer specifying the index of the file path
+#' of the meme file to use.Type data(memeDB) to see the possible options.
+#' Default value is 18 corresponding to the following file:
+#' motif_databases/RNA/Ray2013_rbp_Homo_sapiens.meme
 #'
 #' @param rbp A logical specifying whether to report only motifs matching
 #' with known RBP motifs from ATtRACT database or user motifs specified in
@@ -79,6 +88,7 @@
 #' motifs <- getMotifs(
 #'     targets,
 #'     width = 6,
+#'     database = 'ATtRACT',
 #'     species = "Hsapiens",
 #'     rbp = TRUE,
 #'     reverse = FALSE)
@@ -92,24 +102,33 @@
 #' @importFrom stringi stri_locate_all
 #' @importFrom Biostrings RNAStringSet
 #' @importFrom Biostrings oligonucleotideFrequency
+#' @importFrom universalmotif read_meme
 #' @import dplyr
 #' @import magrittr
 #' @export
 getMotifs <-
     function(targets,
-        width = 6,
-        species  = "Hsapiens",
-        rbp = TRUE,
-        reverse = FALSE,
-        pathToMotifs = NULL) {
+             width = 6,
+             database = 'ATtRACT',
+             species  = "Hsapiens",
+             memeIndexFilePath = 18,
+             rbp = TRUE,
+             reverse = FALSE,
+             pathToMotifs = NULL) {
         if (width < 4 | width > 20) {
             stop("width must be an integer between 4 and 20")
         }
         # Compute all motifs of a given length (width)
-        computedMotifs <- computeMotifs(targets, width)
+        computedMotifs <- .computeMotifs(targets, width)
         # Filter motifs matching with RBPs
         filteredMotifs <-
-            .filterMotifs(computedMotifs, species, rbp, reverse, pathToMotifs)
+            .filterMotifs(computedMotifs,
+                          database,
+                          species,
+                          memeIndexFilePath,
+                          rbp,
+                          reverse,
+                          pathToMotifs)
         # Create list to store motif reults
         motifs <- .createMotifsList(targets, filteredMotifs)
         for (i in seq_along(motifs)) {
@@ -122,7 +141,7 @@ getMotifs <-
                 stringMotif <- motifs[[i]]$motif$motif[j]
                 # Find location. Consider also overlapping patterns (?=pattern)
                 locations <- stringi::stri_locate_all(rnaSS,
-                    regex = paste("(?=", stringMotif, ")", sep = ""))
+                                                      regex = paste("(?=", stringMotif, ")", sep = ""))
 
                 if (names(motifs)[1] == "circ") {
                     motifs[[i]]$locations[stringMotif] <-
@@ -142,7 +161,7 @@ getMotifs <-
                 # Count occurences
                 motifs[[i]]$counts[stringMotif] <-
                     stringr::str_count(rnaSS,
-                        paste("(?=", stringMotif, ")", sep = ""))
+                                       paste("(?=", stringMotif, ")", sep = ""))
             }
         }
         return(motifs)
@@ -150,7 +169,7 @@ getMotifs <-
 
 
 # The function computeMotifs() first computes all possible motifs
-computeMotifs <-
+.computeMotifs <-
     function(targets, width = 6) {
         # Compute all motifs of length width
         computedMotifs <- as.character()
@@ -162,7 +181,7 @@ computeMotifs <-
             computedMotifs <- c(
                 computedMotifs,
                 Biostrings::oligonucleotideFrequency(rnaSS, width, step = 1, simplify.as =
-                        "collapsed") %>%
+                                                         "collapsed") %>%
                     .[. > 0] %>%
                     names()
             ) %>%
@@ -184,7 +203,7 @@ computeMotifs <-
     if (names(targetsToAnalyze)[1] == "circ") {
         # Adjust the length of circ seqs
         ss <- base::substring(targetsToAnalyze$seq, 30,
-            ((targetsToAnalyze$length + 30) + (width - 1)))
+                              ((targetsToAnalyze$length + 30) + (width - 1)))
 
         # Put NA to avoid error when calling RNAStringSet
         ss[is.na(ss)] <- "NA"
@@ -207,46 +226,64 @@ computeMotifs <-
 }
 
 
-# The function getUserAttractMotifs() reads the user motifs
+# The function getUserDBmotifs() reads the user motifs
 # in motifs.txt and retrieves the motifs deposited in the ATtRACT database
 # (\url{http://attract.cnic.es}).
-.getUserAttractMotifs <-
-    function(species  = "Hsapiens",
-        reverse = FALSE,
-        pathToMotifs = NULL) {
+.getUserDBmotifs <-
+    function(database = 'ATtRACT',
+             species  = "Hsapiens",
+             memeIndexFilePath = 18,
+             reverse = FALSE,
+             pathToMotifs = NULL) {
         options(readr.num_columns = 0)
 
-        # Get motifs from attract data base
-        attractRBPmotifs <- .getAttractRBPMotifs(species)
+
+        if (database == 'ATtRACT') {
+            # Get motifs from attract data base (it contains motifs for 159 human RBPs)
+            rbpMotifsFromDB <- .getRBPmotifsAttract(species)
+        } else if (database == 'MEME') {
+            # Get MEME motifs (it contains motifs for 80 human RBPs)
+            rbpMotifsFromDB <- .getRBPmotifsMEME(memeIndexFilePath)
+        } else{
+            stop("database not correct, only ATtRACT or MEME are allowed")
+        }
+
         # Read motifs.txt
         motifsFromFile <- .readMotifs(pathToMotifs)
 
         if (nrow(motifsFromFile) == 0) {
-            cat("motifs.txt is empty or absent. Only
-            ATtRACT motifs will be analyzed")
+            cat("motifs.txt is empty or absent. Only",
+                database,
+                "motifs will be analyzed if present")
         }
-
 
         # we reverse the motifs so that they can be analyzed also
         # in the other orientation
         if (reverse) {
-            # If the file is empty then only the ATtRACT motifs are analyzed
+            # If the file is empty then only the ATtRACT or MEME motifs are analyzed
             if (nrow(motifsFromFile) > 0) {
                 # reverse motifs given in input
-                newMotifsFromFile <-
-                    .getReverseMotifsFromFile(motifsFromFile)
+                motifsFromFileNew <-
+                    getReverseMotifs(motifsFromFile)
             }
-            newAttractRBPmotifs <-
-                .getReverseAttractRBPmotifs(attractRBPmotifs)
+
+            if (database == 'ATtRACT' & nrow(rbpMotifsFromDB) > 0) {
+                rbpMotifsFromDBnew <-
+                    .getReverseAttractRBPmotifs(rbpMotifsFromDB)
+            } else if (nrow(rbpMotifsFromDB) > 0) {
+                rbpMotifsFromDBnew <- getReverseMotifs(rbpMotifsFromDB)
+            }
+
+
         } else{
-            newMotifsFromFile <- motifsFromFile
-            newAttractRBPmotifs <- attractRBPmotifs
+            motifsFromFileNew <- motifsFromFile
+            rbpMotifsFromDBnew <- rbpMotifsFromDB
         }
 
-        userAttractMotifs <-
-            dplyr::bind_rows(newMotifsFromFile[, c(1, 2)], newAttractRBPmotifs)
+        userDBmotifs <-
+            dplyr::bind_rows(motifsFromFileNew[, c(1, 2)], rbpMotifsFromDBnew)
 
-        return(userAttractMotifs)
+        return(userDBmotifs)
     }
 
 
@@ -256,21 +293,27 @@ computeMotifs <-
 # they are filtered based on the value of rbp argument.
 .filterMotifs <-
     function(computedMotifs,
-        species  = "Hsapiens",
-        rbp = TRUE,
-        reverse = FALSE,
-        pathToMotifs = NULL) {
+             database = 'ATtRACT',
+             species  = "Hsapiens",
+             memeIndexFilePath = 18,
+             rbp = TRUE,
+             reverse = FALSE,
+             pathToMotifs = NULL) {
         # Identify motifs matching with RBPs
         filteredMotifs <- .createFilteredMotifsDF(computedMotifs)
 
         # Get user and ATtRACT RBP motifs
-        userATtRACTmotifs <-
-            .getUserAttractMotifs(species, reverse, pathToMotifs)
+        userDBmotifs <-
+            .getUserDBmotifs(database,
+                             species,
+                             memeIndexFilePath,
+                             reverse,
+                             pathToMotifs)
 
         # Check whether the motifs matches with or it is contanined within
         # any RBP motifs
         filteredMotifs <-
-            .matchWithKnowRBPs(filteredMotifs, userATtRACTmotifs, computedMotifs)
+            .matchWithKnowRBPs(filteredMotifs, userDBmotifs, computedMotifs)
 
         # Filter
         if (rbp) {
@@ -291,7 +334,7 @@ computeMotifs <-
 .createFilteredMotifsDF <- function(computedMotifs) {
     filteredMotifs <-
         data.frame(matrix(nrow = length(computedMotifs),
-            ncol = 2))
+                          ncol = 2))
     colnames(filteredMotifs) <-  c("motif", "id")
     filteredMotifs$motif <- computedMotifs
 
@@ -303,8 +346,8 @@ computeMotifs <-
 # any RBP motifs
 .matchWithKnowRBPs <-
     function(filteredMotifs,
-        userATtRACTmotifs,
-        computedMotifs) {
+             userDBmotifs,
+             computedMotifs) {
         widthCompMotifs <- nchar(computedMotifs[1])
         for (j in seq_along(filteredMotifs$motif)) {
             # Grep do not work with pattern. In motifs.txt the user can reports
@@ -313,23 +356,22 @@ computeMotifs <-
             # 2 strings or the first string it is contained as substring within
             # the second
             grepedM <-
-                userATtRACTmotifs[base::grep(filteredMotifs$motif[j], userATtRACTmotifs$motif), ] %>%
+                userDBmotifs[base::grep(filteredMotifs$motif[j], userDBmotifs$motif), ] %>%
                 dplyr::mutate(motif = as.character(.data$motif),
-                    id = as.character(.data$id))
+                              id = as.character(.data$id))
 
-            # str_extract works with pattern. In motifs.txt the user can reports
-            # patterns.
+            # str_extract works with pattern.
             extractedM <-
                 base::cbind(
-                    stringr::str_extract(filteredMotifs$motif[j], userATtRACTmotifs$motif),
-                    userATtRACTmotifs$id
+                    stringr::str_extract(filteredMotifs$motif[j], userDBmotifs$motif),
+                    userDBmotifs$id
                 ) %>%
                 magrittr::set_colnames(c("motif", "id")) %>%
                 as.data.frame() %>%
                 dplyr::select(.data$id, .data$motif) %>%
                 dplyr::filter(!is.na(.data$motif)) %>%
                 dplyr::mutate(motif = as.character(.data$motif),
-                    id = as.character(.data$id)) %>%
+                              id = as.character(.data$id)) %>%
                 dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
 
             joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
@@ -353,13 +395,13 @@ computeMotifs <-
             names(motifs)[2] <- "downGR"
 
         } else if (length(targets) == 1 &
-                names(targets)[[1]] == "bsj") {
+                   names(targets)[[1]] == "bsj") {
             # Create a enmpty list of 1 elements
             motifs <- vector("list", 1)
             names(motifs)[1] <- "bsj"
 
         } else if (length(targets) == 1 &
-                names(targets)[[1]] == "circ") {
+                   names(targets)[[1]] == "circ") {
             # Create a enmpty list of 1 elements
             motifs <- vector("list", 1)
             names(motifs)[1] <- "circ"
@@ -592,69 +634,175 @@ mergeMotifs <- function(motifs) {
 
 
 
-# Get RBP motifs from attract data base
-.getAttractRBPMotifs <- function(species) {
+# Get RBP motifs from attract data base.
+# Download the https://attract.cnic.es/attract/static/ATtRACT.zip.
+# Motifs from the following file were used: ATtRACT_db.txt
+.getRBPmotifsAttract <- function(species) {
     # Create a temporary directory
     td = tempdir()
     # Create the placeholder file
     tf = tempfile(tmpdir = td, fileext = "ATtRACT.zip")
     # download into the placeholder file
-    utils::download.file("https://attract.cnic.es/attract/static/ATtRACT.zip",
-        tf)
-    db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
 
-    # Reformat how the species name is reported in ATtRACT database so
-    # that it can be compared with the species given in input.
-    # E.g Mus_musculus in ATtRACT db becomes Mmusculus. the last one is
-    # how it is reported in BSgenome.
-    el1 <-
-        substr(unlist(lapply(
-            base::strsplit(db$Organism, "_"), "[", 1
-        )), 1, 1)
-    el2 <-
-        tolower(unlist(lapply(
-            base::strsplit(db$Organism, "_"), "[", 2
-        )))
-    db$Organism <- paste0(el1, el2)
-
-    # if the organims given in input is not present in ATtRACT db
-    # then take the human motifs.
-
-    if (species %in% db$Organism) {
-        attractRBPmotifs <- db %>%
-            dplyr::filter(.data$Organism == species) %>%
-            dplyr::select(.data$Gene_name,
-                .data$Motif) %>%
-            dplyr::rename(id = .data$Gene_name,
-                motif = .data$Motif)
-    } else{
-        cat(
-            paste(
-                "Organism not found in ATtRACT db, the human RBP
-                motifs in the ATtRACT database will be used.",
-                sep = " "
-            )
+    url <- "https://attract.cnic.es/attract/static/ATtRACT.zip"
+    tc <-
+        tryCatch(
+            utils::download.file(url, tf),
+            warning = function(w)
+                NULL
         )
-        attractRBPmotifs <- db %>%
-            dplyr::filter(.data$Organism == "Hsapiens") %>%
-            dplyr::select(.data$Gene_name,
-                .data$Motif) %>%
-            dplyr::rename(id = .data$Gene_name,
-                motif = .data$Motif)
+
+    if (!is.null(tc)) {
+        db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
+
+        # Reformat how the species name is reported in ATtRACT database so
+        # that it can be compared with the species given in input.
+        # E.g Mus_musculus in ATtRACT db becomes Mmusculus. the last one is
+        # how it is reported in BSgenome.
+        el1 <-
+            substr(unlist(lapply(
+                base::strsplit(db$Organism, "_"), "[", 1
+            )), 1, 1)
+        el2 <-
+            tolower(unlist(lapply(
+                base::strsplit(db$Organism, "_"), "[", 2
+            )))
+        db$Organism <- paste0(el1, el2)
+
+        # if the organims given in input is not present in ATtRACT db
+        # then take the human motifs.
+
+        if (species %in% db$Organism) {
+            attractRBPmotifs <- db %>%
+                dplyr::filter(.data$Organism == species) %>%
+                dplyr::select(.data$Gene_name,
+                              .data$Motif) %>%
+                dplyr::rename(id = .data$Gene_name,
+                              motif = .data$Motif)
+        } else{
+            cat(
+                paste(
+                    "Organism not found in ATtRACT db, the human RBP
+                    motifs in the ATtRACT database will be used.",
+                    sep = " "
+                )
+            )
+            attractRBPmotifs <- db %>%
+                dplyr::filter(.data$Organism == "Hsapiens") %>%
+                dplyr::select(.data$Gene_name,
+                              .data$Motif) %>%
+                dplyr::rename(id = .data$Gene_name,
+                              motif = .data$Motif)
+        }
+    } else{
+        attractRBPmotifs <- data.frame(matrix(nrow = 0, ncol = 2))
+        colnames(attractRBPmotifs) <-  c("id", "motif")
+        cat('URL not found: ',
+            url,
+            '.\nATtRACT motif can not be used.')
     }
+
     return(attractRBPmotifs)
 }
 
 
 
-# get reverse motifs from file
-.getReverseMotifsFromFile <- function(motifsFromFile) {
-    # reverse motifs given in input
-    reversedMotifsFromFile <- motifsFromFile
+# Rerieve MEME consensus sequences and convert it to a regular expression.
+# Download the http://meme-suite.org/meme-software/Databases/motifs/motif_databases.12.19.tgz.
+# Motifs from the following file are used: RNA\Ray2013_rbp_All_Species.meme
+.getRBPmotifsMEME <-
+    function(memeIndexFilePath = 5,
+             isDNA = FALSE) {
+        # Create a temporary directory
+        td = tempdir()
+        # Create the placeholder file
+        tf = tempfile(tmpdir = td, fileext = 'db')
+        # download into the placeholder file
+        url <-
+            "http://meme-suite.org/meme-software/Databases/motifs/motif_databases.12.19.tgz"
+        tc <-
+            tryCatch(
+                utils::download.file(url, tf),
+                warning = function(w)
+                    NULL
+            )
 
-    for (m in seq_along(reversedMotifsFromFile$motif)) {
-        reversedMotifsFromFile$motif[m] <-
-            reversedMotifsFromFile$motif[m] %>%
+        if (!is.null(tc)) {
+            # Get the name of the first file in the zip archive
+            memeDB <- untar(tf, list = TRUE)
+            memeFile <- grep('rbp', memeDB, value = TRUE) %>%
+                data.frame() %>%
+                magrittr::set_colnames('path') %>%
+                dplyr::filter(., !grepl("dna_encoded",path)) %>%
+                dplyr::mutate(index = seq_along(.data$path)) %>%
+                dplyr::filter(index == memeIndexFilePath)
+
+
+            if (nrow(memeFile)) {
+                # unzip the file to the temporary directory
+                untar(tf, files = memeFile$path, exdir = td)
+                # fpath is the full path to the extracted file
+                fpath = file.path(td, memeFile$path)
+
+                # Read meme motifs from file
+                memeMotifs <- .readMemeMotifs(fpath)
+            } else{
+                cat(
+                    'Index not found, MEME motifs can not be used.\nType(memeDB) to see all possible options.'
+                )
+            }
+
+
+        } else{
+            memeMotifs <- data.frame(matrix(nrow = 0, ncol = 3))
+            colnames(memeMotifs) <-  c("id", "motif", "length")
+            cat('URL not found: ',
+                url,
+                '.\nMEme motifs can not be used.')
+        }
+
+        return(memeMotifs)
+    }
+
+# Read meme motifs from file
+.readMemeMotifs <- function(fpath) {
+    meme <-
+        universalmotif::read_meme(
+            fpath,
+            skip = 0,
+            readsites = FALSE,
+            readsites.meta = FALSE
+        )
+    # Create empty data frame
+    memeMotifs <- data.frame(matrix(nrow = length(meme), ncol = 3))
+    colnames(memeMotifs) <-  c("id", "motif",'length')
+
+    # Convert the sequence to UPPER CASE
+
+    for (i in seq_along(meme)) {
+        memeMotifs$id[i] <- meme[[i]]@altname
+        memeMotifs$length[i] <- nchar(meme[[i]]@consensus)
+        memeMotifs$motif[i] <-
+            getRegexPattern(meme[[i]]@consensus, isDNA = FALSE)
+    }
+
+
+    memeMotifs$motif <-  gsub('T', 'U', memeMotifs$motif)
+
+    return(memeMotifs)
+}
+
+
+
+
+# get reverse motifs from file
+getReverseMotifs <- function(motifsWithRegExp) {
+    # reverse motifs given in input
+    reversedMotifs <- motifsWithRegExp
+
+    for (m in seq_along(reversedMotifs$motif)) {
+        reversedMotifs$motif[m] <-
+            reversedMotifs$motif[m] %>%
             gsub("\\[", "Z", .) %>%
             gsub("]", "X", .) %>%
             IRanges::reverse() %>%
@@ -662,25 +810,25 @@ mergeMotifs <- function(motifs) {
             gsub("Z", "]", .)
     }
 
-    newMotifsFromFile <-
-        dplyr::bind_rows(motifsFromFile, reversedMotifsFromFile)
+    motifsNew <-
+        dplyr::bind_rows(motifsWithRegExp, reversedMotifs)
 
-    return(newMotifsFromFile)
+    return(motifsNew)
 }
 
 
 # Reverse motifs from attract data base
-.getReverseAttractRBPmotifs <- function(attractRBPmotifs) {
-    reverseAttractRBPmotifs <- attractRBPmotifs
+.getReverseAttractRBPmotifs <- function(rbpMotifsFromDB) {
+    reverseAttractRBPmotifs <- rbpMotifsFromDB
     reverseAttractRBPmotifs$motif <-
         IRanges::reverse(reverseAttractRBPmotifs$motif)
 
-    newAttractRBPmotifs <-
-        dplyr::bind_rows(attractRBPmotifs, reverseAttractRBPmotifs)
-    newAttractRBPmotifs <-
-        newAttractRBPmotifs[!duplicated(newAttractRBPmotifs),]
+    rbpMotifsFromDBnew <-
+        dplyr::bind_rows(rbpMotifsFromDB, reverseAttractRBPmotifs)
+    rbpMotifsFromDBnew <-
+        rbpMotifsFromDBnew[!duplicated(rbpMotifsFromDBnew),]
 
-    return(newAttractRBPmotifs)
+    return(rbpMotifsFromDBnew)
 }
 
 
