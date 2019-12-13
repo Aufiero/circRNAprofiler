@@ -36,6 +36,7 @@ test_that("getMotifs() and mergeMotifs() generate the correct data structure
             getMotifs(
                 targets,
                 width = 6,
+                database = 'ATtRACT',
                 species = "Mmusculus",
                 rbp = TRUE,
                 reverse = TRUE
@@ -58,6 +59,7 @@ test_that("getMotifs() and mergeMotifs() generate the correct data structure
             getMotifs(
                 targets,
                 width = 6,
+                database = 'ATtRACT',
                 species = "Mmusculus",
                 rbp = FALSE,
                 reverse = FALSE
@@ -111,6 +113,7 @@ test_that("getMotifs() generates a list with the correct
             getMotifs(
                 targets,
                 width = 4,
+                database = 'ATtRACT',
                 species = "Mmusculus",
                 rbp = TRUE,
                 reverse = TRUE

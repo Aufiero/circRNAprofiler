@@ -10,7 +10,7 @@ circRNAprofiler is an R-based framework that only requires an R installation and
 Installation
 ------------
 
-You can install circRNAprofiler using:
+You can install circRNAprofiler from Bioconductor using:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))

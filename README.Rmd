@@ -29,7 +29,7 @@ facilitate the interpretation of the results.
 
 ## Installation
 
-You can install circRNAprofiler using:
+You can install circRNAprofiler from Bioconductor using:
 ```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -41,7 +41,6 @@ To download the development version on github use:
 ```{r, eval = FALSE}
 BiocManager::install("Aufiero/circRNAprofiler")
 ```
-
 
 ## Documentation
 Detailed information on using this package can be found in the package vignettes:
