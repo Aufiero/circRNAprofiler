@@ -4,8 +4,16 @@
 \alias{getMotifs}
 \title{Screen target sequences for recurrent motifs}
 \usage{
-getMotifs(targets, width = 6, species = "Hsapiens", rbp = TRUE,
-  reverse = FALSE, pathToMotifs = NULL)
+getMotifs(
+  targets,
+  width = 6,
+  database = "ATtRACT",
+  species = "Hsapiens",
+  memeIndexFilePath = 18,
+  rbp = TRUE,
+  reverse = FALSE,
+  pathToMotifs = NULL
+)
 }
 \arguments{
 \item{targets}{A list containing the target sequences to analyze.
@@ -15,9 +23,17 @@ It can be generated with \code{\link{getCircSeqs}},
 \item{width}{An integer specifying the length of all possible motifs to
 extract from the target sequences. Default value is 6.}
 
-\item{species}{A string specifying the species of the RBP motifs to use.
-Type data(attractSpecies) to see the possible options.
+\item{database}{A string specifying the RBP database to use. Possible options
+are ATtRACT or MEME. Default database is "ATtRACT".}
+
+\item{species}{A string specifying the species of the ATtRACT RBP motifs to
+use. Type data(attractSpecies) to see the possible options.
 Default value is "Hsapiens".}
+
+\item{memeIndexFilePath}{An integer specifying the index of the file path
+of the meme file to use.Type data(memeDB) to see the possible options.
+Default value is 18 corresponding to the following file:
+motif_databases/RNA/Ray2013_rbp_Homo_sapiens.meme}
 
 \item{rbp}{A logical specifying whether to report only motifs matching
 with known RBP motifs from ATtRACT database or user motifs specified in
@@ -51,12 +67,13 @@ A list.
 The function getMotifs() scans the target sequences for the
 presence of recurrent motifs of a specific length defined in input.
 By setting rbp equals to TRUE, the identified motifs are matched with motifs
-of known RNA Binding Proteins (RBPs) deposited in the ATtRACT database
-(\url{http://attract.cnic.es}) and with motifs specified by the user.
+of known RNA Binding Proteins (RBPs) deposited in the ATtRACT
+(\url{http://attract.cnic.es}) or MEME database (\url{http://meme-suite.org/})
+and with motifs specified by the user.
 The user motifs must go in the file motifs.txt. If this file is absent or
-empty, only motifs from the ATtRACT database are considered in the analysis.
+empty, only motifs from the ATtRACT or MEME database are considered in the analysis.
 By setting rbp equals to FALSE, only motifs that do not match with any motifs
-deposited in the ATtRACT database or user motifs are reported in the final
+deposited in the databases or user motifs are reported in the final
 output. Location of the selected motifs is also reported. This corresponds
 to the start position of the motif within the sequence (1-index based).
 }
@@ -89,6 +106,7 @@ targets <- getSeqsFromGRs(
 motifs <- getMotifs(
     targets,
     width = 6,
+    database = 'ATtRACT',
     species = "Hsapiens",
     rbp = TRUE,
     reverse = FALSE)

@@ -4,8 +4,12 @@
 \alias{annotateBSJs}
 \title{Annotate circRNA features.}
 \usage{
-annotateBSJs(backSplicedJunctions, gtf, isRandom = FALSE,
-  pathToTranscripts = NULL)
+annotateBSJs(
+  backSplicedJunctions,
+  gtf,
+  isRandom = FALSE,
+  pathToTranscripts = NULL
+)
 }
 \arguments{
 \item{backSplicedJunctions}{A data frame containing the back-spliced junction

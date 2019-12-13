@@ -4,9 +4,14 @@
 \alias{getMiRsites}
 \title{Screen target sequences for miR binding sites}
 \usage{
-getMiRsites(targets, miRspeciesCode = "hsa",
-  miRBaseLatestRelease = TRUE, totalMatches = 7,
-  maxNonCanonicalMatches = 1, pathToMiRs = NULL)
+getMiRsites(
+  targets,
+  miRspeciesCode = "hsa",
+  miRBaseLatestRelease = TRUE,
+  totalMatches = 7,
+  maxNonCanonicalMatches = 1,
+  pathToMiRs = NULL
+)
 }
 \arguments{
 \item{targets}{A list containing the target sequences to analyze.

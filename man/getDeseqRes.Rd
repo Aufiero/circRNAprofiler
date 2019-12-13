@@ -4,8 +4,13 @@
 \alias{getDeseqRes}
 \title{Differential circRNA expression analysis adapted from DESeq2}
 \usage{
-getDeseqRes(backSplicedJunctions, condition, pAdjustMethod = "BH",
-  pathToExperiment = NULL, ...)
+getDeseqRes(
+  backSplicedJunctions,
+  condition,
+  pAdjustMethod = "BH",
+  pathToExperiment = NULL,
+  ...
+)
 }
 \arguments{
 \item{backSplicedJunctions}{A data frame containing the back-spliced junction

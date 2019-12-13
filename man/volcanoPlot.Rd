@@ -4,9 +4,19 @@
 \alias{volcanoPlot}
 \title{Plot differential circRNA expression results}
 \usage{
-volcanoPlot(res, log2FC = 1, padj = 0.05, title = "", gene = FALSE,
-  setxLim = FALSE, xlim = c(-8, 8), setyLim = FALSE, ylim = c(0,
-  5), color = "blue")
+volcanoPlot(
+  res,
+  log2FC = 1,
+  padj = 0.05,
+  title = "",
+  gene = FALSE,
+  geneSet = c(""),
+  setxLim = FALSE,
+  xlim = c(-8, 8),
+  setyLim = FALSE,
+  ylim = c(0, 5),
+  color = "blue"
+)
 }
 \arguments{
 \item{res}{A data frame containing the the differential expression resuls.
@@ -20,8 +30,12 @@ Deafult value is 0.05.}
 
 \item{title}{A character string specifying the title of the plot.}
 
-\item{gene}{A logical specifying whether to add the circRNA host gene names
-to the plot. Deafult value is FALSE.}
+\item{gene}{A logical specifying whether to show all the host gene names of
+the differentially expressed circRNAs to the plot. Deafult value is FALSE.}
+
+\item{geneSet}{A character vector specifying which host gene name of
+the differentially expressed circRNAs to show in the plot. Multiple host
+gene names can be specofied. E.g. c('TTN, RyR2')}
 
 \item{setxLim}{A logical specifying whether to set x scale limits.
 If TRUE the value in xlim will be used. Deafult value is FALSE.}

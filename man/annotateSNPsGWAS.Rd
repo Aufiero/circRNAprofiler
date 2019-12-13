@@ -4,8 +4,12 @@
 \alias{annotateSNPsGWAS}
 \title{Annotate GWAS SNPs}
 \usage{
-annotateSNPsGWAS(targets, assembly = "hg19", makeCurrent = FALSE,
-  pathToTraits = NULL)
+annotateSNPsGWAS(
+  targets,
+  assembly = "hg19",
+  makeCurrent = FALSE,
+  pathToTraits = NULL
+)
 }
 \arguments{
 \item{targets}{A list containing the target regions to analyze.

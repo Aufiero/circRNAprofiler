@@ -4,8 +4,7 @@
 \alias{plotMiR}
 \title{Plot miRNA analysis results}
 \usage{
-plotMiR(rearragedMiRres, n = 40, color = "blue", miRid = FALSE,
-  id = 1)
+plotMiR(rearragedMiRres, n = 40, color = "blue", miRid = FALSE, id = 1)
 }
 \arguments{
 \item{rearragedMiRres}{A list containing containing rearranged

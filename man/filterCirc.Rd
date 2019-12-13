@@ -4,8 +4,12 @@
 \alias{filterCirc}
 \title{Filter circRNAs}
 \usage{
-filterCirc(backSplicedJunctions, allSamples = FALSE, min = 3,
-  pathToExperiment = NULL)
+filterCirc(
+  backSplicedJunctions,
+  allSamples = FALSE,
+  min = 3,
+  pathToExperiment = NULL
+)
 }
 \arguments{
 \item{backSplicedJunctions}{A data frame containing back-spliced junction

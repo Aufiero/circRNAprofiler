@@ -4,8 +4,13 @@
 \alias{getEdgerRes}
 \title{Differential circRNA expression analysis adapted from EdgeR}
 \usage{
-getEdgerRes(backSplicedJunctions, condition, normMethod = "TMM",
-  pAdjustMethod = "BH", pathToExperiment = NULL)
+getEdgerRes(
+  backSplicedJunctions,
+  condition,
+  normMethod = "TMM",
+  pAdjustMethod = "BH",
+  pathToExperiment = NULL
+)
 }
 \arguments{
 \item{backSplicedJunctions}{A data frame containing the back-spliced junction

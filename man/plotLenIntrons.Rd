@@ -4,8 +4,13 @@
 \alias{plotLenIntrons}
 \title{Plot length introns flanking back-spliced junctions}
 \usage{
-plotLenIntrons(annotatedFBSJs, annotatedBBSJs, df1Name = "foreground",
-  df2Name = "background", title = "")
+plotLenIntrons(
+  annotatedFBSJs,
+  annotatedBBSJs,
+  df1Name = "foreground",
+  df2Name = "background",
+  title = ""
+)
 }
 \arguments{
 \item{annotatedFBSJs}{A data frame with the annotated back-spliced junctions

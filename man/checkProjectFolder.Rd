@@ -4,9 +4,14 @@
 \alias{checkProjectFolder}
 \title{Check project folder}
 \usage{
-checkProjectFolder(pathToExperiment = NULL, pathToGTF = NULL,
-  pathToMotifs = NULL, pathToMiRs = NULL, pathToTranscripts = NULL,
-  pathToTraits = NULL)
+checkProjectFolder(
+  pathToExperiment = NULL,
+  pathToGTF = NULL,
+  pathToMotifs = NULL,
+  pathToMiRs = NULL,
+  pathToTranscripts = NULL,
+  pathToTraits = NULL
+)
 }
 \arguments{
 \item{pathToExperiment}{A string containing the path to the experiment.txt

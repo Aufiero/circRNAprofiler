@@ -4,8 +4,7 @@
 \alias{annotateRepeats}
 \title{Annotate repetitive elements}
 \usage{
-annotateRepeats(targets, annotationHubID = "AH5122",
-  complementary = TRUE)
+annotateRepeats(targets, annotationHubID = "AH5122", complementary = TRUE)
 }
 \arguments{
 \item{targets}{A list containing the target regions to analyze.

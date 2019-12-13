@@ -4,8 +4,17 @@
 \alias{plotMotifs}
 \title{Plot motifs analysis results}
 \usage{
-plotMotifs(mergedMotifsFTS, mergedMotifsBTS, log2FC = 1, nf1 = 1,
-  nf2 = 1, df1Name = "foreground", df2Name = "background")
+plotMotifs(
+  mergedMotifsFTS,
+  mergedMotifsBTS,
+  log2FC = 1,
+  removeNegLog2FC = FALSE,
+  nf1 = 1,
+  nf2 = 1,
+  df1Name = "foreground",
+  df2Name = "background",
+  angle = 0
+)
 }
 \arguments{
 \item{mergedMotifsFTS}{A data frame containing the number of occurences
@@ -18,23 +27,35 @@ of each motif found in the background target sequences (e.g. from
 random back-spliced junctions). It can be generated with the
 \code{\link{mergeMotifs}}.}
 
-\item{log2FC}{An integer specifying the log2FC cut-off. Default value is 1.}
+\item{log2FC}{An integer specifying the log2FC cut-off. Default value is 1.
+
+NOTE: log2FC is calculated as follow: normalized number of occurences of
+each motif found in the foreground target sequences / normalized number of
+occurences of each motif found in the background target sequences.
+
+To avoid infinity as a value for fold change, 1 was added to number of occurences
+of each motif found in the foreground and background target sequences before
+the normalization.}
+
+\item{removeNegLog2FC}{A logical specifying whether to remove the RBPs having
+a negative log2FC. If TRUE then only positive log2FC will be visualized.
+Default value is FALSE.}
 
 \item{nf1}{An integer specifying the normalization factor for the
-first data frame mergedMotifsFTS. The occurrences of each motif are divided
-by nf1. The normalized values are then used for fold-change calculation.
-Set this to the number of target sequences (e.g from detected
+first data frame mergedMotifsFTS. The occurrences of each motif plus 1 are
+divided by nf1. The normalized values are then used for fold-change calculation.
+Set this to the number or length of target sequences (e.g from detected
 back-spliced junctions) where the motifs were extracted from.
 Default value is 1.}
 
 \item{nf2}{An integer specifying the normalization factor for the
-second data frame mergedMotifsBTS. The occurrences of each motif are divided
-by nf2. The normalized values are then used for fold-change calculation.
+second data frame mergedMotifsBTS. The occurrences of each motif plus 1 are
+divided by nf2. The The normalized values are then used for fold-change calculation.
 Set this to the number of target sequences (e.g from random
 back-spliced junctions) where the motifs were extracted from.
 Default value is 1.
 
-NOTE: By setting nf1 and nf2 equals to 1 the number of target sequences
+NOTE: If nf1 and nf2 is set equals to 1, the number or length of target sequences
 (e.g detected Vs randomly selected) where the motifs were extrated from,
 is supposed to be the same.}
 
@@ -43,6 +64,9 @@ will be displayed in the legend of the plot. Deafult value is "foreground".}
 
 \item{df2Name}{A string specifying the name of the first data frame. This
 will be displayed in the legend of the plot. Deafult value is "background".}
+
+\item{angle}{An integer specifying the rotation angle of the axis labels.
+Default value is 0.}
 }
 \value{
 A ggplot object.
@@ -93,6 +117,7 @@ targetsBTS <- getSeqsFromGRs(
  motifsFTS <- getMotifs(
      targetsFTS,
      width = 6,
+     database = 'ATtRACT',
      species = "Hsapiens",
      rbp = TRUE,
      reverse = FALSE)
@@ -100,6 +125,7 @@ targetsBTS <- getSeqsFromGRs(
 motifsBTS <- getMotifs(
      targetsBTS,
      width = 6,
+     database = 'ATtRACT',
      species = "Hsapiens",
      rbp = TRUE,
      reverse = FALSE)

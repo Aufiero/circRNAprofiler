@@ -4,8 +4,13 @@
 \alias{plotLenBSEs}
 \title{Plot length back-spliced exons}
 \usage{
-plotLenBSEs(annotatedFBSJs, annotatedBBSJs, df1Name = "foreground",
-  df2Name = "background", title = "")
+plotLenBSEs(
+  annotatedFBSJs,
+  annotatedBBSJs,
+  df1Name = "foreground",
+  df2Name = "background",
+  title = ""
+)
 }
 \arguments{
 \item{annotatedFBSJs}{A data frame with the annotated back-spliced junctions

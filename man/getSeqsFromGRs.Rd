@@ -4,8 +4,7 @@
 \alias{getSeqsFromGRs}
 \title{Retrieve sequences flanking back-spliced junctions}
 \usage{
-getSeqsFromGRs(annotatedBSJs, genome, lIntron = 100, lExon = 10,
-  type = "ie")
+getSeqsFromGRs(annotatedBSJs, genome, lIntron = 100, lExon = 10, type = "ie")
 }
 \arguments{
 \item{annotatedBSJs}{A data frame with the annotated back-spliced junctions.
