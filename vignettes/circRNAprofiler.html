@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2019-12-13" />
+<meta name="date" content="2019-12-19" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -180,7 +180,7 @@ summary {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2019-12-13</h4>
+<h4 class="date">2019-12-19</h4>
 
 </div>
 
@@ -879,13 +879,13 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                  id     gene strand chrom startUpBSE endDownBSE
-## 1      MB:-:chr22:36019401:36013210       MB      - chr22   36019401   36013210
-## 2   EXOC6B:-:chr2:72562418:72411204   EXOC6B      -  chr2   72562418   72411204
-## 3 N4BP2L2:-:chr13:33112962:33110564  N4BP2L2      - chr13   33112962   33110564
-## 4    TECRL:-:chr4:65275186:65140975    TECRL      -  chr4   65275186   65140975
-## 5  PICALM:-:chr11:85780101:85689113   PICALM      - chr11   85780101   85689113
-## 6 MLIP-AS1:-:chr6:53912392:53911435 MLIP-AS1      -  chr6   53912392   53911435</code></pre>
+##                                  id    gene strand chrom startUpBSE endDownBSE
+## 1  INO80C:-:chr18:33077943:33058959  INO80C      - chr18   33077943   33058959
+## 2   FLNA:-:chrX:153578723:153577290    FLNA      -  chrX  153578723  153577290
+## 3   FLNA:-:chrX:153587032:153585909    FLNA      -  chrX  153587032  153585909
+## 4 N4BP2L2:-:chr13:33092057:33054727 N4BP2L2      - chr13   33092057   33054727
+## 5   GUSBP9:-:chr5:70503957:70498080  GUSBP9      -  chr5   70503957   70498080
+## 6    LGMN:-:chr14:93214972:93198994    LGMN      - chr14   93214972   93198994</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>
@@ -1017,9 +1017,9 @@ targetsBTS_gr &lt;-
 <h3>Module 12 - Screen target sequences for RBP/de Novo motifs</h3>
 <div id="getmotifs" class="section level4">
 <h4><em>getMotifs()</em></h4>
-<p>The function getMotifs() scans the target sequences from module 9-11 for the presence of recurrent motifs of a specific length defined in input. Briefly, we first compute all possible motifs of a given length (defined by the argument width of the function), and then the target sequences are scanned for the presence of those motifs. Also overlapping motifs are counted. The identified motifs can subsequently be matched with motifs of known RNA Binding Proteins (RBPs) deposited in the ATtRACT or MEME database. There can be multiple consensus binding motifs for each RBP ranging from 4 to 12 nucleotides. If the identified motifs matches with or they are part (as substring) within any RBP motifs it is marked and named with the name of the matching RBP. A motif can be shared by multiple RBPs, so in that case all RBPs are reported. It is possible to specify whether to report only motifs matching with RBPs or unknown motifs. By setting rbp = TRUE, only motifs matching with known RBP motifs are reported. By setting reverse = TRUE, all the RBP motifs in the ATtRACT or MEME database and custom motifs reported in motifs.txt are reversed and analyzed together with the direct motifs as they are reported in the databases and motifs.txt. Location of the selected motifs is also reported. This corresponds to the start position of the motif within the sequence (1-index based).</p>
+<p>The function getMotifs() scans the target sequences from module 9-11 for the presence of recurrent motifs of a specific length defined in input. Briefly, we first compute all possible motifs of a given length (defined by the argument width of the function), and then the target sequences are scanned for the presence of those motifs. Also overlapping motifs are counted. The identified motifs can subsequently be matched with motifs of known RNA Binding Proteins (RBPs) deposited in the ATtRACT or MEME database. There can be multiple consensus binding motifs for each RBP ranging from 4 to 12 nucleotides. If the identified motifs matches with or they are part (as substring) within any RBP motifs it is marked and named with the name of the matching RBP. A motif can be shared by multiple RBPs, so in that case all RBPs are reported. It is possible to specify whether to report only motifs matching with RBPs or unknown motifs. By setting rbp = TRUE, only motifs matching with known RBP motifs are reported. By setting reverse = TRUE, all the RBP motifs in the ATtRACT or MEME database and custom motifs reported in motifs.txt are reversed and analyzed together with the direct motifs as they are reported in the databases and motifs.txt. Location of the selected motifs is also reported. This corresponds to the start position of the motif within the sequence (1-index based). If RBP analysis is performed on BSJ sequences only motifs crossing the back-spliced junctions with at least one nucleotide are reported. E.g. by setting width = 6, the BSJ sequences retrieved using module 10 are trimmed so that only 5 nucleotides are left at each side of the BSJ. If width = 7, then 6 nucleotides are left at each side of the BSJ etc.</p>
 <p>NOTE:</p>
-<p>It might be that the above URL of the databases from which the RBP motifs are retrierved for some reason do not work, in that case a message will be printed and only motifs reported in the motifs.txt will be used in the analysis.</p>
+<p>It might be that the URL of the databases from which the RBP motifs are retrieved can not be reached, in that case a message will be printed and only motifs reported in the motifs.txt will be used in the analysis.</p>
 <pre class="r"><code># Find motifs in the foreground target sequences
 motifsFTS_gr &lt;-
     getMotifs(targetsFTS_gr,
@@ -1047,13 +1047,15 @@ mergedMotifsBTS_gr &lt;- mergeMotifs(motifsBTS_gr)</code></pre>
 # nf1 = nrow(annotatedCirc), 
 # nf2 = nrow(annotatedBackgroundCircs)
 # 
-# Normalize using circRNA sequences:
+# Normalize using the length of the circRNA sequences:
 # nf1 = sum(annotatedCirc$lenCircRNA, na.rm = T) 
 # nf2 = sum(annotatedBackgroundCircs$lenCircRNA, na.rm = T)
 
-# Normalize using the BSJ sequences:
-# nf1 = 22* nrow(annotatedCirc) 
-# nf2 = 22* nrow(annotatedBackgroundCircs)
+# Normalize using the length of the adjusted BSJ sequences. 
+# Here 10 rapresent the length of the sequences.
+# If in getMotifs width is set to 7 then the lenght of the sequence to use is 12.
+# nf1 = 10* nrow(annotatedCirc) 
+# nf2 = 10* nrow(annotatedBackgroundCircs)
 
 # Plot
 p &lt;-
@@ -1209,23 +1211,23 @@ p</code></pre>
 ##  [1] grid      parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0       BSgenome_1.54.0                         rtracklayer_1.46.0                     
-##  [4] Biostrings_2.54.0                       XVector_0.26.0                          gridExtra_2.3                          
-##  [7] VennDiagram_1.6.20                      futile.logger_1.4.3                     ggpubr_0.2.4                           
-## [10] magrittr_1.5                            ggplot2_3.2.1                           citr_0.3.2                             
-## [13] knitr_1.26                              circRNAprofiler_1.1.2                   readr_1.3.1                            
-## [16] testthat_2.3.1                          gwascat_2.18.0                          Homo.sapiens_1.3.1                     
-## [19] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2 org.Hs.eg.db_3.10.0                     GO.db_3.10.0                           
-## [22] OrganismDbi_1.28.0                      GenomicFeatures_1.38.0                  GenomicRanges_1.38.0                   
-## [25] GenomeInfoDb_1.22.0                     AnnotationDbi_1.48.0                    IRanges_2.20.1                         
-## [28] S4Vectors_0.24.1                        Biobase_2.46.0                          BiocGenerics_0.32.0                    
+##  [1] circRNAprofiler_1.1.2                   testthat_2.3.1                          BSgenome.Hsapiens.UCSC.hg19_1.4.0      
+##  [4] BSgenome_1.54.0                         rtracklayer_1.46.0                      Biostrings_2.54.0                      
+##  [7] XVector_0.26.0                          gridExtra_2.3                           VennDiagram_1.6.20                     
+## [10] futile.logger_1.4.3                     ggpubr_0.2.4                            magrittr_1.5                           
+## [13] ggplot2_3.2.1                           citr_0.3.2                              knitr_1.26                             
+## [16] gwascat_2.18.0                          Homo.sapiens_1.3.1                      TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
+## [19] org.Hs.eg.db_3.10.0                     GO.db_3.10.0                            OrganismDbi_1.28.0                     
+## [22] GenomicFeatures_1.38.0                  GenomicRanges_1.38.0                    GenomeInfoDb_1.22.0                    
+## [25] AnnotationDbi_1.48.0                    IRanges_2.20.1                          S4Vectors_0.24.1                       
+## [28] Biobase_2.46.0                          BiocGenerics_0.32.0                    
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] utf8_1.1.4                    R.utils_2.9.2                 tidyselect_0.2.5              RSQLite_2.1.2                
-##   [5] htmlwidgets_1.5.1             BiocParallel_1.20.0           munsell_0.5.0                 miniUI_0.1.1.1               
+##   [1] R.utils_2.9.2                 tidyselect_0.2.5              RSQLite_2.1.2                 htmlwidgets_1.5.1            
+##   [5] BiocParallel_1.20.0           devtools_2.2.1                munsell_0.5.0                 miniUI_0.1.1.1               
 ##   [9] withr_2.1.2                   colorspace_1.4-1              highr_0.8                     rstudioapi_0.10              
-##  [13] ggsignif_0.6.0                gbRd_0.4-11                   labeling_0.3                  Rdpack_0.11-0                
-##  [17] GenomeInfoDbData_1.2.2        farver_2.0.1                  bit64_0.9-7                   rprojroot_1.3-2              
+##  [13] ggsignif_0.6.0                gbRd_0.4-11                   Rdpack_0.11-0                 labeling_0.3                 
+##  [17] GenomeInfoDbData_1.2.2        bit64_0.9-7                   farver_2.0.1                  rprojroot_1.3-2              
 ##  [21] vctrs_0.2.0                   treeio_1.10.0                 lambda.r_1.2.4                xfun_0.11                    
 ##  [25] BiocFileCache_1.10.2          ggseqlogo_0.1                 R6_2.4.1                      locfit_1.5-9.1               
 ##  [29] bitops_1.0-6                  DelayedArray_0.12.0           assertthat_0.2.1              promises_1.1.0               
@@ -1233,30 +1235,31 @@ p</code></pre>
 ##  [37] rlang_0.4.2                   zeallot_0.1.0                 genefilter_1.68.0             splines_3.6.1                
 ##  [41] lazyeval_0.2.2                acepack_1.4.1                 checkmate_1.9.4               BiocManager_1.30.10          
 ##  [45] yaml_2.2.0                    reshape2_1.4.3                backports_1.1.5               httpuv_1.5.2                 
-##  [49] Hmisc_4.3-0                   RBGL_1.62.1                   tools_3.6.1                   RColorBrewer_1.1-2           
-##  [53] Rcpp_1.0.3                    plyr_1.8.4                    base64enc_0.1-3               progress_1.2.2               
-##  [57] zlibbioc_1.32.0               purrr_0.3.3                   RCurl_1.95-4.12               ps_1.3.0                     
-##  [61] prettyunits_1.0.2             rpart_4.1-15                  openssl_1.4.1                 cowplot_1.0.0                
-##  [65] universalmotif_1.4.1          SummarizedExperiment_1.16.0   cluster_2.1.0                 futile.options_1.0.1         
-##  [69] data.table_1.12.6             matrixStats_0.55.0            pkgload_1.0.2                 hms_0.5.2                    
-##  [73] mime_0.7                      evaluate_0.14                 xtable_1.8-4                  XML_3.98-1.20                
-##  [77] compiler_3.6.1                biomaRt_2.42.0                tibble_2.1.3                  crayon_1.3.4                 
-##  [81] R.oo_1.23.0                   htmltools_0.4.0               later_1.0.0                   Formula_1.2-3                
-##  [85] tidyr_1.0.0                   geneplotter_1.64.0            DBI_1.0.0                     formatR_1.7                  
-##  [89] dbplyr_1.4.2                  MASS_7.3-51.4                 rappdirs_0.3.1                Matrix_1.2-17                
-##  [93] ade4_1.7-13                   cli_2.0.0                     R.methodsS3_1.7.1             pkgconfig_2.0.3              
-##  [97] rvcheck_0.1.7                 GenomicAlignments_1.22.1      foreign_0.8-71                xml2_1.2.2                   
-## [101] roxygen2_7.0.2                ggtree_2.0.1                  annotate_1.64.0               bibtex_0.4.2                 
-## [105] stringr_1.4.0                 callr_3.4.0                   digest_0.6.23                 graph_1.64.0                 
-## [109] rmarkdown_1.18                tidytree_0.3.0                htmlTable_1.13.3              edgeR_3.28.0                 
-## [113] curl_4.3                      shiny_1.4.0                   Rsamtools_2.2.1               lifecycle_0.1.0              
-## [117] nlme_3.1-140                  jsonlite_1.6                  seqinr_3.6-1                  desc_1.2.0                   
-## [121] askpass_1.1                   limma_3.42.0                  fansi_0.4.0                   pillar_1.4.2                 
-## [125] lattice_0.20-38               fastmap_1.0.1                 httr_1.4.1                    pkgbuild_1.0.6               
-## [129] survival_2.44-1.1             interactiveDisplayBase_1.24.0 glue_1.3.1                    BiocVersion_3.10.1           
-## [133] bit_1.1-14                    stringi_1.4.3                 blob_1.2.0                    DESeq2_1.26.0                
-## [137] AnnotationHub_2.18.0          latticeExtra_0.6-28           memoise_1.1.0                 dplyr_0.8.3                  
-## [141] ape_5.3</code></pre>
+##  [49] Hmisc_4.3-0                   RBGL_1.62.1                   usethis_1.5.1                 tools_3.6.1                  
+##  [53] ellipsis_0.3.0                RColorBrewer_1.1-2            sessioninfo_1.1.1             Rcpp_1.0.3                   
+##  [57] plyr_1.8.4                    base64enc_0.1-3               progress_1.2.2                zlibbioc_1.32.0              
+##  [61] purrr_0.3.3                   RCurl_1.95-4.12               ps_1.3.0                      prettyunits_1.0.2            
+##  [65] rpart_4.1-15                  openssl_1.4.1                 cowplot_1.0.0                 universalmotif_1.4.1         
+##  [69] SummarizedExperiment_1.16.0   cluster_2.1.0                 fs_1.3.1                      data.table_1.12.6            
+##  [73] futile.options_1.0.1          matrixStats_0.55.0            pkgload_1.0.2                 hms_0.5.2                    
+##  [77] mime_0.7                      evaluate_0.14                 xtable_1.8-4                  XML_3.98-1.20                
+##  [81] compiler_3.6.1                biomaRt_2.42.0                tibble_2.1.3                  crayon_1.3.4                 
+##  [85] R.oo_1.23.0                   htmltools_0.4.0               later_1.0.0                   Formula_1.2-3                
+##  [89] tidyr_1.0.0                   geneplotter_1.64.0            DBI_1.0.0                     formatR_1.7                  
+##  [93] dbplyr_1.4.2                  MASS_7.3-51.4                 rappdirs_0.3.1                Matrix_1.2-17                
+##  [97] ade4_1.7-13                   readr_1.3.1                   cli_2.0.0                     R.methodsS3_1.7.1            
+## [101] pkgconfig_2.0.3               rvcheck_0.1.7                 GenomicAlignments_1.22.1      foreign_0.8-71               
+## [105] xml2_1.2.2                    roxygen2_7.0.2                ggtree_2.0.1                  annotate_1.64.0              
+## [109] bibtex_0.4.2                  callr_3.4.0                   stringr_1.4.0                 digest_0.6.23                
+## [113] graph_1.64.0                  rmarkdown_1.18                tidytree_0.3.0                htmlTable_1.13.3             
+## [117] edgeR_3.28.0                  curl_4.3                      shiny_1.4.0                   Rsamtools_2.2.1              
+## [121] lifecycle_0.1.0               nlme_3.1-140                  jsonlite_1.6                  seqinr_3.6-1                 
+## [125] fansi_0.4.0                   desc_1.2.0                    askpass_1.1                   limma_3.42.0                 
+## [129] pillar_1.4.2                  lattice_0.20-38               pkgbuild_1.0.6                fastmap_1.0.1                
+## [133] httr_1.4.1                    survival_2.44-1.1             remotes_2.1.0                 interactiveDisplayBase_1.24.0
+## [137] glue_1.3.1                    BiocVersion_3.10.1            bit_1.1-14                    stringi_1.4.3                
+## [141] blob_1.2.0                    DESeq2_1.26.0                 AnnotationHub_2.18.0          latticeExtra_0.6-28          
+## [145] memoise_1.1.0                 dplyr_0.8.3                   ape_5.3</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>

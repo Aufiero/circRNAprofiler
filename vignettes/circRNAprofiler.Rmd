@@ -951,11 +951,16 @@ the ATtRACT or MEME database and custom motifs reported in motifs.txt are revers
 analyzed together with the direct motifs as they are reported in the databases 
 and motifs.txt. Location of the selected motifs is also reported. This 
 corresponds to the start position of the motif within the sequence (1-index based).
+If RBP analysis is performed on BSJ sequences only motifs crossing the back-spliced 
+junctions with at least one nucleotide are reported. E.g. by setting width = 6,
+the BSJ sequences retrieved using module 10 are trimmed so that only 5 nucleotides 
+are left at each side of the BSJ. If width = 7, then 6 nucleotides are left at 
+each side of the BSJ etc.
 
 NOTE:
 
-It might be that the above URL of the databases from which the RBP motifs are 
-retrierved for some reason do not work, in that case a message will be printed 
+It might be that the URL of the databases from which the RBP motifs are 
+retrieved can not be reached, in that case a message will be printed 
 and only motifs reported in the motifs.txt will be used in the analysis. 
 
 ```{r, eval = FALSE}
@@ -997,13 +1002,15 @@ using the number or the total length of the target sequences.
 # nf1 = nrow(annotatedCirc), 
 # nf2 = nrow(annotatedBackgroundCircs)
 # 
-# Normalize using circRNA sequences:
+# Normalize using the length of the circRNA sequences:
 # nf1 = sum(annotatedCirc$lenCircRNA, na.rm = T) 
 # nf2 = sum(annotatedBackgroundCircs$lenCircRNA, na.rm = T)
 
-# Normalize using the BSJ sequences:
-# nf1 = 22* nrow(annotatedCirc) 
-# nf2 = 22* nrow(annotatedBackgroundCircs)
+# Normalize using the length of the adjusted BSJ sequences. 
+# Here 10 rapresent the length of the sequences.
+# If in getMotifs width is set to 7 then the lenght of the sequence to use is 12.
+# nf1 = 10* nrow(annotatedCirc) 
+# nf2 = 10* nrow(annotatedBackgroundCircs)
 
 # Plot
 p <-
