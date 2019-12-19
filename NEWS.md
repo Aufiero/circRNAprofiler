@@ -26,3 +26,9 @@ Version 1.1.2 (development version) (Dic 15, 2019)
 -   In getMotifs function:
 
     -   Included possibilities to use motifs of RBPs from MEME database
+
+Version 1.1.3 (development version) (Dic 19, 2019)
+==================================================
+
+-   In plotMotifs function:
+    -   Added n param for filtering the motifs.

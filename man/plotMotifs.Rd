@@ -8,6 +8,7 @@ plotMotifs(
   mergedMotifsFTS,
   mergedMotifsBTS,
   log2FC = 1,
+  n = 0,
   removeNegLog2FC = FALSE,
   nf1 = 1,
   nf2 = 1,
@@ -36,6 +37,11 @@ occurences of each motif found in the background target sequences.
 To avoid infinity as a value for fold change, 1 was added to number of occurences
 of each motif found in the foreground and background target sequences before
 the normalization.}
+
+\item{n}{An integer specifying the number of motifs cutoff.
+E.g. if 3 is specifiyed only motifs that are found at least 3 times in the
+foreground or background target sequences are retained.
+Deafaut value is 0.}
 
 \item{removeNegLog2FC}{A logical specifying whether to remove the RBPs having
 a negative log2FC. If TRUE then only positive log2FC will be visualized.

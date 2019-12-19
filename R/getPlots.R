@@ -708,6 +708,11 @@ volcanoPlot <- function(res,
 #' of each motif found in the foreground and background target sequences before
 #' the normalization.
 #'
+#' @param n An integer specifying the number of motifs cutoff.
+#' E.g. if 3 is specifiyed only motifs that are found at least 3 times in the
+#' foreground or background target sequences are retained.
+#' Deafaut value is 0.
+#'
 #' @param removeNegLog2FC A logical specifying whether to remove the RBPs having
 #' a negative log2FC. If TRUE then only positive log2FC will be visualized.
 #' Default value is FALSE.
@@ -818,6 +823,7 @@ plotMotifs <-
     function(mergedMotifsFTS,
         mergedMotifsBTS,
         log2FC = 1,
+        n = 0,
         removeNegLog2FC = FALSE,
         nf1 = 1,
         nf2 = 1,
@@ -829,6 +835,7 @@ plotMotifs <-
                 mergedMotifsFTS,
                 mergedMotifsBTS,
                 log2FC,
+                n,
                 nf1,
                 nf2
             )
@@ -879,6 +886,7 @@ plotMotifs <-
 .getMergedMotifsAll <- function(mergedMotifsFTS,
     mergedMotifsBTS,
     log2FC = 1,
+    n = 0,
     nf1 = 1,
     nf2 = 1) {
     mergedMotifsAll <-
@@ -892,6 +900,7 @@ plotMotifs <-
             foreground = ifelse(is.na(.data$foreground), 0, .data$foreground),
             background = ifelse(is.na(.data$background), 0, .data$background)
         ) %>%
+        dplyr::filter(.data$foreground >= n | .data$background >= n )%>%
         dplyr::mutate(
             foregroundNorm = (.data$foreground+1) / nf1,
             backgroundNorm = (.data$background+1) / nf2

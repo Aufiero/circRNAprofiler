@@ -95,6 +95,7 @@
 #'
 #' @importFrom readr read_tsv
 #' @importFrom utils download.file
+#' @importFrom utils untar
 #' @importFrom rlang .data
 #' @importFrom IRanges reverse
 #' @importFrom stringr str_count
@@ -254,7 +255,7 @@ getMotifs <-
         if (nrow(motifsFromFile) == 0) {
             cat("motifs.txt is empty or absent. Only",
                 database,
-                "motifs will be analyzed if present")
+                "motifs will be analyzed if available")
         }
 
         # we reverse the motifs so that they can be analyzed also
@@ -312,8 +313,10 @@ getMotifs <-
 
         # Check whether the motifs matches with or it is contanined within
         # any RBP motifs
-        filteredMotifs <-
-            .matchWithKnowRBPs(filteredMotifs, userDBmotifs, computedMotifs)
+        if(nrow(userDBmotifs)>0){
+            filteredMotifs <-
+                .matchWithKnowRBPs(filteredMotifs, userDBmotifs, computedMotifs)
+        }
 
         # Filter
         if (rbp) {
@@ -683,7 +686,7 @@ mergeMotifs <- function(motifs) {
             cat(
                 paste(
                     "Organism not found in ATtRACT db, the human RBP
-                    motifs in the ATtRACT database will be used.",
+                    motifs in the ATtRACT database will be analyzed.",
                     sep = " "
                 )
             )
@@ -697,9 +700,9 @@ mergeMotifs <- function(motifs) {
     } else{
         attractRBPmotifs <- data.frame(matrix(nrow = 0, ncol = 2))
         colnames(attractRBPmotifs) <-  c("id", "motif")
-        cat('URL not found: ',
+        cat('URL can not be reached: ',
             url,
-            '.\nATtRACT motif can not be used.')
+            '.\nATtRACT motif can not be analyzed.')
     }
 
     return(attractRBPmotifs)
@@ -729,18 +732,18 @@ mergeMotifs <- function(motifs) {
 
         if (!is.null(tc)) {
             # Get the name of the first file in the zip archive
-            memeDB <- untar(tf, list = TRUE)
+            memeDB <- utils::untar(tf, list = TRUE)
             memeFile <- grep('rbp', memeDB, value = TRUE) %>%
                 data.frame() %>%
                 magrittr::set_colnames('path') %>%
-                dplyr::filter(., !grepl("dna_encoded",path)) %>%
+                dplyr::filter(., !grepl("dna_encoded",.data$path)) %>%
                 dplyr::mutate(index = seq_along(.data$path)) %>%
-                dplyr::filter(index == memeIndexFilePath)
+                dplyr::filter(.data$index == memeIndexFilePath)
 
 
             if (nrow(memeFile)) {
                 # unzip the file to the temporary directory
-                untar(tf, files = memeFile$path, exdir = td)
+                utils::untar(tf, files = memeFile$path, exdir = td)
                 # fpath is the full path to the extracted file
                 fpath = file.path(td, memeFile$path)
 
@@ -748,7 +751,7 @@ mergeMotifs <- function(motifs) {
                 memeMotifs <- .readMemeMotifs(fpath)
             } else{
                 cat(
-                    'Index not found, MEME motifs can not be used.\nType(memeDB) to see all possible options.'
+                    'Index not found, MEME motifs can not be analyzed.\nType(memeDB) to see all possible options.'
                 )
             }
 
@@ -756,9 +759,9 @@ mergeMotifs <- function(motifs) {
         } else{
             memeMotifs <- data.frame(matrix(nrow = 0, ncol = 3))
             colnames(memeMotifs) <-  c("id", "motif", "length")
-            cat('URL not found: ',
+            cat('URL can not be reached: ',
                 url,
-                '.\nMEme motifs can not be used.')
+                '.\nMEme motifs can not be analyzed.')
         }
 
         return(memeMotifs)
