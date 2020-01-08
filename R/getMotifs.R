@@ -66,10 +66,10 @@
 #' # Load short version of the gencode v19 annotation file
 #' data("gtf")
 #'
-#' # Example with the first back-spliced junctions.
-#' # Multiple back-spliced junctions can also be analyzed at the same time.
+#' # Example with the first back-spliced junction
+#' # Multiple back-spliced junctions can also be analyzed at the same time
 #'
-#' # Annotate the first back-spliced junctions
+#' # Annotate the first back-spliced junction
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
@@ -201,7 +201,7 @@ getMotifs <-
     targetsToAnalyze$seq[is.na(targetsToAnalyze$seq)] <- "NA"
 
     # Adjust sequences
-    if (names(targetsToAnalyze)[1] == "circ") {
+    if (targetsToAnalyze$type[1] == "circ") {
         # Adjust the length of circ seqs
         ss <- base::substring(targetsToAnalyze$seq, 30,
                               ((targetsToAnalyze$length + 30) + (width - 1)))
@@ -210,7 +210,7 @@ getMotifs <-
         ss[is.na(ss)] <- "NA"
         rnaSS <- Biostrings::RNAStringSet(ss)
 
-    } else if (names(targetsToAnalyze)[1] == "bsj") {
+    } else if (targetsToAnalyze$type[1] == "bsj") {
         # We adjust the length of BSJ seqs. Motifs must have at least
         # 1 nucleotide crossing the BSJ.
         r1 <-

@@ -84,10 +84,10 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Example with the first back-spliced junctions.
-# Multiple back-spliced junctions can also be analyzed at the same time.
+# Example with the first back-spliced junction.
+# Multiple back-spliced junctions can also be analyzed at the same time
 
-# Annotate the first back-spliced junctions
+# Annotate the first back-spliced junction
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get genome
