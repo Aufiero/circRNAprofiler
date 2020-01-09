@@ -42,3 +42,11 @@ the normalization.
     the BSJ sequences are trimmed so that only 5 nucleotides are left at each 
     side of the BSJ. If width = 7, then 6 nucleotides are left at each side of
     the BSJ etc.
+    
+# Version 1.1.5 (development version) (Jen 09, 2020)
+
+*   In plotMotifs function:
+    + Before only motifs found in the foreground sequences were reported. Now also
+     motifs found in the background are reported in the output.
+     
+

@@ -911,7 +911,8 @@ plotMotifs <-
         dplyr::rename(log2FC = .data$log2fc) %>%
         dplyr::mutate(id = factor(.data$id, levels = .data$id)) %>%
         dplyr::mutate(motif.x = ifelse(is.na(.data$motif.x), .data$motif.y, .data$motif.x)) %>%
-        dplyr::rename(motif = .data$motif.x) %>%
+        dplyr::rename(motifF = .data$motif.x) %>%
+        dplyr::rename(motifB = .data$motif.y) %>%
         dplyr::select(
             .data$id,
             .data$foreground,
@@ -919,7 +920,8 @@ plotMotifs <-
             .data$foregroundNorm,
             .data$backgroundNorm,
             .data$log2FC,
-            .data$motif
+            .data$motifF,
+            .data$motifB
         )
     return(mergedMotifsAll)
 }

@@ -84,7 +84,7 @@ data("mergedBSJunctions")
 # Load short version of the gencode v19 annotation file
 data("gtf")
 
-# Example with the first back-spliced junction.
+# Example with the first back-spliced junction
 # Multiple back-spliced junctions can also be analyzed at the same time
 
 # Annotate the first back-spliced junction
