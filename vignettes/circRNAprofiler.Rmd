@@ -1056,7 +1056,9 @@ divided by the number (or length) of sequences analyzed.
 
 - log2FC: log2 fold change calculated in this way (foregroundNorm)/(backgroundNorm).
 
-- motif: motif of the corresponding RBP.
+- motifF: motifs of the corresponding RBP found in the foreground sequences.
+
+- motifB: motifs of the corresponding RBP found in the background sequences.
 
 NOTE:
 
