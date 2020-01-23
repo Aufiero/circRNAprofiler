@@ -32,3 +32,20 @@ Version 1.1.3 (development version) (Dic 19, 2019)
 
 -   In plotMotifs function:
     -   Added n param for filtering the motifs.
+
+Version 1.1.4 (development version) (Jen 08, 2020)
+==================================================
+
+-   In getMotifs function:
+    -   Fixed a bug when trimming the BSJ sequences. E.g. by setting
+        width = 6, the BSJ sequences are trimmed so that only 5
+        nucleotides are left at each side of the BSJ. If width = 7, then
+        6 nucleotides are left at each side of the BSJ etc.
+
+Version 1.1.5 (development version) (Jen 09, 2020)
+==================================================
+
+-   In plotMotifs function:
+    -   Before only motifs found in the foreground sequences were
+        reported. Now also motifs found in the background are reported
+        in the output.
