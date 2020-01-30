@@ -995,7 +995,7 @@ mergedMotifsBTS_gr <- mergeMotifs(motifsBTS_gr)
 Retrieve and plot log2FC and counts of the motifs found in the target sequences 
 (e.g. background and foreground). If the number or the length of the target sequences
 is different then the counts should be normalized. Normalization can be done 
-using the number or the total length of the target sequences.
+using the number or the total length of the target sequences (suggested).
 
 ```{r, fig.align="center", fig.width = 7, fig.height = 7, eval = FALSE}
 # Normalize using the number of target sequences:
@@ -1007,21 +1007,29 @@ using the number or the total length of the target sequences.
 # nf2 = sum(annotatedBackgroundCircs$lenCircRNA, na.rm = T)
 
 # Normalize using the length of the adjusted BSJ sequences. 
-# Here 10 rapresent the length of the sequences.
-# If in getMotifs width is set to 7 then the lenght of the sequence to use is 12.
+# If in getMotifs width is set to 6 then the lenght of the sequence is 10.
 # nf1 = 10* nrow(annotatedCirc) 
 # nf2 = 10* nrow(annotatedBackgroundCircs)
+
+# Normalize using the length of the flanking sequences.
+# In getSeqsFromGRs we retrieved 200 nucleotides from the flanking introns and 
+# 10 nucleotides from the back-spliced exons, then the lenght of the sequence
+# is 210 *2 (2 because there is the upstream and downstream genomic range).
+# nf1 = (210*2)* nrow(annotatedCirc)
+# nf2 = (210*2)* nrow(annotatedBackgroundCircs)
 
 # Plot
 p <-
     plotMotifs(
         mergedMotifsFTS_gr,
         mergedMotifsBTS_gr,
-        nf1 = nrow(annotatedCirc), 
-        nf2 = nrow(annotatedBackgroundCircs), 
+        nf1 = (210*2)* nrow(annotatedCirc) , 
+        nf2 = (210*2)* nrow(annotatedBackgroundCircs), 
         log2FC = 1,
+        removeNegLog2FC = T,
         df1Name = "circALPK2",
-        df2Name = "Other circRNAs"
+        df2Name = "Other circRNAs",
+        angle = 45,
     )
 ggarrange(p[[1]],
           p[[2]],
