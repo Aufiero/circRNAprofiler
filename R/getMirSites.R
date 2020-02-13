@@ -90,6 +90,8 @@
 getMiRsites <- function(targets, miRspeciesCode = "hsa",
     miRBaseLatestRelease = TRUE, totalMatches = 7,
     maxNonCanonicalMatches = 1, pathToMiRs = NULL) {
+
+
     # Retrieve miR sequences from miRBase or from mature.fa file
     microRNAs <- .getMiRseqs(miRBaseLatestRelease, miRspeciesCode, pathToMiRs)
 

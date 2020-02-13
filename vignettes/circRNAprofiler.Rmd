@@ -1118,7 +1118,7 @@ the target sequence.
 
 - totMatchesInSeed: is the number of total matches (canonical WC + non-canonical matches)
 found between the miRNA seed region and the miRNA seed region binding site in 
-the target sequence.
+the target sequence. The maximun number of possible matches is 7.
 
 - cwcMatchesInSeed: is the number of continuous WC matches found between the miRNA
 seed region and the miRNA seed region binding site in the target sequence.
@@ -1135,7 +1135,8 @@ number 1 (C5') of the miRNA sequence.
 
 - totMatchesInCentral: is the number of total matches (canonical WC + non-canonical matches)
 found between the miRNA central region and the sequence upstream the miRNA seed 
-region binding site in the target sequence (e.g. position 16 to 19).
+region binding site in the target sequence (e.g. position 16 to 19). 
+The maximun number of possible matches is 4.
 
 - cwcMatchesInCentral: is the number of continuous WC matches found between the 
 miRNA central region and the sequence upstream the miRNA seed region binding site
@@ -1143,7 +1144,8 @@ in the target sequence (e.g. position 16 to 19).
 
 - totMatchesInCompensatory: is the number of total matches found between the miRNA
 compensatory region and the sequence upstream the miRNA seed region binding site
-in the target sequence (e.g. position 12 to 15).
+in the target sequence (e.g. position 12 to 15). 
+The maximun number of possible matches is 4.
 
 - cwcMatchesInCompensatory: is the number of continuous WC matches found between
 the miRNA compensatory region and the region upstream the miRNA seed region 
