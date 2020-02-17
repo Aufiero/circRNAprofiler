@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2020-02-13" />
+<meta name="date" content="2020-02-17" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -180,7 +180,7 @@ summary {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2020-02-13</h4>
+<h4 class="date">2020-02-17</h4>
 
 </div>
 
@@ -675,7 +675,7 @@ p &lt;- VennDiagram::draw.triple.venn(
 <h3>Module 5 - Find differentially expressed circRNAs</h3>
 <div id="getdeseqres" class="section level4">
 <h4><em>getDeseqRes()</em></h4>
-<p>The helper functions getDeseqRes() identifies differentially expressed circRNAs. The latter uses the R Bioconductor packages DESeq2 which implement a beta-binomial model to model changes in circRNA expression. The differential expression analysis is performed by comparing the condition positioned forward against the condition positioned backward in the alphabet (values in the column condition in experiment.txt). E.g. if there are 2 conditions A and B then a negative log2FC means that in the conditions B there is a downregulation of the corresponding circRNA. If a positive log2FC is found means that there is an upregulation in the condition B of that circRNA.</p>
+<p>The helper functions getDeseqRes() identifies differentially expressed circRNAs. The latter uses the R Bioconductor package DESeq2 which implement a beta-binomial model to model changes in circRNA expression. The differential expression analysis is performed by comparing the condition positioned forward against the condition positioned backward in the alphabet (values in the column condition in experiment.txt). E.g. if there are 2 conditions A and B then a negative log2FC means that in the conditions B there is a downregulation of the corresponding circRNA. If a positive log2FC is found means that there is an upregulation in the condition B of that circRNA.</p>
 <pre class="r"><code># Compare condition B Vs A
 deseqResBvsA &lt;-
     getDeseqRes(
@@ -761,7 +761,7 @@ ggarrange(p1,
 </div>
 <div id="edgerres" class="section level4">
 <h4><em>edgerRes()</em></h4>
-<p>Alternatively, the helper functions edgerRes() can also be used to identifies differentially expressed circRNAs. The latter uses the R Bioconductor packages EdgeR which implement a beta-binomial model to model changes in circRNA expression. The differential expression analysis is perfomed by comparing the condition positioned forward against the condition positioned backward in the alphabet (values in the column condition of experiment.txt). E.g. if there are 2 conditions A and B then a negative log2FC means that in the conditions B there is a downregulation of the corresponding circRNA. If a positive log2FC is found means that there is an upregulation in the condition B of that circRNA.</p>
+<p>Alternatively, the helper functions edgerRes() can also be used to identifies differentially expressed circRNAs. The latter uses the R Bioconductor package EdgeR which implement a beta-binomial model to model changes in circRNA expression. The differential expression analysis is perfomed by comparing the condition positioned forward against the condition positioned backward in the alphabet (values in the column condition of experiment.txt). E.g. if there are 2 conditions A and B then a negative log2FC means that in the conditions B there is a downregulation of the corresponding circRNA. If a positive log2FC is found means that there is an upregulation in the condition B of that circRNA.</p>
 <pre class="r"><code># Compare condition B Vs A
 edgerResBvsA &lt;-
     getEdgerRes(
@@ -879,13 +879,13 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                  id    gene strand chrom startUpBSE endDownBSE
-## 1   SLC8A1:-:chr2:40739501:40387905  SLC8A1      -  chr2   40739501   40387905
-## 2   SYCP2:-:chr20:58490744:58489164   SYCP2      - chr20   58490744   58489164
-## 3 N4BP2L2:-:chr13:33110006:33092012 N4BP2L2      - chr13   33110006   33092012
-## 4  PICALM:-:chr11:85733512:85725913  PICALM      - chr11   85733512   85725913
-## 5    LGMN:-:chr14:93179179:93176017    LGMN      - chr14   93179179   93176017
-## 6  ZNF404:-:chr19:44405537:44405020  ZNF404      - chr19   44405537   44405020</code></pre>
+##                                 id   gene strand chrom startUpBSE endDownBSE
+## 1  FLNA:-:chrX:153586605:153578399   FLNA      -  chrX  153586605  153578399
+## 2  SLC8A1:-:chr2:40657420:40401846 SLC8A1      -  chr2   40657420   40401846
+## 3     MB:-:chr22:36013376:36006931     MB      - chr22   36013376   36006931
+## 4 PICALM:-:chr11:85693228:85692788 PICALM      - chr11   85693228   85692788
+## 5 MYBPC3:-:chr11:47374253:47364129 MYBPC3      - chr11   47374253   47364129
+## 6 INO80C:-:chr18:33077899:33069296 INO80C      - chr18   33077899   33069296</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>

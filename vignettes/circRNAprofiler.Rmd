@@ -494,7 +494,7 @@ p <- VennDiagram::draw.triple.venn(
 #### _getDeseqRes()_
 
 The helper functions getDeseqRes() identifies differentially expressed
-circRNAs. The latter uses the R Bioconductor packages DESeq2 which 
+circRNAs. The latter uses the R Bioconductor package DESeq2 which 
 implement a beta-binomial model to model changes in circRNA expression. The 
 differential expression analysis is performed by comparing the condition positioned
 forward against the condition positioned backward in the alphabet (values in the 
@@ -569,7 +569,7 @@ ggarrange(p1,
 #### _edgerRes()_
 
 Alternatively, the helper functions edgerRes() can also be used to identifies
-differentially expressed circRNAs. The latter uses the R Bioconductor packages 
+differentially expressed circRNAs. The latter uses the R Bioconductor package 
 EdgeR which implement a beta-binomial model to model changes in circRNA expression.
 The differential expression analysis is perfomed by comparing the condition positioned
 forward against the condition positioned backward in the alphabet (values in the
