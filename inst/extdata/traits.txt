@@ -1,0 +1,336 @@
+id
+AR-C124910XX levels in individuals with acute coronary syndromes treated with ticagrelor
+Anthracycline-induced cardiotoxicity in childhood cancer
+Atrial Septal Defect
+Atrial fibrillation
+Atrial fibrillation (SNPxSNP interaction)
+Atrial fibrillation (interaction)
+Atrial fibrillation/atrial flutter
+Atrioventricular conduction
+Atrioventricular septal defects in Down syndrome
+Brugada syndrome
+Cardiac Troponin-T levels
+Cardiac hypertrophy
+Cardiac muscle measurement
+Cardiac repolarization
+Cardiac structure and function
+Cardio vascular disease (drug interaction; BB)
+Cardiomyopathy in childhood cancer survivors
+Cardiomyopathy in childhood cancer survivors (anthracycline interaction)
+Cardiovascular disease (drug interaction, BB)
+Cardiovascular disease (drug interaction, CCB)
+Cardiovascular disease (drug interaction, diuretics)
+Cardiovascular disease (drug interaction; ACE)
+Cardiovascular disease in hypertension (ACE inhibitor interaction)
+Cardiovascular disease in hypertension (beta-blocker interaction)
+Cardiovascular disease in hypertension (calcium channel blocker interaction)
+Cardiovascular disease in hypertension (diuretic interaction)
+Cardiovascular disease risk factors
+Cardiovascular event reduction in the elderly at risk for vascular disease (statin therapy interaction)
+Cardiovascular heart disease in diabetics
+Carotid artery central pulse pressure
+Carotid artery circumferential wall stress
+Carotid artery external diameter
+Carotid artery internal diameter
+Carotid artery intima media thickness
+Carotid artery intima media thickness (sex interaction)
+Carotid artery mean blood pressure
+Carotid artery stiffness
+Carotid artery wall cross sectional area
+Clopidogrel active metabolite levels
+Congenital heart disease
+Congenital heart malformation
+Congenital left-sided heart lesions
+Congenital left-sided heart lesions (maternal effect)
+Conotruncal heart defects
+Coronary arterial lesions in patients with Kawasaki disease
+Coronary artery aneurysm in Kawasaki disease
+Coronary artery calcification
+Coronary artery calcification (smoking interaction)
+Coronary artery disease
+Coronary artery disease or ischemic stroke
+Coronary artery disease or large artery stroke
+Coronary artery disease-related phenotypes
+Coronary atherosclerosis (increased number of diseased vessels) (traffic exposure interaction)
+Coronary heart disease
+Coronary heart disease event reduction in response to statin therapy (interaction)
+Coronary heart disease in familial hypercholesterolemia
+Coronary restenosis
+Coronary spasm
+Dilated cardiomyopathy
+Drug-induced torsades de pointes
+Echocardiographic traits
+Electrocardiographic conduction measures
+Electrocardiographic traits
+Heart failure
+Heart rate
+Heart rate variability traits
+Hypertrophic cardiomyopathy
+Incident coronary heart disease
+Incident myocardial infarction
+Left ventricular QRS voltage
+Left ventricular mass
+Mitral annular calcification
+Mitral valve prolapse
+Mortality among heart failure patients
+Mortality in heart failure
+Myocardial infarction (drug interaction; ACE)
+Myocardial infarction (drug interaction; BB)
+Myocardial infarction (drug interaction; CCB)
+Myocardial infarction (drug interaction; diuretics)
+Myocardial infarction (early onset)
+Myocardial infarction in coronary artery disease
+Myocardial infarction in hypertension (ACE inhibitor interaction)
+Myocardial infarction in hypertension (beta blocker interaction)
+Myocardial infarction in hypertension (calcium channel blocker interaction)
+Myocardial infarction in hypertension (diuretic interaction)
+NT-proBNP levels in acute coronary syndrome
+P wave duration
+PR interval
+PR interval in Tripanosoma cruzi seropositivity
+PR segment
+Peripartum cardiomyopathy
+QRS complex
+QRS complex (12-leadsum)
+QRS complex (Cornell)
+QRS complex (Sokolow-Lyon)
+QRS duration
+QRS duration in Tripanosoma cruzi seropositivity
+QRS interval (sulfonylurea treatment interaction)
+QT interval
+QT interval (interaction)
+QT interval (sulfonylurea treatment interaction)
+QT interval (tricyclic/tetracyclic antidepressant use interaction)
+QT interval in Tripanosoma cruzi seropositivity
+Resting heart rate
+RR interval (heart rate)
+RR interval (tricyclic/tetracyclic antidepressant use interaction)
+Takotsubo syndrome
+Vein graft stenosis in coronary artery bypass grafting
+Abdominal aortic aneurysm
+Adiponectin levels
+Adiponectin levels (BMI-adjusted)
+Adiponectin levels in pregnancy
+Adiposity
+Adiposity in newborns
+Anticoagulant levels
+Antihypertensive response
+Aortic root size
+Aortic stiffness
+Aortic-valve calcification
+Apolipoprotein A-IV levels
+Apolipoprotein Levels
+Arterial stiffness
+Arterial stiffness (pulse-wave velocity)
+BMI (joint main and interaction effects)
+BMI (smoking interaction)
+BMI in active individuals
+BMI in inactive individuals
+BMI in non-smokers
+BMI in smokers
+Blood osmolality (transformed sodium)
+Blood pressure
+Blood pressure (age interaction)
+Blood pressure (anthropometric measures interaction)
+Blood pressure (response to antihypertensive medication)
+Blood pressure (smoking interaction)
+Blood pressure measurement (cold pressor test)
+Blood pressure measurement (high sodium and potassium intervention)
+Blood pressure measurement (high sodium intervention)
+Blood pressure measurement (low sodium intervention)
+Blood pressure response to hydrochlorothiazide in hypertension
+Blood pressure variability
+Body fat mass
+Body fat percentage
+Body mass (lean)
+Body mass index
+Body mass index (age interaction)
+Body mass index (change over time)
+Body mass index (change over time) in cancer
+Body mass index (change over time) in cancer or chronic obstructive pulmonary disease
+Body mass index (change over time) in chronic obstructive pulmonary disease
+Body mass index (change over time) in gastrointestinal cancer
+Body mass index (change over time) in gastrointestinal cancer or chronic obstructive pulmonary disease
+Body mass index (change over time) in lung cancer
+Body mass index (change over time) in lung cancer or chronic obstructive pulmonary disease
+Body mass index (education interaction)
+Body mass index (interaction)
+Body mass index (joint analysis main effects and physical activity interaction)
+Body mass index (physical activity interaction)
+Body mass index (sex interaction)
+Body mass index and cholesterol (psychopharmacological treatment)
+Body mass index and fat mass
+Body mass index in asthmatics
+Body mass index in non-asthmatics
+Body mass index variance
+C-reactive protein
+C-reactive protein and white blood cell count
+C-reactive protein levels
+C-reactive protein levels in ischemic stroke
+C-reactive protein levels or HDL-cholesterol levels (pleiotropy)
+C-reactive protein levels or LDL-cholesterol levels (pleiotropy)
+C-reactive protein levels or total cholesterol levels (pleiotropy)
+C-reactive protein levels or triglyceride levels (pleiotropy)
+Calcium levels
+Carotid atherosclerosis (smoking interaction)
+Carotid atherosclerosis in HIV infection
+Carotid intima media thickness
+Carotid plaque burden
+Carotid plaque burden (smoking interaction)
+Cholesterol
+Cholesterol and Triglycerides
+Cholesterol, total
+Creatinine clearance
+Creatinine levels
+Creatinine levels in ischemic stroke
+Diabetes (gestational)
+Diabetes (incident)
+Diabetes in response to antihypertensive drug treatment
+Diabetes in response to antihypertensive drug treatment (treatment strategy interaction)
+Diabetes related insulin traits
+Diabetic kidney disease
+Diabetic nephropathy in type 1 diabetes
+Diabetic retinopathy
+Diabetic retinopathy in type 2 diabetes
+Diastolic blood pressure
+Diastolic blood pressure (alcohol consumption interaction)
+Diastolic blood pressure (cigarette smoking interaction)
+Diastolic blood pressure (long-term average)
+Diastolic blood pressure response to hydrochlorothiazide in hypertension
+Fasting blood glucose
+Fasting glucose-related traits
+Fasting glucose-related traits (interaction with BMI)
+Fasting insulin (interaction)
+Fasting insulin-related traits
+Fasting insulin-related traits (interaction with BMI)
+Fasting plasma glucose
+Fasting plasma glucose (childhood)
+Fat body mass
+Fat distribution (HIV)
+Fat intake
+Glomerular filtration rate (creatinine)
+Glomerular filtration rate (cystatin C)
+Glomerular filtration rate in chronic kidney disease
+Glomerular filtration rate in diabetics (creatinine)
+Glomerular filtration rate in non diabetics (creatinine)
+HDL Cholesterol - Triglycerides (HDLC-TG)
+HDL Cholesterol in HIV-infection
+HDL cholesterol
+HDL cholesterol (interaction)
+HDL cholesterol levels
+Height adjusted BMI
+Hypertension
+Hypertension (pulmonary)
+Hypertension (young onset)
+Hypertension risk in short sleep duration
+Hypertriglyceridemia
+Ischemic stroke
+Ischemic stroke (cardioembolic)
+Ischemic stroke (large artery atherosclerosis)
+Ischemic stroke (non-cardioembolic)
+Ischemic stroke (small artery occlusion)
+Ischemic stroke (undetermined subtype)
+LDL (oxidized)
+LDL cholesterol
+LDL cholesterol levels
+LDL cholesterol subfractions
+LDL cholesterol to HDL cholesterol ratio
+LDL peak particle diameter (total fat intake interaction)
+Large artery stroke
+Lipid metabolism phenotypes
+Lipid traits
+Lipoprotein (a) - cholesterol levels
+Lipoprotein (a) levels
+Lipoprotein diameter
+Lipoprotein-associated phospholipase A2 activity and mass
+Lipoprotein-associated phospholipase A2 activity change in response to statin therapy
+Low high density lipoprotein cholesterol levels
+Mean arterial pressure
+Mean arterial pressure (alcohol consumption interaction)
+Mean arterial pressure (long-term average)
+Metabolic syndrome
+Metabolic syndrome (bivariate traits)
+Metabolic traits
+NHDL cholesterol
+NHDL cholesterol to HDL cholesterol ratio
+Obesity
+Obesity (early onset extreme)
+Obesity (extreme)
+Obesity and blood pressure
+Obesity and osteoporosis
+Obesity in adult survivors of childhood cancer exposed to cranial radiation
+Obesity in adult survivors of childhood cancer not exposed to cranial radiation
+Obesity-related traits
+Phospholipid levels
+Phospholipid levels (plasma)
+Pulse pressure
+Pulse pressure (alcohol consumption interaction)
+Pulse pressure (long-term average)
+Pulse pressure in young-onset hypertension
+Response to antiplatelet therapy
+Response to clopidogrel therapy
+Response to clopidogrel therapy in coronary heart disease
+Response to diuretic therapy
+Response to diuretic therapy in hypertension
+Response to metformin
+Response to metformin (IC50)
+Response to metformin in type 2 diabetes (glycemic)
+Response to simvastatin treatment (PCSK9 protein level change)
+Response to statin therapy
+Response to statins (HDL cholesterol change)
+Response to statins (LDL cholesterol change)
+Smoking behaviour (cigarettes smoked per day)
+Smoking cessation
+Smoking cessation in chronic obstructive pulmonary disease
+Smoking initiation
+Smoking quantity
+Smoking status (current vs former)
+Sphingolipid levels
+Stroke
+Stroke (ischemic)
+Stroke (pediatric)
+Subclinical atherosclerosis traits (other)
+Systolic blood pressure
+Systolic blood pressure (alcohol consumption interaction)
+Systolic blood pressure (cigarette smoking interaction)
+Systolic blood pressure (long-term average)
+Systolic blood pressure change trajectories
+Systolic blood pressure in sickle cell anemia
+Systolic blood pressure response to hydrochlorothiazide in hypertension
+Thoracic aortic aneurysms and dissections
+Ticagrelor levels in individuals with acute coronary syndromes treated with ticagrelor
+Total cholesterol levels
+Triglyceride levels
+Triglyceride to HDL cholesterol ratio
+Triglycerides
+Triglycerides-Blood Pressure (TG-BP)
+Type 1 diabetes
+Type 1 diabetes and autoimmune thyroid diseases
+Type 1 diabetes autoantibodies
+Type 1 diabetes nephropathy
+Type 2 diabetes
+Type 2 diabetes (age of onset)
+Type 2 diabetes (dietary heme iron intake interaction)
+Type 2 diabetes (young onset) and obesity
+Type 2 diabetes and other traits
+Type 2 diabetes nephropathy
+Venous thromboembolism
+Venous thromboembolism (interaction)
+Venous thromboembolism adjusted for sickle cell variant rs77121243-T
+Very long-chain saturated fatty acid levels (fatty acid 20:0)
+Very long-chain saturated fatty acid levels (fatty acid 22:0)
+Very long-chain saturated fatty acid levels (fatty acid 24:0)
+Visceral adipose tissue
+Visceral adipose tissue adjusted for BMI
+Visceral adipose tissue attenuation (Hounslow unit scale)
+Visceral adipose tissue/subcutaneous adipose tissue ratio
+Visceral adipose tissue/subcutaneous adipose tissue ratio adjusted for BMI
+Visceral fat
+Waist circumference
+Waist Circumference - Triglycerides (WC-TG)
+Waist circumference adjusted for body mass index
+Waist circumference and related phenotypes
+Waist-hip ratio
+Waist-to-hip circumference ratio (interaction)
+Waist-to-hip ratio adjusted for body mass index
+Warfarin maintenance dose

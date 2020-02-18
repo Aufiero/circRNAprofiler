@@ -1,0 +1,2 @@
+id	motif	length
+RBM20	[ACU]UUCU[ACU]	6

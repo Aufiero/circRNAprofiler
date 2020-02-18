@@ -9,6 +9,8 @@ if (getRversion() >= "3.1.0")
 #'
 #' @param pathToGTF A string containing the path to the GTF file.
 #' Use the same annotation file used during the RNA-seq mapping procedure.
+#' If .gtf file is not present in the current working directory the full path
+#' should be specified.
 #'
 #' @return A data frame.
 #'
@@ -62,7 +64,7 @@ formatGTF <- function(pathToGTF = NULL) {
         }
     } else{
         formattedGTF <- data.frame()
-        cat("Specify path to GTF file.")
+        cat("Specify path to GTF file.\n")
     }
 
     return(formattedGTF)
