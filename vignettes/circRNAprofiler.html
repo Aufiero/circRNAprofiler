@@ -772,13 +772,13 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                 id   gene strand chrom startUpBSE endDownBSE
-## 1     MB:-:chr22:36013503:36002811     MB      - chr22   36013503   36002811
-## 2  SLC8A1:-:chr2:40838193:40404892 SLC8A1      -  chr2   40838193   40404892
-## 3   TTN:-:chr2:179516247:179504775    TTN      -  chr2  179516247  179504775
-## 4  EXOC6B:-:chr2:72722668:72719447 EXOC6B      -  chr2   72722668   72719447
-## 5 PICALM:-:chr11:85693228:85692788 PICALM      - chr11   85693228   85692788
-## 6   LGMN:-:chr14:93214957:93198994   LGMN      - chr14   93214957   93198994</code></pre>
+##                                  id    gene strand chrom startUpBSE endDownBSE
+## 1 N4BP2L2:-:chr13:33092057:33018103 N4BP2L2      - chr13   33092057   33018103
+## 2 N4BP2L2:-:chr13:33110006:33092012 N4BP2L2      - chr13   33110006   33092012
+## 3   GUSBP9:-:chr5:70493614:70438472  GUSBP9      -  chr5   70493614   70438472
+## 4  INO80C:-:chr18:33067434:33048675  INO80C      - chr18   33067434   33048675
+## 5   ZNF91:-:chr19:23493365:23491726   ZNF91      - chr19   23493365   23491726
+## 6    TTN:-:chr2:179659278:179654087     TTN      -  chr2  179659278  179654087</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>
@@ -889,12 +889,12 @@ getCircSeqs(annotatedCirc, gtf, genome)
 <li><p>transcript: transcript whose exon coordinates overlap with the detected back-spliced junction coordinate and used in the downstream analysis.</p></li>
 <li><p>strand: is the strand from which the gene is transcribed.</p></li>
 <li><p>chrom: is the chromosome from which the circRNA is derived.</p></li>
+<li><p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>length: length of the extracted sequences. The circRNA sequences reported in the output file (column seq) are longer than the predicted length (column lenght), due to the 50 nucleotides attached at the 3’ tail to recreate the back-spliced junction.</p></li>
+<li><p>seq: sequence used in the downstream analysis.</p></li>
+<li><p>type: type of sequences retrieved. In this case circ stands for circRNA.</p></li>
 </ul>
-<p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>length: length of the extracted sequences. The circRNA sequences reported in the output file (column seq) are longer than the predicted length (column lenght), due to the 50 nucleotides attached at the 3’ tail to recreate the back-spliced junction.</p>
-<p>seq: sequence used in the downstream analysis.</p>
-<p>type: type of sequences retrieved. In this case circ stands for circRNA.</p>
 </div>
 </div>
 <div id="module-10---retrieve-bsj-sequences" class="section level3">
@@ -915,12 +915,12 @@ targetsFTS_bsj &lt;-
 <li><p>transcript: transcript whose exon coordinates overlap with the detected back-spliced junction coordinate and used in the downstream analysis.</p></li>
 <li><p>strand: is the strand from which the gene is transcribed.</p></li>
 <li><p>chrom: is the chromosome from which the circRNA is derived.</p></li>
+<li><p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>length: length of the extracted sequences. For the back-spliced junctions this will be 22 nucleotides.</p></li>
+<li><p>seq: sequence used in the downstream analysis.</p></li>
+<li><p>type: type of sequences retrieved. In this case bsj stands back-spliced junctions.</p></li>
 </ul>
-<p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>length: length of the extracted sequences. For the back-spliced junctions this will be 22 nucleotides.</p>
-<p>seq: sequence used in the downstream analysis.</p>
-<p>type: type of sequences retrieved. In this case bsj stands back-spliced junctions.</p>
 </div>
 </div>
 <div id="module-11---retrieve-sequences-flanking-the-bsjs" class="section level3">
@@ -954,12 +954,12 @@ targetsBTS_gr &lt;-
 <li><p>transcript: transcript whose exon coordinates overlap with the detected back-spliced junction coordinate and used in the downstream analysis.</p></li>
 <li><p>strand: is the strand from which the gene is transcribed.</p></li>
 <li><p>chrom: is the chromosome from which the circRNA is derived.</p></li>
+<li><p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p></li>
+<li><p>length: length of the extracted sequences.</p></li>
+<li><p>seq: sequence used in the downstream analysis.</p></li>
+<li><p>type: type of sequences retrieved. See type argument of function getSeqsFromGRs(). If type = “fi” the sequences derive from introns flanking the back-spliced exons If type = “ie” the sequences derive from the genomic window defined by using the values given in input to lIntron and lExon. If type = “bse” the sequences derive from back-spliced exons.</p></li>
 </ul>
-<p>startGR: is the 5’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>endGR: is the 3’ coordinate of the genomic range from which the sequence are extracted.</p>
-<p>length: length of the extracted sequences.</p>
-<p>seq: sequence used in the downstream analysis.</p>
-<p>type: type of sequences retrieved. See type argument of function getSeqsFromGRs(). If type = “fi” the sequences derive from introns flanking the back-spliced exons If type = “ie” the sequences derive from the genomic window defined by using the values given in input to lIntron and lExon. If type = “bse” the sequences derive from back-spliced exons.</p>
 </div>
 </div>
 <div id="module-12---screen-target-sequences-for-rbpde-novo-motifs" class="section level3">

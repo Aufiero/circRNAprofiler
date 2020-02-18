@@ -2,7 +2,7 @@
 title: 'circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_document
+output: rmarkdown::pdf_document
 fontsize: 12pt
 bibliography: references.bib
 vignette: >
@@ -954,20 +954,20 @@ back-spliced junction coordinate and used in the downstream analysis.
 
 - chrom: is the chromosome from which the circRNA is derived.	
 
-startGR: is the 5' coordinate of the genomic range from which the sequence are
+- startGR: is the 5' coordinate of the genomic range from which the sequence are
 extracted.
 
-endGR: is the 3' coordinate of the genomic range from which the sequence are
+- endGR: is the 3' coordinate of the genomic range from which the sequence are
 extracted.
 
-length: length of the extracted sequences. 
+- length: length of the extracted sequences. 
 The circRNA sequences reported in the output file (column seq) are longer than 
 the predicted length (column lenght), due to the 50 nucleotides attached 
 at the 3' tail to recreate the back-spliced junction.
 
-seq: sequence used in the downstream analysis.
+- seq: sequence used in the downstream analysis.
 
-type: type of sequences retrieved. In this case circ stands for circRNA.
+- type: type of sequences retrieved. In this case circ stands for circRNA.
 
 
 ### Module 10 - Retrieve BSJ sequences
@@ -1000,18 +1000,18 @@ back-spliced junction coordinate and used in the downstream analysis.
 
 - chrom: is the chromosome from which the circRNA is derived.	
 
-startGR: is the 5' coordinate of the genomic range from which the sequence are
+- startGR: is the 5' coordinate of the genomic range from which the sequence are
 extracted.
 
-endGR: is the 3' coordinate of the genomic range from which the sequence are
+- endGR: is the 3' coordinate of the genomic range from which the sequence are
 extracted.
 
-length: length of the extracted sequences. For the back-spliced junctions this 
+- length: length of the extracted sequences. For the back-spliced junctions this 
 will be 22 nucleotides.
 
-seq: sequence used in the downstream analysis.
+- seq: sequence used in the downstream analysis.
 
-type: type of sequences retrieved. In this case bsj stands back-spliced junctions.
+- type: type of sequences retrieved. In this case bsj stands back-spliced junctions.
 
 
 ### Module 11 - Retrieve sequences flanking the BSJs
@@ -1063,17 +1063,17 @@ back-spliced junction coordinate and used in the downstream analysis.
 
 - chrom: is the chromosome from which the circRNA is derived.	
 
-startGR: is the 5' coordinate of the genomic range from which the sequence are
+- startGR: is the 5' coordinate of the genomic range from which the sequence are
 extracted.
 
-endGR: is the 3' coordinate of the genomic range from which the sequence are
+- endGR: is the 3' coordinate of the genomic range from which the sequence are
 extracted.
 
-length: length of the extracted sequences.
+- length: length of the extracted sequences.
 
-seq: sequence used in the downstream analysis.
+- seq: sequence used in the downstream analysis.
 
-type: type of sequences retrieved. See type argument of function getSeqsFromGRs().
+- type: type of sequences retrieved. See type argument of function getSeqsFromGRs().
 If type = "fi" the sequences derive from introns flanking the back-spliced exons
 If type = "ie" the sequences derive from the genomic window defined by 
 using the values given in input to lIntron and lExon. 
@@ -1260,7 +1260,6 @@ have to be retrieved and then the functions getMotifs() and mergeMotifs() have
 to be run, as described above.
 
 
-    
 ### Module 13 - Screen circRNA sequences for miRNA binding sites
 
 #### _getMiRsites()_
