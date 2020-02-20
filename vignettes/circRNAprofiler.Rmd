@@ -803,6 +803,9 @@ its example.
 
 ```{r}
 # If you want to analysis specific transcripts report them in transcripts.txt (optional).
+# If transcripts.txt is not present in your working directory specify pathToTranscripts.
+# As default transcripts.txt is searched in the wd.
+
 # As an example of the 1458 filtered circRNAs we annotate only the firt 30 
 # circRNAs
 annotatedBSJs <- annotateBSJs(filteredCirc[1:30,], gtf, isRandom = FALSE) 
@@ -1143,7 +1146,10 @@ Type ?getMotifs for more information about the arguments of the function
 and its example.
 
 ```{r, eval = FALSE}
-# If you want to analysis also custom motifs report them in motifs.txt (optional).
+# If you want to analysis also custom motifs report them in motifs.txt (optional). 
+# If motifs.txt is not present in your working directory specify pathToMotifs.
+# As default motifs.txt is searched in the wd.
+
 # E.g. in motifs.txt we added RBM20 consensus motif since it is not present in 
 # the ATtRACT database.
 
@@ -1394,10 +1400,10 @@ Type ?getMiRsites for more information about the arguments of the function
 and its example.
 
 ```{r,eval = FALSE}
-# Screen circRNA sequences for miRNA binding sites
-
 # If you want to analysis only a subset of miRs, then specify the miR ids in 
-# miRs.txt (optional). 
+# miRs.txt (optional).
+# If miRs.txt is not present in your working directory specify pathToMiRs.
+# As default miRs.txt is searched in the wd. 
 
 miRsites <-
     getMiRsites(
