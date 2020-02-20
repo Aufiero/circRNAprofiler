@@ -41,8 +41,8 @@ by the user. It must have 3 columns with headers:
 By default pathToMotifs is set to NULL and the file it is searched in the
 working directory. If motifs.txt is located in a different directory then
 the path needs to be specified. If this file is absent or empty only the
-motifs of RNA Binding Proteins in the ATtRACT database are considered in the
-motifs analysis.}
+motifs of RNA Binding Proteins in the ATtRACT or MEME database are considered
+in the motifs analysis.}
 
 \item{pathToMiRs}{A string containing the path to the miRs.txt file.
 The file miRs.txt contains the microRNA ids from miRBase
@@ -79,9 +79,10 @@ set up.
 }
 \description{
 The function checkProjectFolder() verifies that the
-project folder is set up correctly. The function
-\code{\link{initCircRNAprofiler}} can be used to initialize the
-project folder.
+project folder is set up correctly. It checks that the mandatory files
+(.gtf file, the folders with the circRNAs_X.txt files and experiemnt.txt)
+are present in the working directory.The function
+\code{\link{initCircRNAprofiler}} can be used to initialize the project folder.
 }
 \examples{
 checkProjectFolder()

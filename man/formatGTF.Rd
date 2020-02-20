@@ -8,7 +8,9 @@ formatGTF(pathToGTF = NULL)
 }
 \arguments{
 \item{pathToGTF}{A string containing the path to the GTF file.
-Use the same annotation file used during the RNA-seq mapping procedure.}
+Use the same annotation file used during the RNA-seq mapping procedure.
+If .gtf file is not present in the current working directory the full path
+should be specified.}
 }
 \value{
 A data frame.

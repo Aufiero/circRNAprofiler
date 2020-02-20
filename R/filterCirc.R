@@ -98,7 +98,8 @@ filterCirc <- function(backSplicedJunctions,
         }
     } else{
         filteredCirc <- backSplicedJunctions
-        cat("experiment.txt not found, data frame can not be filtered.")
+        cat("experiment.txt not found in wd (or empty), data frame can not be filtered.
+            Type ?filterCirc and see pathToExperiment param.\n")
     }
     # Return a filtered data frame
     return(filteredCirc)

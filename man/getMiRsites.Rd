@@ -34,7 +34,8 @@ in the working directory. Default value is TRUE.}
 \item{totalMatches}{An integer specifying the total number of matches that
 have to be found between the seed region of the miR and the seed site of the
 target sequence. If the total number of matches found is less than the
-cut-off, the seed site is discarded. Default value is 7.}
+cut-off, the seed site is discarded. The maximun number of possible matches
+is 7. Default value is 7.}
 
 \item{maxNonCanonicalMatches}{An integer specifying the max number of
 non-canonical matches (G:U) allowed between the seed region of the miR and

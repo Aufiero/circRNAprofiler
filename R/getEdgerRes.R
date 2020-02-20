@@ -121,8 +121,8 @@ getEdgerRes <-
 
         } else{
             edgerRes <- data.frame()
-            cat("experiment.txt not found. Differential expression analysis can
-                not be run.")
+            cat("experiment.txt not found in wd (or empty). Differential expression analysis can
+                not be run. Type ?getEdgerRes and see pathToExperiment param.\n")
         }
         return(edgerRes)
     }

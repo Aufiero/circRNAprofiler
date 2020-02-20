@@ -1,0 +1,4 @@
+id
+>hsa-miR-1-3p
+>hsa-miR-126-3p
+>hsa-miR-145-5p

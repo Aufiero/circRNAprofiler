@@ -2,7 +2,7 @@
 title: 'circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs'
 author: "Simona Aufiero"
 date: "`r Sys.Date()`"
-output: rmarkdown::pdf_document
+output: rmarkdown::html_document
 fontsize: 12pt
 bibliography: references.bib
 vignette: >
@@ -42,7 +42,7 @@ pipeline used by circRNAprofiler is highly automated and customizable.
 Furthermore, circRNAprofiler includes additional functions for data 
 visualization which facilitate the interpretation of the results.
 
-```{r, echo=FALSE, out.width='60%', fig.align="center", fig.cap="\\label{fig:figs} Figure 1: Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
+```{r, echo=FALSE, out.width='70%', fig.align="center", fig.cap="\\label{fig:figs} Figure 1: Schematic representation of the circRNA analysis workflow implemented by circRNAprofiler. The grey boxes represent the 15 modules with the main R-functions reported in italics. The different type of sequences that can be selected are depicted in the dashed box. BSJ, Back-Spliced Junction."}
 
 knitr::include_graphics("./images/image1.png")
 ```
@@ -55,13 +55,10 @@ was here re-analyzed. Multiple detection tools (CircMarker(cm), MapSplice2 (ms)
 and NCLscan (ns)) were used this time for the detection of circRNAs and an additional 
 sample for each condition was included reaching a total of 9 samples: 3 control
 hearts, 3 hearts of patients with dilated cardiomyopathies (DCM) and 3 hearts with
-hypertrophic cardiomyopathies (HCM).**The raw files containing the detected circRNAs
-are not part of circRNAprofiler package. After the circRNA detections we locally 
-setup the project folder as described in Module 1 and ran through Modules 2 and 3
-to generate the data object backSplicedJunctions and mergedBSJunctions which can
-be loaded and used for example purpose in the package vignettes.
-The user should setup its own project folder as specified by Module 1 and then
-import the detected circRNAs using Module 2.** 
+hypertrophic cardiomyopathies (HCM).**After the circRNA detection
+we locally setup the project folder as described in Module 1 and ran through 
+Modules 2 and 3 to generate the data object backSplicedJunctions and mergedBSJunctions
+which can be loaded and used as an example in the package vignettes.** 
 
 Raw RNA sequencing data are available at NCBI BioProject accession number 
 PRJNA533243.
@@ -90,7 +87,6 @@ library(ggpubr)
 library(ggplot2)
 library(VennDiagram)
 library(gridExtra)
-#library(kableExtra)
 ```
 
 ## Running circRNAprofiler
@@ -105,7 +101,7 @@ available in the package. The project folder should be structured as in the
 example Figure 2 if seven detection tools are used to detect circRNAs in 
 6 samples.
 
-```{r, echo=FALSE, out.width='45%', fig.align="center", fig.cap="\\label{fig:figs} Figure 2: Example of a project folder structure"}
+```{r, echo=FALSE, out.width='55%', fig.align="center", fig.cap="\\label{fig:figs} Figure 2: Example of a project folder structure"}
 knitr::include_graphics("./images/image2.png")
 ```
 
@@ -129,7 +125,7 @@ filled with the appropriate information (see files description below).
 If only MapSplice is used for the circRNA detection run the following command:
 
 ```{r, eval = FALSE }
-initCircRNAprofiler(projectFolderName = "circRNAprofiler", detectionTools =
+initCircRNAprofiler(projectFolderName = "projectCirc", detectionTools =
                       "mapsplice")
 ```
 
@@ -138,13 +134,16 @@ the command with the name of the detection tools used, e.g.:
 
 ```{r, eval = FALSE}
 initCircRNAprofiler(
-    projectFolderName = "circRNAprofiler",
+    projectFolderName = "projectCirc",
     detectionTools = c("mapsplice", "nclscan", "circmarker")
 )
 ```
 
-**Next, set project folder projectFolderName (in this case circRNAprofiler) 
-as your working directory.**
+<span style="color:red">**IMPORTANT**</span>
+
+<span style="color:red">**Next, set project folder projectFolderName (in this case projectCirc) 
+as your working directory.**</span>
+
 
 **_Project files description_**
 
@@ -325,12 +324,44 @@ head(circRNApredictions)
 
 ```
 
+
+
+<span style="color:red">For example purpose a project folder named **projectCirc** 
+was created in **inst/extdata** folder of the R package circRNAprofiler as specified 
+by Module 1. The project folder projectCirc contains a **short version of the raw
+files containing the detected circRNAs** and the 
+**optional files motifs.txt, miRs.txt, transcripts.txt and traits.txt.**</span>
+
+<span style="color:red">**Alternatively** load the data object backSplicedJunctions 
+and mergedBSJunctions containing the whole set of circRNAs detected
+in the heart and specify the path to experiment.txt.</span>
+
+```{r, eval=FALSE}
+# Path to experiment.txt
+pathToExperiment <- system.file("extdata", "experiment.txt",
+                                package ="circRNAprofiler")
+
+
+```
+
+
+<span style="color:red">**Note: The user should download gencode.V19.annotation.gtf 
+from https://www.gencodegenes.org/ and put it in the working directory projectCirc.
+Next, set projectCirc as working directory and ran Module 2.**</span>
+
+<span style="color:red">A short version of the above .gtf file has been 
+generated and can be use for example purpose.</span>
+
+
 #### _checkProjectFolder()_
 
 The function checkProjectFolder() helps to verify that the project folder is 
-set up correctly.
+set up correctly.  It checks that the mandatory files 
+( .gtf file, the folders with the circRNAs_X.txt files and experiemnt.txt)
+are present in the working directory.
 
 ```{r, eval = FALSE}
+# Set project folder projectCirc as your working directory and run:
 check <- checkProjectFolder()
 check
 ```
@@ -340,28 +371,22 @@ If the project folder is set up correctly, check should be equal to 0.
 
 ### Module 2 - Import predicted circRNAs
 
-```{r}
-# For example purpose we put "experiment.txt" in "extdata" so that it can be used 
-# with this vignettes
-pathToExperiment <- system.file("extdata", "experiment.txt",
-    package ="circRNAprofiler")
-```
-
-
 #### _formatGTF()_
 
-The function formatGTF() formats the given annotation file from ensemble gencode,
-UCSC or NCBI. The gtf object is then called in other functions. 
+The function formatGTF() formats the given annotation file from ensemble, gencode,
+UCSC or NCBI. The gtf object is then used in other functions. 
+
+Type ?formatGTF for more information about the argument of the function and its
+example.
 
 ```{r}
-# Type ?formatGTF for more information about the argument of the function and its
-# example.
-# gtf <- formatGTF(pathToGTF)
+# Set project folder projectCirc as your working directory.
+# Download gencode.V19.annotation.gtf from https://www.gencodegenes.org/ and 
+# put it in the working directory, then run:
+# gtf <- formatGTF("gencode.V19.annotation.gtf")
 
-# For example purpose load a short version of the formatted gencode.V19.annotation.gtf 
-# which was downloaded from https://www.gencodegenes.org/.
-# We ran the above command with pathToGTF = "gencode.V19.annotation.gtf" 
-# to create the object "gtf"
+# For example purpose load a short version of the formatted gtf file generated
+# using the command above.
 data("gtf")
 head(gtf)
 
@@ -375,15 +400,16 @@ specified subfolders), adapts the content and generates a unique data frame with
 the circRNAs detected by each detection tool and the occurrences found in each
 sample. 
 
-```{r}
-# Setup your project folder as described in Module 1.
-# Type ?getBackSplicedJunctions for more information about the arguments of the 
-# function and its example.
-# backSplicedJunctions <- getBackSplicedJunctions(gtf, pathToExperiment)
+Type ?getBackSplicedJunctions for more information about the arguments of the 
+function and its example.
 
-# For example purpose we load the object resulting by running the above command
-# in the project folder that was setup locally which contained the raw files with
-# the detected circRNAs.
+```{r}
+# Set working directory to projectCirc which contains a short version of the raw
+# files containing the detected circRNAs. The run: 
+# backSplicedJunctions <- getBackSplicedJunctions(gtf)
+
+# Alternatively, you can load the object containing the whole set of circRNAs detected
+# in the heart generated running the command above.
 data("backSplicedJunctions")
 head(backSplicedJunctions)
 ```
@@ -432,14 +458,15 @@ by the user they can be exported in a file (i.e. antisenseCircRNAs.txt) for user
 consultation. Modules in circRNAprofiler are specific for the analysis of 
 circRNAs that derive from the sense strand of the corresponding gene.
 
-```{r}
-# Type ?mergeBSJunctions for more information about the arguments of the function
-# and its example.
-# mergedBSJunctions <-
-# mergeBSJunctions(backSplicedJunctions, gtf, pathToExperiment)
+Type ?mergeBSJunctions for more information about the arguments of the function
+and its example.
 
-# For example purpose we load the object resulting by running the above command
-# in the project folder that was setup locally.
+```{r}
+# If you set projectCirc as your working directory, then run:
+# mergedBSJunctions <- mergeBSJunctions(backSplicedJunctions, gtf)
+
+# Alternatively, you can load the object containing the whole set of circRNAs 
+# detected in the heart merged using the code above.
 data("mergedBSJunctions")
 head(mergedBSJunctions)
 
@@ -475,12 +502,14 @@ of a disease/treatment can decrease the expression of subset of circRNAs
 thus by applying the filtering to all samples(allSamples = TRUE) those circRNAs 
 are discarded. 
 
-```{r}
-# Type ?filterCirc for more information about the arguments of the function and 
-# and its example.
+Type ?filterCirc for more information about the arguments of the function and 
+and its example.
 
+```{r}
+# If you set projectCirc as your working directory, then run:
 filteredCirc <-
-filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5, pathToExperiment)
+filterCirc(mergedBSJunctions, allSamples = FALSE, min = 5)
+
 ```
 
 Plot circRNAs after the filtering step.
@@ -518,7 +547,6 @@ p <- VennDiagram::draw.triple.venn(
     fill = c("skyblue", "pink1", "mediumorchid")
 )
 
-
 ```
 
 ### Module 5 - Find differentially expressed circRNAs
@@ -535,20 +563,24 @@ a negative log2FC means that in the conditions B there is a downregulation of th
 corresponding circRNA. If a positive log2FC is found means that there is an 
 upregulation in the condition B of that circRNA.
 
+Type ?getDeseqRes for more information about the arguments of the function and 
+its example.
+
 ```{r}
 # Compare condition B Vs A
-# Type ?getDeseqRes for more information about the arguments of the function and 
-# its example.
-
+# If you set projectCirc as your working directory, then run:
 deseqResBvsA <-
     getDeseqRes(
         filteredCirc,
         condition = "A-B",
         fitType = "local",
-        pAdjustMethod = "BH",
-        pathToExperiment
+        pAdjustMethod = "BH"
     )
 head(deseqResBvsA)
+
+
+
+
 ```
 
 ```{r}
@@ -558,13 +590,15 @@ deseqResCvsA <-
         filteredCirc,
         condition = "A-C",
         fitType = "local",
-        pAdjustMethod = "BH",
-        pathToExperiment
+        pAdjustMethod = "BH"
     )
 head(deseqResCvsA)
 ```
 
-Use volcanoPlot() function
+Use volcanoPlot() function.
+
+Type ?volcanoPlot for more information about the arguments of the function and 
+its example.
 
 ```{r, fig.align="center", fig.height= 8, fig.width = 8}
 # We set the xlim and ylim to the same values for both plots to make them
@@ -615,18 +649,17 @@ a negative log2FC means that in the conditions B there is a downregulation of
 the corresponding circRNA. If a positive log2FC is found means that there is 
 an upregulation in the condition B of that circRNA.
 
+Type ?getEdgerRes for more information about the arguments of the function and 
+its example.
+
 ```{r,eval = FALSE}
 # Compare condition B Vs A
-# Type ?getDeseqRes for more information about the arguments of the function and 
-# its example.
 edgerResBvsA <-
     getEdgerRes(
         filteredCirc,
         condition = "A-B",
         normMethod = "TMM",
-        pAdjustMethod = "BH",
-        pathToExperiment
-    )
+        pAdjustMethod = "BH"    )
 head(edgerResBvsA)
 ```
 
@@ -637,8 +670,7 @@ edgerResCvsA <-
         filteredCirc,
         condition = "A-C",
         normMethod = "TMM",
-        pAdjustMethod = "BH",
-        pathToExperiment
+        pAdjustMethod = "BH"
     )
 head(edgerResCvsA)
 ```
@@ -657,6 +689,9 @@ NOTE:
 Only back-spliced junction coordinates where the mapping was successful 
 are reported. Back-spliced junction coordinates that could not be 
 mapped might be not conserved between the analyzed species.
+
+Type ?liftedBSJcoords for more information about the arguments of the function and 
+its example.
 
 ```{r, eval = FALSE}
 liftedBSJcoords <- liftBSJcoords(filteredCirc, map = "hg19ToMm9",
@@ -763,19 +798,14 @@ the annotation file. It is important to use the same annotation file (*.gtf file
 used during the read mapping procedure since the same gene can be differently 
 annotated by the existing annotation databases [@Zhao.Zhang2015].
 
- 
+Type ?annotateBSJs for more information about the arguments of the function and 
+its example.
+
 ```{r}
-# Type ?annotateBSJs for more information about the arguments of the function 
-# and its example.
-
 # If you want to analysis specific transcripts report them in transcripts.txt (optional).
-# For example purpose we put "transcripts.txt" in "extdata" so that it can be used 
-# with this vignettes
-pathToTranscripts <- system.file("extdata", "transcripts.txt", package="circRNAprofiler")
-
 # As an example of the 1458 filtered circRNAs we annotate only the firt 30 
 # circRNAs
-annotatedBSJs <- annotateBSJs(filteredCirc[1:30,], gtf, isRandom = FALSE, pathToTranscripts) 
+annotatedBSJs <- annotateBSJs(filteredCirc[1:30,], gtf, isRandom = FALSE) 
 head(annotatedBSJs)
 ```
 
@@ -791,9 +821,10 @@ can also be given as argument. If f = 10, 10% of the of the back-spliced junctio
 belong to single exons. Randomly selected back-spliced junctions can be used as
 background data set for structural and functional analysis. 
 
+Type ?getRandomBSJunctions for more information about the arguments of the function and 
+its example.
+
 ```{r}
-# Type ?getRandomBSJunctions for more information about the arguments of the 
-# function and its example.
 # First find frequency of single exon circRNAs
 f <-
     sum((annotatedBSJs$exNumUpBSE == 1 |
@@ -814,12 +845,14 @@ annotatedRBSJs <- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)
 
 Use the plot functions to plot all the features of the annotated back-spliced-junctions.
 
+Type ?plotLenIntrons ?plotLenBSEs ?plotHostGenes ?plotExBetweenBSEs ?plotExPosition
+?plotTotExons for more information about the arguments of the functions 
+and their examples.
+
 ```{r, fig.align="center", fig.width = 10, fig.height = 7, eval = FALSE}
 # annotatedBSJs act as foreground data set
 # annotatedRBSJs act as background data set
 
-# Type ?plotLenIntrons for more information about the arguments of the function 
-# and its example.
 # Length of flanking introns
 p1 <- plotLenIntrons(
     annotatedBSJs,
@@ -830,8 +863,6 @@ p1 <- plotLenIntrons(
 )
 
 # Length of back-splided exons
-# Type ?plotLenBSEs for more information about the arguments of the function and 
-# its example.
 p2 <- plotLenBSEs(
     annotatedBSJs,
     annotatedRBSJs,
@@ -841,28 +872,20 @@ p2 <- plotLenBSEs(
 )
 
 # No. of circRNAs produced from the host genes
-# Type ?plotHostGenes for more information about the arguments of the function
-# and its example.
 p3 <-
     plotHostGenes(annotatedBSJs, title = "# CircRNAs produced from host genes")
 
 # No. of exons in between the back-spliced junctions
-# Type ?plotExBetweenBSEs for more information about the arguments of the function
-# and its example.
 p4 <-
     plotExBetweenBSEs(annotatedBSJs, title = "# Exons between back-spliced junctions")
 
 # Position of back-spliced exons within the host transcripts
-# Type ?plotExPosition for more information about the arguments of the function
-# and its example.
 p5 <-
     plotExPosition(annotatedBSJs,
         n = 1,
         title = "Position back-spliced exons in the transcripts")
 
 # Total no. of exons within the host transcripts
-# Type ?plotTotExons for more information about the arguments of the function
-# and its example.
 p6 <-
     plotTotExons(annotatedBSJs, title = " Total number of exons in the host transcripts")
 
@@ -883,7 +906,7 @@ ggarrange(p1,
 knitr::include_graphics("./images/image3.png")
 ```
 
-### Retrieve target sequences
+### **Retrieve target sequences**
 
 Downstream screenings can be perfomed on one or multiple circRNAs (e.g 
 differentially expressed circRNAs or circRNAs arising from the same host genes).
@@ -931,10 +954,11 @@ together to recreate the circRNA sequence. To recreate the back-spliced junction
 sequence 50 nucleotides are taken from the 5' head and attached at the 3' tail 
 of each circRNA sequence. 
 
+Type ?getCircSeqs for more information about the arguments of the function and
+its example.
 
 ```{r,eval = FALSE}
-# Type ?getCircSeqs for more information about the arguments of the function and
-# its example.
+
 # Foreground target sequences
 targetsFTS_circ <-
 getCircSeqs(annotatedCirc, gtf, genome)
@@ -978,9 +1002,10 @@ The function getSeqsAcrossBSJs() can be used to retrieve the sequences across
 the back-spliced junctions.  A total of 11 nucleotides from each side of the
 back-spliced junction are taken and concatenated together.
 
+Type ?getSeqsAcrossBSJs for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
-# Type ?getSeqsAcrossBSJs for more information about the arguments of the function 
-# and its example.
 # Foreground target sequences
 targetsFTS_bsj <-
     getSeqsAcrossBSJs(annotatedCirc, gtf, genome)
@@ -1027,9 +1052,10 @@ sequences are retrieved from the genomic window defined by using the values give
 in input to lIntron and lExon. If type = "bse" the sequences of the back-spliced
 exons will be extracted. 
 
+Type ?getSeqsFromGRs for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
-# Type ?getSeqsFromGRs for more information about the arguments of the function 
-# and its example.
 # Foreground target sequences
 targetsFTS_gr <-
     getSeqsFromGRs(
@@ -1079,6 +1105,7 @@ If type = "ie" the sequences derive from the genomic window defined by
 using the values given in input to lIntron and lExon. 
 If type = "bse" the sequences derive from back-spliced exons.
 
+### **Screen target sequences**
 
 ### Module 12 - Screen target sequences for RBP/de Novo motifs
 
@@ -1112,16 +1139,13 @@ It might be that the URL of the databases from which the RBP motifs are
 retrieved can not be reached, in that case a message will be printed 
 and only motifs reported in the motifs.txt will be used in the analysis. 
 
-```{r, eval = FALSE}
-# Type ?getMotifs for more information about the arguments of the function 
-# and its example.
+Type ?getMotifs for more information about the arguments of the function 
+and its example.
 
+```{r, eval = FALSE}
 # If you want to analysis also custom motifs report them in motifs.txt (optional).
-# For example purpose we put "motifs.txt" in "extdata" so that it can be used 
-# with this vignettes
 # E.g. in motifs.txt we added RBM20 consensus motif since it is not present in 
 # the ATtRACT database.
-pathToMotifs <- system.file("extdata", "motifs.txt", package="circRNAprofiler")
 
 # Find motifs in the foreground target sequences
 motifsFTS_gr <-
@@ -1130,8 +1154,7 @@ motifsFTS_gr <-
               database = 'ATtRACT',
               species = "Hsapiens",
               rbp = TRUE,
-              reverse = FALSE,
-              pathToMotifs)
+              reverse = FALSE)
 # Find motifs in the background target sequences
 motifsBTS_gr <-
     getMotifs(targetsBTS_gr,
@@ -1139,8 +1162,7 @@ motifsBTS_gr <-
               database = 'ATtRACT',
               species = "Hsapiens",
               rbp = TRUE,
-              reverse = FALSE,
-              pathToMotifs)
+              reverse = FALSE)
 ```
 
  
@@ -1162,9 +1184,10 @@ motifs and the corresponding RBP.
 The function mergeMotifs() groups all the motifs recognized by the same RBP and 
 report the total counts.
 
+Type ?mergeMotifs for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
-# Type ?mergeMotifs for more information about the arguments of the function 
-# and its example.
 mergedMotifsFTS_gr <- mergeMotifs(motifsFTS_gr)
 mergedMotifsBTS_gr <- mergeMotifs(motifsBTS_gr)
 ```
@@ -1174,10 +1197,11 @@ Retrieve and plot log2FC and counts of the motifs found in the target sequences
 is different then the counts should be normalized. Normalization can be done 
 using the number or the total length of the target sequences (suggested).
 
+Type ?plotMotifs for more information about the arguments of the function 
+and its example.
+
 ```{r, fig.align="center", fig.width = 7, fig.height = 7, eval = FALSE}
 # Plot log2FC and normalized counts
-# Type ?plotMotifs for more information about the arguments of the function 
-# and its example.
 
 # Normalize using the number of target sequences:
 # nf1 = nrow(annotatedCirc), 
@@ -1366,16 +1390,14 @@ increases with the number of sequences and miRNAs to analyze. To reduce false
 positives and computational time we suggest making a selection on miRNAs, e.g. 
 use only miRNAs expressed in the tissues of interest.
 
+Type ?getMiRsites for more information about the arguments of the function 
+and its example.
+
 ```{r,eval = FALSE}
 # Screen circRNA sequences for miRNA binding sites
-# Type ?getMiRsites for more information about the arguments of the function 
-# and its example.
 
 # If you want to analysis only a subset of miRs, then specify the miR ids in 
 # miRs.txt (optional). 
-# For example purpose we put "miRs.txt." in "extdata" so that it can be used 
-# with this vignettes.  We only reported 3 miRs in miRs.txt 
-pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 
 miRsites <-
     getMiRsites(
@@ -1383,8 +1405,7 @@ miRsites <-
         miRspeciesCode = "hsa",
         miRBaseLatestRelease = TRUE,
         totalMatches = 6,
-        maxNonCanonicalMatches = 1,
-        pathToMiRs
+        maxNonCanonicalMatches = 1
     )
   
 ```
@@ -1432,10 +1453,12 @@ The function plotMir() can be used to visualize the miR results of 1 circRNA
 at the time. By setting id = 1 the the miR results of the first element of the 
 list rearragedMiRres are plotted.
 
+Type ?plotMiR for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
 # Plot miRNA analysis results
-# Type ?plotMiR for more information about the arguments of the function 
-# and its example.
+
 p <- plotMiR(rearragedMiRres,
              n = 40,
              color = "blue",
@@ -1444,6 +1467,8 @@ p <- plotMiR(rearragedMiRres,
 p
 ```
 
+
+### **Annotate target sequences**
 
 ### Module 14 - Annotate GWAS SNPs
 
@@ -1456,9 +1481,10 @@ database. The genomic coordinates of the GWAS SNPs are overlapped with the
 genomic coordinates of the target sequences. This is possible only for the human
 genome. An empty list is returned if none overlapping SNPs are found.
 
+Type ?annotateSNPsGWAS for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
-# Type ?annotateSNPsGWAS for more information about the arguments of the function 
-# and its example.
 snpsGWAS <-
     annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19", makeCurrent = TRUE)
     
@@ -1482,9 +1508,10 @@ specified, repetitve elements from Homo sapiens, genome hg19 will be
 downloaded and annotated. 
 An empty list is returned if none overlapping repeats are found.
 
+Type ?annotateRepeats for more information about the arguments of the function 
+and its example.
+
 ```{r, eval = FALSE}
-# Type ?annotateRepeats for more information about the arguments of the function 
-# and its example.
 repeats <-
     annotateRepeats(targetsFTS_gr, annotationHubID = "AH5122", 
                     complementary = TRUE)

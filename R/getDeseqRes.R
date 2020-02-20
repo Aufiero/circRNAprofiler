@@ -106,8 +106,8 @@ getDeseqRes <-
                 dds)
         } else{
             deseqRes <- data.frame()
-            cat("experiment.txt not found. Differential expression analysis can
-                not be run.")
+            cat("experiment.txt not found in wd (or empty). Differential expression analysis can
+                not be run. Type ?getDeseqRes and see pathToExperiment param.\n")
         }
         return(deseqRes)
     }

@@ -114,7 +114,8 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
         }
     } else{
         backSplicedJunctions <- data.frame()
-        cat("experiment.txt not found or empty. The analysis can not start.")
+        cat("experiment.txt not found (or empty). The analysis can not start.
+            Type ?getBackSplicedJunctions and see pathToExperiment param.\n")
     }
 
     return(backSplicedJunctions)
@@ -267,7 +268,8 @@ mergeBSJunctions <-
 
         } else{
             mergedBSJunctionsClenead <- backSplicedJunctions
-            cat("experiment.txt not found or empty, data frame can not be merged")
+            cat("experiment.txt not found in wd (or empty), data frame can not be merged.
+                Type ?mergeBSJunctions and see pathToExperiment param.\n")
         }
 
         return(mergedBSJunctionsClenead)
