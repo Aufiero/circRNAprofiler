@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2020-02-20" />
+<meta name="date" content="2020-02-21" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -180,7 +180,7 @@ summary {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2020-02-20</h4>
+<h4 class="date">2020-02-21</h4>
 
 </div>
 
@@ -767,13 +767,13 @@ f &lt;-
 randomBSJunctions &lt;-
     getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
 head(randomBSJunctions)
-##                                  id    gene strand chrom startUpBSE endDownBSE
-## 1      MB:-:chr22:36018608:36006931      MB      - chr22   36018608   36006931
-## 2 N4BP2L2:-:chr13:33112929:33101545 N4BP2L2      - chr13   33112929   33101545
-## 3  PICALM:-:chr11:85780101:85692788  PICALM      - chr11   85780101   85692788
-## 4    LGMN:-:chr14:93214972:93180721    LGMN      - chr14   93214972   93180721
-## 5  ZNF404:-:chr19:44405537:44388108  ZNF404      - chr19   44405537   44388108
-## 6   ZNF91:-:chr19:23541650:23522033   ZNF91      - chr19   23541650   23522033</code></pre>
+##                                  id     gene strand chrom startUpBSE endDownBSE
+## 1   SLC8A1:-:chr2:40739575:40657160   SLC8A1      -  chr2   40739575   40657160
+## 2 N4BP2L2:-:chr13:33112970:33109906  N4BP2L2      - chr13   33112970   33109906
+## 3    TECRL:-:chr4:65275116:65188405    TECRL      -  chr4   65275116   65188405
+## 4 N4BP2L2:-:chr13:33112929:33091625  N4BP2L2      - chr13   33112929   33091625
+## 5  ZNF404:-:chr19:44388116:44384162   ZNF404      - chr19   44388116   44384162
+## 6 MLIP-AS1:-:chr6:53912392:53895430 MLIP-AS1      -  chr6   53912392   53895430</code></pre>
 <p>Annotate randomly selected back-spliced junctions.</p>
 <pre class="r"><code>annotatedRBSJs &lt;- annotateBSJs(randomBSJunctions, gtf, isRandom = TRUE)</code></pre>
 <p>Use the plot functions to plot all the features of the annotated back-spliced-junctions.</p>
@@ -1190,7 +1190,7 @@ p</code></pre>
 ##  [4] Biostrings_2.54.0                       XVector_0.26.0                          citr_0.3.2                             
 ##  [7] knitr_1.27                              gridExtra_2.3                           VennDiagram_1.6.20                     
 ## [10] futile.logger_1.4.3                     ggpubr_0.2.4                            magrittr_1.5                           
-## [13] ggplot2_3.2.1                           circRNAprofiler_1.1.11                  gwascat_2.18.0                         
+## [13] ggplot2_3.2.1                           circRNAprofiler_1.1.12                  gwascat_2.18.0                         
 ## [16] Homo.sapiens_1.3.1                      TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2 org.Hs.eg.db_3.10.0                    
 ## [19] GO.db_3.10.0                            OrganismDbi_1.28.0                      GenomicFeatures_1.38.2                 
 ## [22] GenomicRanges_1.38.0                    GenomeInfoDb_1.22.0                     AnnotationDbi_1.48.0                   

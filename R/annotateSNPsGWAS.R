@@ -3,7 +3,7 @@
 #' @description The function annotateSNPsGWAS() annotates GWAS SNPs located
 #' in the region flanking the back-spliced junctions of each circRNA.
 #' SNPs information including the corresponding genomic coordinates are
-#' retrived from the GWAs catalog database.
+#' retrieved from the GWAs catalog database.
 #' The user can restric the analysis to specific traits/diseases. These must go
 #' in the file traits.txt. If this file is absent or empty, all traits in the
 #' GWAS catalog are considered in the analysis.
