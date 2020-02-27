@@ -71,8 +71,11 @@ importMapSplice <- function(pathToFile) {
             .data$endDownBSE
         ) %>%
         dplyr::summarise(coverage = sum(.data$coverage))
+
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
+
+
     return(adaptedPatientCircTable)
 }
 
@@ -378,7 +381,6 @@ importKnife <- function(pathToFile) {
             # back-spliced junction coordinate
             coverage = .data$readNumber
         )
-
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -489,7 +491,6 @@ importOther <- function(pathToFile) {
             # back-spliced junction
             .data$coverage
         )
-
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -561,7 +562,6 @@ importCircMarker <- function(pathToFile, gtf) {
             # back-spliced junction coordinate
             .data$coverage
         )
-
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -601,9 +601,9 @@ importCircMarker <- function(pathToFile, gtf) {
 #' @param pathToFile A character string specifying the path to the file
 #' containing the detected circRNAs.
 #'
-#' @keywords internal
-#'
 #' @return A data frame.
+#'
+#' @keywords internal
 #'
 #' @examples
 #' # Path to an example file containing circRNA detected by UROBORUS
@@ -640,7 +640,6 @@ importUroborus <- function(pathToFile) {
             # back-spliced junction coordinate
             coverage = .data$read_counts
         )
-
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 

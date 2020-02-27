@@ -179,6 +179,13 @@ getDetectionTools <- function() {
 #' See \code{\link{getDetectionTools}}  for more detail about the code
 #' corresponding to each circRNA detection tool.
 #'
+#' NOTE: Since different detection tools can report sligtly different coordinates
+#' before grouping the back-spliced junctions, it is possible to fix the latter
+#' using the gtf file. In this way the back-spliced junctions coordinates will
+#' correspond to the exon coordinates reported in the gtf file. A difference of
+#' nucleodites is allowed between the bsj and exon coordinates.
+#' See param fixBSJsWithGTF.
+#'
 #' @param backSplicedJunctions A data frame containing back-spliced junction
 #' coordinates and counts generated with \code{\link{getBackSplicedJunctions}}.
 #'
@@ -203,6 +210,9 @@ getDetectionTools <- function() {
 #' FALSE. A circRNA is defined antisense if the strand reported in the prediction
 #' results is different from the strand reported in the genome annotation file.
 #' The antisense circRNAs are removed from the returned data frame.
+#'
+#' @param fixBSJsWithGTF A logical specifying whether to fix the back-spliced
+#' junctions coordinates using the GTF file. Default value is FALSE.
 #'
 #' @return A data frame.
 #'
@@ -230,12 +240,24 @@ mergeBSJunctions <-
     function(backSplicedJunctions,
         gtf,
         pathToExperiment = NULL,
-        exportAntisense = FALSE) {
+        exportAntisense = FALSE,
+        fixBSJsWithGTF= FALSE) {
         # Read experiment.txt
         experiment <- .readExperiment(pathToExperiment)
         if (nrow(experiment) > 0) {
+
+            if(fixBSJsWithGTF){
+                # Fix coordiates with GTF
+                backSplicedJunctionsFixed<- .fixCoordsWithGTF(backSplicedJunctions, gtf)
+                id <- .getID(backSplicedJunctionsFixed)
+                backSplicedJunctionsFixed$id <- id
+            }else{
+                backSplicedJunctionsFixed<-backSplicedJunctions
+            }
+
+
             # Find and merge commonly identified back-spliced junctions
-            mergedBSJunctions <- backSplicedJunctions %>%
+            mergedBSJunctions <- backSplicedJunctionsFixed %>%
                 dplyr::mutate(mean = rowMeans(.[, experiment$label])) %>%
                 dplyr::group_by(.data$strand,
                     .data$chrom,

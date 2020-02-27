@@ -49,3 +49,12 @@ Version 1.1.5 (development version) (Jen 09, 2020)
     -   Before only motifs found in the foreground sequences were
         reported. Now also motifs found in the background are reported
         in the output.
+
+Version 1.1.14 (development version) (Jen 09, 2020)
+===================================================
+
+-   In mergeBSJunctions function:
+    -   Since different detection tools can report sligtly different
+        coordinates before grouping the back-spliced junctions, it is
+        possible to fix the latter using the gtf file. See param
+        fixBSJsWithGTF.

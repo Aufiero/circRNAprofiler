@@ -445,6 +445,13 @@ All the tools that detected the back-spliced junction are then listed in the
 column "tool" of the final table. Run getDetectionTools() to get the code
 correspoding to each circRNA detection tool.
 
+Since different detection tools can report sligtly different coordinates
+before grouping the back-spliced junctions, it is possible to fix the latter
+using the gtf file. In this way the back-spliced junctions coordinates will
+correspond to the exon coordinates reported in the gtf file. A difference of 
+maximum 2 nucleodites is allowed between the bsj and exon coordinates.  
+See param fixBSJsWithGTF.
+
 NOTE:
 In this module circRNAs that derived from the antisense strand of the reported
 gene are identified. In detail, in our pipeline a circRNA is defined 
