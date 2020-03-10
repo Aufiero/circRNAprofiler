@@ -264,7 +264,7 @@ mergeBSJunctions <-
                     .data$startUpBSE,
                     .data$endDownBSE) %>%
                 dplyr::arrange(desc(mean)) %>%
-                dplyr::mutate(mergedTools = paste(sort(.data$tool), collapse = ",")) %>%
+                dplyr::mutate(mergedTools = paste(sort(unique(.data$tool)), collapse = ",")) %>%
                 dplyr::filter(row_number() == 1) %>%
                 dplyr::ungroup() %>%
                 dplyr::select(-c(.data$tool, .data$mean)) %>%
