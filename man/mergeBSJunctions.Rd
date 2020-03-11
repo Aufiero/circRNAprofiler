@@ -8,7 +8,8 @@ mergeBSJunctions(
   backSplicedJunctions,
   gtf,
   pathToExperiment = NULL,
-  exportAntisense = FALSE
+  exportAntisense = FALSE,
+  fixBSJsWithGTF = FALSE
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ antisense circRNAs in a file named antisenseCircRNAs.txt. Default value is
 FALSE. A circRNA is defined antisense if the strand reported in the prediction
 results is different from the strand reported in the genome annotation file.
 The antisense circRNAs are removed from the returned data frame.}
+
+\item{fixBSJsWithGTF}{A logical specifying whether to fix the back-spliced
+junctions coordinates using the GTF file. Default value is FALSE.}
 }
 \value{
 A data frame.
@@ -49,6 +53,13 @@ across all samples. All the tools that detected the back-spliced junctions
 are then listed in the column "tool" of the final data frame.
 See \code{\link{getDetectionTools}}  for more detail about the code
 corresponding to each circRNA detection tool.
+
+NOTE: Since different detection tools can report sligtly different coordinates
+before grouping the back-spliced junctions, it is possible to fix the latter
+using the gtf file. In this way the back-spliced junctions coordinates will
+correspond to the exon coordinates reported in the gtf file. A difference of
+nucleodites is allowed between the bsj and exon coordinates.
+See param fixBSJsWithGTF.
 }
 \examples{
 # Load detected back-soliced junctions

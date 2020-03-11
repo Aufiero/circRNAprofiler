@@ -384,7 +384,7 @@
         dplyr::group_by(.data$id) %>%
         dplyr::slice(row_number(1)) %>%
         dplyr::ungroup() %>%
-        dplyr::select(.data$id, start)
+        dplyr::select(.data$id, .data$start)
 
     overlappingGRs2 <-
         suppressWarnings(GenomicRanges::findOverlaps(
@@ -399,7 +399,7 @@
         dplyr::group_by(.data$id) %>%
         dplyr::slice(row_number(1)) %>%
         dplyr::ungroup() %>%
-        dplyr::select(.data$id, start) %>%
+        dplyr::select(.data$id, .data$start) %>%
         dplyr::mutate(end = .data$start) %>%
         dplyr::select(.data$id, .data$end)
 
