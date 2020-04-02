@@ -19,6 +19,12 @@
 #' will be displayed in the legend of the plot. Deafult value is "background".
 #'
 #' @param title A character string specifying the title of the plot.
+#' 
+#' @param setyLim A logical specifying whether to set y scale limits.
+#' If TRUE the value in ylim will be used. Deafult value is FALSE.
+#'
+#' @param ylim An integer specifying the lower and upper y axis limits
+#' Deafult values are c(0, 8).
 #'
 #' @return A ggplot object.
 #'
@@ -58,7 +64,9 @@ plotLenIntrons <-
         annotatedBBSJs,
         df1Name = "foreground",
         df2Name = "background",
-        title = "") {
+        title = "",
+        setyLim = FALSE,
+        ylim = c(0, 8)) {
         # Reshape the data frame
         reshForeground <- annotatedFBSJs %>%
             dplyr::mutate(circRNA = rep("foreground", nrow(annotatedFBSJs))) %>%
@@ -94,9 +102,18 @@ plotLenIntrons <-
         combinedFB <- rbind(reshForeground, reshBackground)
         combinedFB$length <- as.numeric(combinedFB$length)
         # Plot
+        if(setyLim){
+            ymin <- ylim[1]
+            ymax <- ylim[2]
+        }else{
+            ymin<- 0
+            ymax<- base::max(log10(combinedFB$length), na.rm = T)
+        }
+        
         p <-
-            ggplot(combinedFB, aes(x = .data$feature, y = log10(length))) +
+            ggplot(combinedFB, aes(x = .data$feature, y = log10(.data$length)))+
             geom_boxplot(aes(fill = .data$circRNA), na.rm = TRUE) +
+            ylim(ymin,ymax )+
             labs(title = title, x = "", y = "Log10 length (nt)") +
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
@@ -127,6 +144,12 @@ plotLenIntrons <-
 #' will be displayed in the legend of the plot.
 #'
 #' @param title A character string specifying the title of the plot
+#' 
+#' @param setyLim A logical specifying whether to set y scale limits.
+#' If TRUE the value in ylim will be used. Deafult value is FALSE.
+#'
+#' @param ylim An integer specifying the lower and upper y axis limits
+#' Deafult values are c(0, 8).
 #'
 #' @return A ggplot object.
 #'
@@ -167,7 +190,9 @@ plotLenBSEs <-
         annotatedBBSJs,
         df1Name = "foreground",
         df2Name = "background",
-        title = "") {
+        title = "",
+        setyLim = FALSE,
+        ylim = c(0, 8)) {
         # Reshape the data frame
         reshForeground <- annotatedFBSJs %>%
             dplyr::mutate(circRNA = rep("foreground", nrow(annotatedFBSJs))) %>%
@@ -203,9 +228,17 @@ plotLenBSEs <-
         combinedFB <- rbind(reshForeground, reshBackground)
         combinedFB$length <- as.numeric(combinedFB$length)
         # Plot
+        if(setyLim){
+            ymin <- ylim[1]
+            ymax <- ylim[2]
+        }else{
+            ymin<- 0
+            ymax<- base::max(log10(combinedFB$length), na.rm = T)
+        }
         p <-
-            ggplot(combinedFB, aes(x = .data$feature, y = log10(length))) +
+            ggplot(combinedFB, aes(x = .data$feature, y = log10(.data$length))) +
             geom_boxplot(aes(fill = .data$circRNA), na.rm = TRUE) +
+            ylim(ymin,ymax)+
             labs(title = title, x = "", y = "Log10 length (nt)") +
             theme_classic() +
             theme(plot.title = element_text(hjust = 0.5),
