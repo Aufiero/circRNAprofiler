@@ -843,7 +843,7 @@ f <-
 
 # Retrieve random back-spliced junctions
 randomBSJunctions <-
-    getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf)
+    getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf, setSeed = 123)
 head(randomBSJunctions)
 ```
 
@@ -859,7 +859,7 @@ Type ?plotLenIntrons ?plotLenBSEs ?plotHostGenes ?plotExBetweenBSEs ?plotExPosit
 ?plotTotExons for more information about the arguments of the functions 
 and their examples.
 
-```{r, fig.align="center", fig.width = 10, fig.height = 7, eval = FALSE}
+```{r, fig.align="center", fig.width = 13, fig.height = 8, eval = FALSE}
 # annotatedBSJs act as foreground data set
 # annotatedRBSJs act as background data set
 
@@ -869,7 +869,9 @@ p1 <- plotLenIntrons(
     annotatedRBSJs,
     title = "Length flanking introns",
     df1Name = "predicted",
-    df2Name = "random"
+    df2Name = "random",
+    setyLim = TRUE, 
+    ylim = c(0,7)
 )
 
 # Length of back-splided exons
@@ -878,7 +880,9 @@ p2 <- plotLenBSEs(
     annotatedRBSJs,
     title = "Length back-splided exons",
     df1Name = "predicted",
-    df2Name = "random"
+    df2Name = "random",
+    setyLim = TRUE, 
+    ylim = c(0,7)
 )
 
 # No. of circRNAs produced from the host genes

@@ -4,11 +4,13 @@
 \name{ahChainFiles}
 \alias{ahChainFiles}
 \title{ahChainFile}
-\format{A data frame with 1113 rows and 2 columns
+\format{
+A data frame with 1113 rows and 2 columns
 \describe{
     \item{id}{is the AnnotationHub id}
     \item{chainFile}{is the *.chain.gz file}
-}}
+}
+}
 \usage{
 ahChainFiles
 }

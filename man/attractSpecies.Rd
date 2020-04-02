@@ -4,10 +4,12 @@
 \name{attractSpecies}
 \alias{attractSpecies}
 \title{attractSpecies}
-\format{A data frame with 37 rows and 1 columns
+\format{
+A data frame with 37 rows and 1 columns
 \describe{
     \item{species}{is the species}
-}}
+}
+}
 \usage{
 attractSpecies
 }

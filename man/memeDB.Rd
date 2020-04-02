@@ -4,11 +4,13 @@
 \name{memeDB}
 \alias{memeDB}
 \title{memeDB}
-\format{A character vector with 25 rows ans 2 columns
+\format{
+A character vector with 25 rows ans 2 columns
 \describe{
     \item{path}{is the file path }
     \item{index}{index of the file path }
-}}
+}
+}
 \usage{
 memeDB
 }

@@ -4,13 +4,15 @@
 \name{miRspeciesCodes}
 \alias{miRspeciesCodes}
 \title{miRspeciesCodes}
-\format{A data frame with 271 rows and 2 columns
+\format{
+A data frame with 271 rows and 2 columns
 \describe{
     \item{code}{is the unique identifier of the species as reported in
     miRBase db}
     \item{species}{is the species}
 
-}}
+}
+}
 \usage{
 miRspeciesCodes
 }

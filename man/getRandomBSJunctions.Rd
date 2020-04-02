@@ -4,7 +4,7 @@
 \alias{getRandomBSJunctions}
 \title{Retrieve random back-spliced junctions}
 \usage{
-getRandomBSJunctions(gtf, n = 100, f = 10)
+getRandomBSJunctions(gtf, n = 100, f = 10, setSeed = NULL)
 }
 \arguments{
 \item{gtf}{A dataframe containing genome annotation information This can be
@@ -15,6 +15,9 @@ from which random back-spliced junctions are extrated. Default value = 100.}
 
 \item{f}{An integer specifying the fraction of single exon circRNAs that
 have to be present in the output data frame. Default value is 10.}
+
+\item{setSeed}{An integer which is used for selecting random back-spliced 
+junctions. Default values is set to NULL.}
 }
 \value{
 A data frame.

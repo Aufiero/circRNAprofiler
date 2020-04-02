@@ -4,7 +4,8 @@
 \name{iupac}
 \alias{iupac}
 \title{iupac}
-\format{A data frame with 18 rows and 4 columns
+\format{
+A data frame with 18 rows and 4 columns
 \describe{
     \item{code}{is the IUPAC nucleotide code}
     \item{base}{is the base}
@@ -12,7 +13,8 @@
     IUPAC code}
     \item{regexRNA}{is the regular expression of the corresponding
     IUPAC code}
-}}
+}
+}
 \usage{
 iupac
 }

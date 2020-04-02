@@ -4,7 +4,8 @@
 \name{backSplicedJunctions}
 \alias{backSplicedJunctions}
 \title{backSplicedJunctions}
-\format{A data frame with 63521 rows and 16 columns
+\format{
+A data frame with 63521 rows and 16 columns
 \describe{
     \item{id}{Unique identifier}
     \item{gene}{is the gene name whose exon coordinates overlap that of
@@ -28,7 +29,8 @@
     \item{H1}{Number of occurences of each circRNA in HCM 1}
     \item{H2}{Number of occurences of each circRNA in HCM 2}
     \item{H3}{Number of occurences of each circRNA in HCM 3}
-}}
+}
+}
 \usage{
 backSplicedJunctions
 }
