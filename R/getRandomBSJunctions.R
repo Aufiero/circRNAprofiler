@@ -11,6 +11,9 @@
 #'
 #' @param f An integer specifying the fraction of single exon circRNAs that
 #' have to be present in the output data frame. Default value is 10.
+#' 
+#' @param setSeed An integer which is used for selecting random back-spliced 
+#' junctions. Default values is set to NULL. 
 #'
 #' @return A data frame.
 #'
@@ -25,12 +28,18 @@
 #' @importFrom rlang .data
 #' @import dplyr
 #' @export
-getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
-     # Create an empty data frame
+getRandomBSJunctions <- function(gtf, n = 100, f = 10, setSeed=NULL) {
+   
+    if(!is.null(setSeed)){
+        seed<-setSeed
+    }else{
+        seed = NULL
+    }
+      # Create an empty data frame
     randomBSJunctions <-.createRandomBSJunctionsDF(n)
 
    # Select random BSEs from gtf
-    allBSEs <- .selectRandomBSEs(gtf, n, f)
+    allBSEs <- .selectRandomBSEs(gtf, n, f,seed)
 
     # For negative strand
     allBSEsNeg <- allBSEs[allBSEs$strand == "-",]
@@ -81,10 +90,14 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10) {
 
 
 # Select random BSEs from gtf file
-.selectRandomBSEs<- function(gtf, n, f ){
+.selectRandomBSEs<- function(gtf, n, f,seed=NULL){
+    
+    if(!is.null(seed)){
+        set.seed(seed)
+    }
     # calculate the percentage of back-spliced junctions from sigle exons
     c <- round((n / 100) * f, 0)
-
+    
     # Select one random exon from n randomly selected transcript
     bsExons1 <- gtf %>%
         dplyr::filter(.data$type == "exon") %>%
