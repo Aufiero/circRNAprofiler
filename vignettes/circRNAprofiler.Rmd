@@ -73,7 +73,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("circRNAprofiler")
 ```
 
-To download the development version on github use:
+To download the latest development version on github use:
 ```{r, eval = FALSE}
 BiocManager::install("Aufiero/circRNAprofiler")
 ```
@@ -1132,8 +1132,8 @@ the argument width of the function), and then the target sequences are scanned
 for the presence of those motifs. Also overlapping motifs are counted. 
 The identified motifs can subsequently be matched with motifs of known RNA Binding 
 Proteins (RBPs) deposited in the ATtRACT or MEME database. 
-A motif identified in target sequences is selected if it matches with or they 
-are part (as substring) of any RBP motifs deposited in the database. It is possible 
+A motif identified in target sequences is selected if it matches with or it 
+is part (as substring) of any RBP motifs deposited in the database. It is possible 
 to specify whether to report only motifs matching with RBPs or unknown motifs. 
 By setting rbp = TRUE, only motifs matching with known RBP motifs are reported.
 By setting reverse = TRUE, all the RBP motifs in the ATtRACT or MEME database 
@@ -1515,7 +1515,7 @@ The function annotateRepeats() annotates repetitive elements
 located in the region flanking the back-spliced junctions of each circRNA. 
 Briefly, the genomic coordinates of repetitive elements in the RepeatMasker 
 database are overlapped with the genomic coordinates of the target sequences.
-If compementary = TRUE, only back-spliced junctions of circRNAs of which flanking 
+If complementary = TRUE, only back-spliced junctions of circRNAs of which flanking 
 introns contain complementary repeats (repeats belonging to a same 
 family but located on opposite strands) are reported in the final output.
 Repetitive elements are provided by AnnotationHub storage which
@@ -1540,6 +1540,11 @@ We work hard to ensure that circRNAprofiler is a powerful tool empowering your
 research. However, no software is free of bugs and issues, therefore we would 
 love to get feedback from our users. 
 
+## Citation
+If you find this code useful in your research, please cite:
+
+Aufiero, S., Reckman, Y.J., Tijsen, A.J. et al. circRNAprofiler: an R-based computational framework for the downstream analysis of circular RNAs. BMC Bioinformatics 21, 164 (2020). https://doi.org/10.1186/s12859-020-3500-3
+
 ## Acknowledgement
 
 We thank Engr. Dario Zarro and the member of the YP group for helpful discussion.  
@@ -1549,5 +1554,6 @@ We thank Engr. Dario Zarro and the member of the YP group for helpful discussion
 ```{r}
 sessionInfo()
 ```
+
 
 ## References
