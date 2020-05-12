@@ -15,6 +15,7 @@ Version 1.1.2 (development version) (Dic 15, 2019)
         background target sequences before the normalization.
 
     -   Added angle param for the rotation angle of the axis labels.
+
     -   Added removeNegLog2FC param to remove the RBPs having a negative
         log2FC.
 
@@ -56,5 +57,15 @@ Version 1.1.14 (development version) (Jen 09, 2020)
 -   In mergeBSJunctions function:
     -   Since different detection tools can report sligtly different
         coordinates before grouping the back-spliced junctions, it is
-        possible to fix the latter using the gtf file. See param
+        now possible to fix the latter using the gtf file. See param
         fixBSJsWithGTF.
+
+Version 1.2.0 (April 27, 2020)
+==============================
+
+Second release on bioconductor
+
+Version 1.2.2 (development version) (May 12, 2020)
+==================================================
+
+Added reference to cite the paper

@@ -56,3 +56,11 @@ the normalization.
     + Since different detection tools can report sligtly different coordinates
     before grouping the back-spliced junctions, it is now possible to fix the 
     latter using the gtf file. See param fixBSJsWithGTF.
+    
+# Version 1.2.0 (April 27, 2020)
+
+Second release on bioconductor    
+
+# Version 1.2.2 (development version) (May 12, 2020)
+
+Added reference to cite the paper
