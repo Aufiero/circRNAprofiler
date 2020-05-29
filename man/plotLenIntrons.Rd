@@ -9,7 +9,9 @@ plotLenIntrons(
   annotatedBBSJs,
   df1Name = "foreground",
   df2Name = "background",
-  title = ""
+  title = "",
+  setyLim = FALSE,
+  ylim = c(0, 8)
 )
 }
 \arguments{
@@ -28,6 +30,12 @@ will be displayed in the legend of the plot. Deafult value is "foreground".}
 will be displayed in the legend of the plot. Deafult value is "background".}
 
 \item{title}{A character string specifying the title of the plot.}
+
+\item{setyLim}{A logical specifying whether to set y scale limits.
+If TRUE the value in ylim will be used. Deafult value is FALSE.}
+
+\item{ylim}{An integer specifying the lower and upper y axis limits
+Deafult values are c(0, 8).}
 }
 \value{
 A ggplot object.

@@ -64,3 +64,7 @@ Second release on bioconductor
 # Version 1.2.2 (development version) (May 12, 2020)
 
 Added reference to cite the paper
+
+# Version 1.2.3 (development version)
+
+Fixed roxygen doc for data

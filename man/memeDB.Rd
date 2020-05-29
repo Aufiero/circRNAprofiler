@@ -12,7 +12,7 @@ A character vector with 25 rows ans 2 columns
 }
 }
 \usage{
-memeDB
+data(memeDB)
 }
 \description{
 A dataframe containing the file paths of the files containing the RBP motifs

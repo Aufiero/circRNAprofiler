@@ -13,7 +13,7 @@ A data frame with 84 rows and 3 columns
 }
 }
 \usage{
-ahRepeatMasker
+data(ahRepeatMasker)
 }
 \description{
 A data frame containing the AnnotationHub id related to the repeatMasker db,

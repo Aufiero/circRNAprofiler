@@ -12,7 +12,7 @@ A data frame with 1113 rows and 2 columns
 }
 }
 \usage{
-ahChainFiles
+data(ahChainFiles)
 }
 \description{
 A data frame containing the AnnotationHub id related to the *.chain.gz file,

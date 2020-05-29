@@ -32,7 +32,7 @@ A data frame with 63521 rows and 16 columns
 }
 }
 \usage{
-backSplicedJunctions
+data(backSplicedJunctions)
 }
 \description{
 A data frame containing genomic coordinates (genome assembly hg19) of

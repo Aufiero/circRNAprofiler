@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 4401 rows and 9 columns.
 }
 \usage{
-gtf
+data(gtf)
 }
 \description{
 A data frame containing a short version of the already formatted gencode v19

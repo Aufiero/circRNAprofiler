@@ -843,7 +843,7 @@ f <-
 
 # Retrieve random back-spliced junctions
 randomBSJunctions <-
-    getRandomBSJunctions(n = nrow(annotatedBSJs), f = f, gtf, setSeed = 123)
+    getRandomBSJunctions(gtf, n = nrow(annotatedBSJs), f = f, setSeed = 123)
 head(randomBSJunctions)
 ```
 

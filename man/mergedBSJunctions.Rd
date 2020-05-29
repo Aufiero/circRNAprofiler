@@ -32,7 +32,7 @@ A data frame with 41558 rows and 16 columns
 }
 }
 \usage{
-mergedBSJunctions
+data(mergedBSJunctions)
 }
 \description{
 A data frame containing genomic coordinates (genome assembly hg19) detected

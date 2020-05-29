@@ -16,7 +16,7 @@ A data frame with 18 rows and 4 columns
 }
 }
 \usage{
-iupac
+data(iupac)
 }
 \description{
 A data frame containing IUPAC codes and the correspoding regular expression.

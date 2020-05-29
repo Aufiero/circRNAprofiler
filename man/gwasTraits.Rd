@@ -11,7 +11,7 @@ A data frame with 653 rows and 1 columns
 }
 }
 \usage{
-gwasTraits
+data(gwasTraits)
 }
 \description{
 A data frame containing the traits/disease extracted on the 31th October 2018

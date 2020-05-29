@@ -11,7 +11,7 @@ A data frame with 37 rows and 1 columns
 }
 }
 \usage{
-attractSpecies
+data(attractSpecies)
 }
 \description{
 A data frame containing the species for which RBP motifs are available

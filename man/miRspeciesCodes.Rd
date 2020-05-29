@@ -14,7 +14,7 @@ A data frame with 271 rows and 2 columns
 }
 }
 \usage{
-miRspeciesCodes
+data(miRspeciesCodes)
 }
 \description{
 A data frame containing the code of the species as reported in miRBase
