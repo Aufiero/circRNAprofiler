@@ -17,8 +17,10 @@
 #' @return A NULL object
 #'
 #' @examples
+#' \dontrun{
 #' initCircRNAprofiler(projectFolderName = "circProject",
 #'     detectionTools = "mapsplice")
+#' }
 #'
 #'
 #' @importFrom magrittr %>%

@@ -26,8 +26,10 @@ The function initCircRNAprofiler() initializes the project
 forlder.
 }
 \examples{
+\dontrun{
 initCircRNAprofiler(projectFolderName = "circProject",
     detectionTools = "mapsplice")
+}
 
 
 }
