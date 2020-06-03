@@ -41,6 +41,6 @@ successful are reported.
 data("mergedBSJunctions")
 
 # LifOver the first 10 back-spliced junction coordinates
-# liftedBSJcoords <- liftBSJcoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
+liftedBSJcoords <- liftBSJcoords(mergedBSJunctions[1:10,], map = "hg19ToMm9")
 
 }

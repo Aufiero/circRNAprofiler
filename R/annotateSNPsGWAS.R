@@ -44,6 +44,7 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
+#' if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve targets
@@ -56,9 +57,15 @@
 #'     )
 #'
 #' # Annotate GWAS SNPs
+#' 
 #' snpsGWAS <- annotateSNPsGWAS(targets, assembly = "hg19")
+#' 
+#' }
+#' 
 #'
 #' @import dplyr
+#' @importFrom gwascat makeCurrentGwascat
+#' @importFrom gwascat subsetByTraits
 #' @importFrom GenomicRanges makeGRangesFromDataFrame
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom magrittr %>%
@@ -67,8 +74,6 @@
 #' @importFrom S4Vectors queryHits
 #' @importFrom rlang .data
 #' @importFrom GenomeInfoDb seqlevelsStyle
-#' @importFrom gwascat makeCurrentGwascat
-#' @importFrom gwascat subsetByTraits
 #' @importFrom utils data
 #' @export
 annotateSNPsGWAS <-

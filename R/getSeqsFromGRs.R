@@ -41,6 +41,7 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
+#' if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve target sequences
@@ -51,10 +52,10 @@
 #'     lExon = 10,
 #'     type = "ie"
 #'     )
-#'
+#' }
+#' 
 #' @importFrom Biostrings reverseComplement
 #' @importFrom BSgenome getSeq
-#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @export
 getSeqsFromGRs <-
     function(annotatedBSJs,

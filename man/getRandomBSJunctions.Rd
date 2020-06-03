@@ -11,7 +11,7 @@ getRandomBSJunctions(gtf, n = 100, f = 10, setSeed = NULL)
 generated with \code{\link{formatGTF}}.}
 
 \item{n}{Integer specifying the number of randomly selected transcripts
-from which random back-spliced junctions are extrated. Default value = 100.}
+from which random back-spliced junctions are extracted. Default value = 100.}
 
 \item{f}{An integer specifying the fraction of single exon circRNAs that
 have to be present in the output data frame. Default value is 10.}

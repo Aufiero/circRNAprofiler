@@ -64,7 +64,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                 backSplicedJunctionsTool <- .createBackSplicedJunctionsDF()
 
                 for (i in seq_along(experiment$fileName)) {
-                    # Read the file contaning the prediction one at the time
+                    # Read the file containing the prediction one at the time
                     pathToFile <- file.path(detectionToolsUsed$name[j],
                         experiment$fileName[i])
 
@@ -310,6 +310,17 @@ mergeBSJunctions <-
         ))))
     colnames(backSplicedJunctions) <-
         c(basicColumns, addColNames)
+    
+    backSplicedJunctions$id <- as.character(backSplicedJunctions$id)
+    backSplicedJunctions$gene  <- as.character(backSplicedJunctions$gene )
+    backSplicedJunctions$strand <- as.character(backSplicedJunctions$strand)
+    backSplicedJunctions$chrom  <- as.character(backSplicedJunctions$chrom )
+    backSplicedJunctions$startUpBSE  <- as.numeric(backSplicedJunctions$startUpBSE )
+    backSplicedJunctions$endDownBSE <- as.numeric(backSplicedJunctions$endDownBSE)
+    if(!is.null(addColNames)){
+        backSplicedJunctions[,7]<- as.character(backSplicedJunctions[,7])
+        
+    }
 
     return(backSplicedJunctions)
 }
@@ -346,13 +357,14 @@ mergeBSJunctions <-
             dplyr::select(.data$gene_name, .data$strand) %>%
             dplyr::group_by(.data$gene_name) %>%
             dplyr::filter(row_number() == 1)
+        colnames(shrinkedGTF)<- paste0(colnames(shrinkedGTF),'1')
 
         mt <-
-            match(mergedBSJunctions$gene, shrinkedGTF$gene_name)
+            match(mergedBSJunctions$gene, shrinkedGTF$gene_name1)
         antisenseCircRNAs <-
             dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt,]) %>%
             dplyr::filter(.data$strand != .data$strand1) %>%
-            dplyr::select(-c(.data$gene_name, .data$strand1))
+            dplyr::select(-c(.data$gene_name1, .data$strand1))
 
         if (exportAntisense) {
             utils::write.table(

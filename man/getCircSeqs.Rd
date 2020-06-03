@@ -40,6 +40,8 @@ data("gtf")
 annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 
 # Get genome
+if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
+
 genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 
 # Retrieve target sequences
@@ -47,5 +49,8 @@ targets <- getCircSeqs(
     annotatedBSJs,
     gtf,
     genome)
+
+}
+
 
 }

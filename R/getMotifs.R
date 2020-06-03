@@ -73,6 +73,8 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
+#' if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
+#' 
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve target sequences
@@ -92,6 +94,9 @@
 #'     species = "Hsapiens",
 #'     rbp = TRUE,
 #'     reverse = FALSE)
+#' 
+#' }
+#' 
 #'
 #' @importFrom readr read_tsv
 #' @importFrom utils download.file
@@ -282,7 +287,7 @@ getMotifs <-
         }
 
         userDBmotifs <-
-            dplyr::bind_rows(motifsFromFileNew[, c(1, 2)], rbpMotifsFromDBnew)
+            rbind(motifsFromFileNew[, c(1, 2)], rbpMotifsFromDBnew)
 
         return(userDBmotifs)
     }
@@ -611,7 +616,7 @@ mergeMotifs <- function(motifs) {
         for (j in seq_along(toSplit$motif)) {
             id <- base::strsplit(toSplit$id[j], ",")[[1]]
             for (b in seq_along(id)) {
-                rbpsWithSharedMotifs <- dplyr::bind_rows(
+                rbpsWithSharedMotifs <- rbind(
                     rbpsWithSharedMotifs,
                     as.data.frame(cbind(id[b], toSplit$motif[j])) %>%
                         magrittr::set_colnames(c("id", "motif")) %>%

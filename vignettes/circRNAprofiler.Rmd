@@ -65,17 +65,25 @@ PRJNA533243.
 
 ## Install the package
 
-You can install circRNAprofiler using:
+First install:
 ```{r, eval = FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
+}
+    
+```
 
+The you can install circRNAprofiler using:
+```{r, eval = FALSE}
 BiocManager::install("circRNAprofiler")
 ```
 
 To download the latest development version on github use:
 ```{r, eval = FALSE}
-BiocManager::install("Aufiero/circRNAprofiler")
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("circRNAprofiler")
 ```
 
 ## Load the package
@@ -950,8 +958,9 @@ transcript (see annotateBSJs()).
 ```{r}
 # All the sequences will be retrieved from the BSgenome package which contains 
 # the serquences of the genome of interest
-if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE))
-    install.packages("BSgenome.Hsapiens.UCSC.hg19")
+if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
+  BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+}
 
 # Get genome
 genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
@@ -1441,9 +1450,9 @@ rearragedMiRres <- rearrangeMiRres(miRsites)
 Store results in an excel file
 
 ```{r, eval=FALSE}
-# If multiple circRNAs have been anlyzed for the presence of miR binding sites
+# If multiple circRNAs have been analyzed for the presence of miR binding sites
 # the following code can store the predictions for each circRNA in a 
-# different sheet of an xlsx file for a better user consultaion.
+# different sheet of an xlsx file for a better user consultation.
 i <- 1
 j <- 1
 while (i <= (length(rearragedMiRres))) {
@@ -1502,9 +1511,9 @@ Type ?annotateSNPsGWAS for more information about the arguments of the function
 and its example.
 
 ```{r, eval = FALSE}
-snpsGWAS <-
+  snpsGWAS <-
     annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19", makeCurrent = TRUE)
-    
+  
 ```
 
 ### Module 15 - Annotate repetitive elements
@@ -1530,8 +1539,8 @@ and its example.
 
 ```{r, eval = FALSE}
 repeats <-
-    annotateRepeats(targetsFTS_gr, annotationHubID = "AH5122", 
-                    complementary = TRUE)
+    annotateRepeats(targetsFTS_gr, annotationHubID = "AH5122", complementary = TRUE)
+
 ```
 
 ## Support

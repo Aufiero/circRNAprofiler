@@ -59,6 +59,7 @@
 #' annotatedBSJs <- annotateBSJs(mergedBSJunctions[1, ], gtf)
 #'
 #' # Get genome
+#' if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve target sequences.
@@ -77,6 +78,8 @@
 #'    totalMatches = 6,
 #'    maxNonCanonicalMatches = 1,
 #'    pathToMiRs )
+#' }
+#' 
 #'
 #' @importFrom IRanges reverse
 #' @importFrom readr read_tsv
