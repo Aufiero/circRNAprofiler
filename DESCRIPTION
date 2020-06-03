@@ -1,7 +1,7 @@
 Package: circRNAprofiler
 Type: Package
 Title: circRNAprofiler: An R-Based Computational Framework for the Downstream Analysis of Circular RNAs
-Version: 1.2.4
+Version: 1.2.6
 Author: Simona Aufiero
 Maintainer: Simona Aufiero <simo.aufiero@gmail.com>
 Description: R-based computational framework for a comprehensive in silico 
@@ -15,7 +15,7 @@ Encoding: UTF-8
 biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, 
     GenomeAssembly, DifferentialExpression
 Depends: 
-    R(>= 3.6.0), 
+    R(>= 3.6.0),
     gwascat
 RoxygenNote: 7.1.0
 Suggests: 
@@ -31,6 +31,7 @@ Suggests:
     BSgenome.Mmusculus.UCSC.mm9,
     BSgenome.Hsapiens.UCSC.hg38,
     BSgenome.Mmusculus.UCSC.mm10,
+    BiocManager,
 Imports:
     dplyr,
     magrittr,
@@ -52,10 +53,10 @@ Imports:
     rlang,
     S4Vectors,
     stats,
-    AnnotationHub,
     GenomeInfoDb,
-    BSgenome.Hsapiens.UCSC.hg19,
     universalmotif,
+    AnnotationHub,
+    BSgenome.Hsapiens.UCSC.hg19,
 VignetteBuilder: 
     knitr
 URL: 
