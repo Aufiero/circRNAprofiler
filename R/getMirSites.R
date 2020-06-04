@@ -184,7 +184,7 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
     microRNAs  <- data.frame(matrix(nrow = length(microRNAids), ncol = 4))
     colnames(microRNAs) <-  c("id", "length", "seq", "seqRev")
     for (i in seq_along(microRNAs$id)) {
-        indexMir <- base::which(miRBase == microRNAids[i])
+        indexMir <- which(miRBase == microRNAids[i])
         microRNAs$id[i] <- microRNAids[i]
         microRNAs$seq[i] <- miRBase[indexMir + 1]
 
@@ -802,7 +802,7 @@ rearrangeMiRres <- function(miRsites) {
 
         idM <- miRsites$microRNAs$id
         counts <- as.character(miRsites$counts[i, idM])
-        counts[base::which(is.na(miRsites$counts[i, idM]))] <- 0
+        counts[which(is.na(miRsites$counts[i, idM]))] <- 0
         rearragedMiRres[[i]][[2]]$counts <- as.numeric(counts)
 
         rearragedMiRres[[i]][[2]]$totMatchesInSeed <-

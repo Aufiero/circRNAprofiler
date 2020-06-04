@@ -85,11 +85,11 @@ getSeqsFromGRs <-
             targets[[i]] <- .getTargetsDF(annotatedBSJs)
 
             if (i == 1) {
-                indexStart <- base::which(colnames(grCoords) == "startUpGR")
-                indexEnd <- base::which(colnames(grCoords) == "endUpGR")
+                indexStart <- which(colnames(grCoords) == "startUpGR")
+                indexEnd <- which(colnames(grCoords) == "endUpGR")
             } else{
-                indexStart <- base::which(colnames(grCoords) == "startDownGR")
-                indexEnd <- base::which(colnames(grCoords) == "endDownGR")
+                indexStart <- which(colnames(grCoords) == "startDownGR")
+                indexEnd <- which(colnames(grCoords) == "endDownGR")
             }
             # Fill the data frame with the extracted genomic range coordinates
             targets[[i]]$id <- grCoords$id

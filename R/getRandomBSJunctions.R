@@ -134,7 +134,7 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10, setSeed=NULL) {
     }
  
     # Align duplicates on the same row
-    indexDup <- base::which(duplicated(bsExons12$transcript_id))
+    indexDup <- which(duplicated(bsExons12$transcript_id))
     duplicates <- bsExons12[indexDup,]
     colnames(duplicates)<- paste0(colnames(duplicates),'1')
     

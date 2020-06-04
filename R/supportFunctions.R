@@ -31,7 +31,7 @@
 
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
         missingNamesId <-
-            base::which(!colnames(backSplicedJunctions) %in% colNames)
+            v(!colnames(backSplicedJunctions) %in% colNames)
         stop("missing or wrong column names: ",
              paste(colnames(backSplicedJunctions)[missingNamesId],
                    collapse = " \t"))
@@ -285,12 +285,12 @@
 # getting errors with the makeGRangesFromDataFrame function that does
 # not handle NA values
 .cleanTargets <- function(targets) {
-    index1 <- base::which(
+    index1 <- which(
         !is.na(targets[[1]]$transcript) &
             !is.na(targets[[1]]$startGR) &
             !is.na(targets[[1]]$endGR)
     )
-    index2 <- base::which(
+    index2 <- which(
         !is.na(targets[[2]]$transcript) &
             !is.na(targets[[2]]$startGR) &
             !is.na(targets[[2]]$endGR)
