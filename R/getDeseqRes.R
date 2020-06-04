@@ -92,7 +92,7 @@ getDeseqRes <-
                 DESeq2::DESeqDataSetFromMatrix(
                     countData = backSplicedJunctions[, experiment$label],
                     colData =
-                        experiment[,-which(names(experiment) %in% "fileName")],
+                        experiment[,-base::which(names(experiment) %in% "fileName")],
                     design = ~ condition
                 )
 

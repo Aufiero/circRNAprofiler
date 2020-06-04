@@ -108,7 +108,7 @@ checkProjectFolder <-
         cnm <- c("id", "motif", "length")
 
         if (!all(cnm %in% colnames(motifsFromFile))) {
-            missingNamesId <- which(!cnm %in%
+            missingNamesId <- base::which(!cnm %in%
                     colnames(motifsFromFile))
             cat(
                 "(!) missing or wrong column names in motifs.txt: ",
@@ -225,7 +225,7 @@ checkProjectFolder <-
     if (nrow(experiment) > 0) {
         cne <- c("label", "fileName", "condition")
         if (!all(cne %in%  colnames(experiment))) {
-            missingNamesId <- which(!cne %in% colnames(experiment))
+            missingNamesId <- base::which(!cne %in% colnames(experiment))
             cat(
                 "(!): missing or wrong column names in experiment.txt: ",
                 paste(cne[missingNamesId], collapse = " \t", "\n")
@@ -239,11 +239,11 @@ checkProjectFolder <-
         predictionToolsAll <- getDetectionTools()
         if (sum(predictionToolsAll$name  %in% fileNames) >= 1) {
             pt <-
-                predictionToolsAll$name[which(predictionToolsAll$name %in% fileNames)]
+                predictionToolsAll$name[base::which(predictionToolsAll$name %in% fileNames)]
 
             for (i in seq_along(pt)) {
                 if (!all(experiment$fileName %in% list.files(pt[i]))) {
-                    missingFilesId <- which(!experiment$fileName %in% list.files(pt[i]))
+                    missingFilesId <- base::which(!experiment$fileName %in% list.files(pt[i]))
                     cat(
                         "(!): .txt file reported in experiment.txt is not
                         present in folder named",

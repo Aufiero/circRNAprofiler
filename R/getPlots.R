@@ -107,7 +107,7 @@ plotLenIntrons <-
             ymax <- ylim[2]
         }else{
             ymin<- 0
-            ymax<- base::max(log10(combinedFB$length), na.rm = T)
+            ymax<- base::max(log10(combinedFB$length), na.rm = TRUE)
         }
         
         p <-
@@ -233,7 +233,7 @@ plotLenBSEs <-
             ymax <- ylim[2]
         }else{
             ymin<- 0
-            ymax<- base::max(log10(combinedFB$length), na.rm = T)
+            ymax<- base::max(log10(combinedFB$length), na.rm = TRUE)
         }
         p <-
             ggplot(combinedFB, aes(x = .data$feature, y = log10(.data$length))) +

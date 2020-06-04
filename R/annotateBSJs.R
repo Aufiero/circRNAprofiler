@@ -450,7 +450,7 @@ annotateBSJs <- function(backSplicedJunctions,
             # Analyze the transcript specified by the user in
             # transcripts.txt
             index <-
-                which(allTranscripts %in%  transcriptsFromFile$id)
+                base::which(allTranscripts %in%  transcriptsFromFile$id)
             # In case multiple transcripts are given in input for
             # the same circRNA, the first is taken. Only one isoform
             # at the time can be analyzed.

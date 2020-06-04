@@ -78,7 +78,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
                         .checkBSJsDF(adaptedPatientBSJunctions, addColNames = "coverage")
 
                     patientBSJunctions <- adaptedPatientBSJunctions
-                    indexCoverage <- which(colnames(patientBSJunctions) == "coverage")
+                    indexCoverage <- base::which(colnames(patientBSJunctions) == "coverage")
                     colnames(patientBSJunctions)[indexCoverage] <- experiment$label[i]
 
                     # Merge circRNAs

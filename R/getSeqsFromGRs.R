@@ -56,6 +56,7 @@
 #' 
 #' @importFrom Biostrings reverseComplement
 #' @importFrom BSgenome getSeq
+#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @export
 getSeqsFromGRs <-
     function(annotatedBSJs,
@@ -84,11 +85,11 @@ getSeqsFromGRs <-
             targets[[i]] <- .getTargetsDF(annotatedBSJs)
 
             if (i == 1) {
-                indexStart <- which(colnames(grCoords) == "startUpGR")
-                indexEnd <- which(colnames(grCoords) == "endUpGR")
+                indexStart <- base::which(colnames(grCoords) == "startUpGR")
+                indexEnd <- base::which(colnames(grCoords) == "endUpGR")
             } else{
-                indexStart <- which(colnames(grCoords) == "startDownGR")
-                indexEnd <- which(colnames(grCoords) == "endDownGR")
+                indexStart <- base::which(colnames(grCoords) == "startDownGR")
+                indexEnd <- base::which(colnames(grCoords) == "endDownGR")
             }
             # Fill the data frame with the extracted genomic range coordinates
             targets[[i]]$id <- grCoords$id

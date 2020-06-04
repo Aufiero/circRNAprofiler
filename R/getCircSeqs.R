@@ -49,6 +49,7 @@
 #' @importFrom Biostrings RNAString
 #' @importFrom rlang .data
 #' @import dplyr
+#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @export
 getCircSeqs <-
     function(annotatedBSJs,

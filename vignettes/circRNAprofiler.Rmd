@@ -325,7 +325,7 @@ circRNApredictions <-
     read.table(
         "circRNAs_test.txt",
         header = TRUE,
-        stringsAsFactors = T,
+        stringsAsFactors = TRUE,
         sep = "\t"
     )
 head(circRNApredictions)
@@ -1256,7 +1256,7 @@ p <-
         nf1 = (210*2)* nrow(annotatedCirc) , 
         nf2 = (210*2)* nrow(annotatedBackgroundCircs), 
         log2FC = 1,
-        removeNegLog2FC = T,
+        removeNegLog2FC = TRUE,
         df1Name = "circALPK2",
         df2Name = "Other circRNAs",
         angle = 45

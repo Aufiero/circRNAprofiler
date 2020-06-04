@@ -73,4 +73,6 @@ Fixed roxygen doc for data
 
 Fixed bugs due to dplyr 1.0.0 breaking changes. 
 
+# Version 1.3.1 (development version)
 
+Fix version number to odd number for version devel

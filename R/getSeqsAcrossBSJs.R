@@ -42,6 +42,7 @@
 #' 
 #'
 #' @importFrom BSgenome getSeq
+#' @import BSgenome.Hsapiens.UCSC.hg19
 #' @importFrom Biostrings RNAString
 #' @importFrom Biostrings reverseComplement
 #' @importFrom rlang .data
