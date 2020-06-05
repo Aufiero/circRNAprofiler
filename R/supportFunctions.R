@@ -31,7 +31,7 @@
 
     if (!all(colNames  %in% colnames(backSplicedJunctions))) {
         missingNamesId <-
-            v(!colnames(backSplicedJunctions) %in% colNames)
+            which(!colnames(backSplicedJunctions) %in% colNames)
         stop("missing or wrong column names: ",
              paste(colnames(backSplicedJunctions)[missingNamesId],
                    collapse = " \t"))

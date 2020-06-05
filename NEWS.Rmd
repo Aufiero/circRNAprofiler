@@ -61,18 +61,6 @@ the normalization.
 
 Second release on bioconductor    
 
-# Version 1.2.2 (development version) (May 12, 2020)
-
-Added reference to cite the paper
-
-# Version 1.2.3 (development version)
-
-Fixed roxygen doc for data
-
-# Version 1.2.6 (development version)
-
-Fixed bugs due to dplyr 1.0.0 breaking changes. 
-
 # Version 1.3.1 (development version)
 
-Fix version number to odd number for version devel
+Added files to fix bugs
