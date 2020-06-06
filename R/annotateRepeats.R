@@ -11,9 +11,9 @@
 #' It can be generated with \code{\link{getSeqsFromGRs}}.
 #'
 #' @param annotationHubID A string specifying the AnnotationHub id to use.
-#' Type data(ahRepeatMasker) to see all possibile options. E.g. if AH5122 is
-#' specified, repetitve elements from Homo sapiens, genome hg19 will be
-#' downloaded and annotated. Defult value is "AH5122".
+#' Type data(ahRepeatMasker) to see all possible options. E.g. if AH5122 is
+#' specified, repetitive elements from Homo sapiens, genome hg19 will be
+#' downloaded and annotated. Default value is "AH5122".
 #'
 #' @param complementary A logical specifying whether to filter and report
 #' only back-spliced junctions of circRNAs which flanking introns contain
@@ -34,7 +34,7 @@
 #'
 #' # Get genome
 #' if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
-#' 
+#'
 #' genome <- BSgenome::getBSgenome("BSgenome.Hsapiens.UCSC.hg19")
 #'
 #' # Retrieve targets
@@ -48,9 +48,9 @@
 #'
 #' # Annotate repeats
 #'
-#'  repeats <- annotateRepeats(targets, annotationHubID  = "AH5122", 
+#'  repeats <- annotateRepeats(targets, annotationHubID  = "AH5122",
 #'  complementary = TRUE)
-#' 
+#'
 #' }
 #'
 #'
@@ -66,47 +66,48 @@
 #' @export
 annotateRepeats <-
     function(targets,
-        annotationHubID = "AH5122",
-        complementary = TRUE) {
+             annotationHubID = "AH5122",
+             complementary = TRUE) {
         if (length(targets) == 2 &
-                names(targets)[[1]] == "upGR") {
+            names(targets)[[1]] == "upGR") {
             # Create an empty list of 2 elements
             repeats <- vector("list", 2)
             names(repeats)[1] <- "upGR"
             names(repeats)[2] <- "downGR"
-
+            
         }  else {
             stop("target sequences not valid, only upstream and downtream GRs
                 are allowed.")
         }
-
+        
         ah <- AnnotationHub::AnnotationHub()
         rm <- ah[[annotationHubID]]
-
+        
         # Clean targets from NA value
         targets <- .cleanTargets(targets)
-
+        
         for (i in seq_along(repeats)) {
             # Create an empty list of 2 elements to store the extracted
             # information
             repeats[[i]] <- vector("list", 2)
             names(repeats[[i]])[1] <- "targets"
             names(repeats[[i]])[2] <- "repeats"
-
+            
             targetsToAnalyze <- targets[[i]]
-            overlaps <- .findOverlappingRepeats(rm, targetsToAnalyze)
+            overlaps <-
+                .findOverlappingRepeats(rm, targetsToAnalyze)
             repeats[[i]]$targets <- overlaps$targets
             repeats[[i]]$repeats <- overlaps$repeats
-
+            
         }
-
+        
         # Find repeats of the same family located in the upstream and
         # downstream genomic ranges and located on different strands
-
+        
         if (complementary) {
             repeats <- .getComplRepeats(repeats)
         }
-
+        
         return(repeats)
     }
 
@@ -115,87 +116,87 @@ annotateRepeats <-
 # The function getRepeatsColNames() returns the column names.
 .getRepeatsColNames <- function() {
     repeatsColumns <- c("id",
-        "name",
-        "chrom",
-        "start",
-        "end",
-        "width",
-        "strand",
-        "score")
+                        "name",
+                        "chrom",
+                        "start",
+                        "end",
+                        "width",
+                        "strand",
+                        "score")
     return(repeatsColumns)
-
+    
 }
 
 # The function getRepeatsColNames() returns complementary repeats.
 .getComplRepeats <- function(repeats) {
-
     upGRs <-
         base::cbind(repeats$upGR$repeats,
-            rep("up", nrow(repeats$upGR$repeats)))
+                    rep("up", nrow(repeats$upGR$repeats)))
     colnames(upGRs)[9] <- "gr"
     downGRs <-
         base::cbind(repeats$downGR$repeats,
-            rep("down", nrow(repeats$downGR$repeats)))
+                    rep("down", nrow(repeats$downGR$repeats)))
     colnames(downGRs)[9] <- "gr"
-
-
+    
+    
     # Report only instances where the same repeats (same family) is
     # present in the upstream and downstream genomic ranges and are
     # located on different strands.
     overlaps <-
         S4Vectors::findMatches(upGRs$id, downGRs$id, select = "all")
-    df <-
-        data.frame(upGRs[S4Vectors::queryHits(overlaps), ],
-            downGRs[S4Vectors::subjectHits(overlaps), ])
-
-    matchingRepeats <- df %>%
-        dplyr::group_by(.data$id) %>%
-        mutate_if(is.factor, as.character) %>%
-        dplyr::filter(.data$name == .data$name.1 &
-                .data$gr != .data$gr.1 &
-                .data$strand != .data$strand.1)
-
-
-    # if the repeats are found
-    if (nrow(matchingRepeats)) {
+    
+    if (length(overlaps) > 0) {
+        df <-
+            data.frame(upGRs[S4Vectors::queryHits(overlaps),],
+                       downGRs[S4Vectors::subjectHits(overlaps),])
+        
+        
+        matchingRepeats <- df %>%
+            dplyr::mutate_if(is.factor, as.character) %>%
+            dplyr::filter(
+                .data$name == .data$name.1 &
+                    .data$gr != .data$gr.1 &
+                    .data$strand != .data$strand.1
+            )
+        
         repeats$upGR$repeats <-
             matchingRepeats[, c(1, 2, 4, 5, 6, 7, 8)] %>%
             dplyr::arrange(.data$id)
-
+        
         repeats$upGR$targets <-
             repeats$upGR$targets %>%
             dplyr::filter(.data$id %in% unique(matchingRepeats$id)) %>%
             dplyr::arrange(.data$id)
-
-
+        
+        
         repeats$downGR$repeats <-
             matchingRepeats[, c(10, 11, 12, 13, 14, 15, 16, 17)] %>%
             stats::setNames(gsub(".1", "", names(.))) %>%
             dplyr::arrange(.data$id)
-
-
+        
+        
         repeats$downGR$targets <-
             repeats$downGR$targets %>%
             dplyr::filter(.data$id %in% unique(matchingRepeats$id)) %>%
             dplyr::arrange(.data$id)
-
+        
     } else {
         repeats[[1]]$repeats <-
             data.frame(matrix(nrow = 0, ncol = 8))
         colnames(repeats[[1]]$repeats) <-
             .getRepeatsColNames()
-
+        
         repeats[[2]]$repeats <-
             data.frame(matrix(nrow = 0, ncol = 8))
         colnames(repeats[[2]]$repeats) <-
             .getRepeatsColNames()
     }
-
+    
     return(repeats)
 }
 
 # Select the needed column and rename repeats data frame
-.renameRepeats <- function(repeats){
+.renameRepeats <- function(repeats) {
     repeats <- repeats %>%
         dplyr::select(
             .data$id,
@@ -215,8 +216,8 @@ annotateRepeats <-
             strand = .data$strand.1,
             score = .data$score
         )
-
-    repeats <- repeats[!duplicated(repeats), ]
+    
+    repeats <- repeats[!duplicated(repeats),]
     return(repeats)
 }
 
@@ -234,33 +235,33 @@ annotateRepeats <-
         strand.field = "strand",
         starts.in.df.are.0based = FALSE
     )
-
+    
     # Find Overlaps
     overlaps <-
         suppressWarnings(GenomicRanges::findOverlaps(rm, genRanges, ignore.strand =
-                TRUE))
+                                                         TRUE))
     if (length(overlaps) == 0) {
         # No genomic ranges in common
         repeats <- data.frame(matrix(nrow = 0, ncol = 8))
         colnames(repeats) <- .getRepeatsColNames()
-
-        targets <- targetsToAnalyze[NULL,]
-
+        
+        targets <- targetsToAnalyze[NULL, ]
+        
     } else{
         repeats <- data.frame(genRanges[S4Vectors::subjectHits(overlaps)],
-            rm[S4Vectors::queryHits(overlaps)])
+                              rm[S4Vectors::queryHits(overlaps)])
         repeats <- .renameRepeats(repeats)
-
+        
         # Keep only targets where a hit is found
         targets <-
-            repeats[S4Vectors::subjectHits(overlaps),] %>%
+            repeats[S4Vectors::subjectHits(overlaps), ] %>%
             dplyr::filter(!duplicated(.))
     }
-
+    
     overlaps <- vector("list", 2)
     names(overlaps)[1] <- "repeats"
     names(overlaps)[2] <- "targets"
-
+    
     overlaps$repeats <- repeats
     overlaps$targets <- targets
     return(overlaps)

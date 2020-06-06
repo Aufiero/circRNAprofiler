@@ -11,9 +11,9 @@ annotateRepeats(targets, annotationHubID = "AH5122", complementary = TRUE)
 It can be generated with \code{\link{getSeqsFromGRs}}.}
 
 \item{annotationHubID}{A string specifying the AnnotationHub id to use.
-Type data(ahRepeatMasker) to see all possibile options. E.g. if AH5122 is
-specified, repetitve elements from Homo sapiens, genome hg19 will be
-downloaded and annotated. Defult value is "AH5122".}
+Type data(ahRepeatMasker) to see all possible options. E.g. if AH5122 is
+specified, repetitive elements from Homo sapiens, genome hg19 will be
+downloaded and annotated. Default value is "AH5122".}
 
 \item{complementary}{A logical specifying whether to filter and report
 only back-spliced junctions of circRNAs which flanking introns contain
@@ -57,7 +57,7 @@ targets <- getSeqsFromGRs(
 
 # Annotate repeats
 
- repeats <- annotateRepeats(targets, annotationHubID  = "AH5122", 
+ repeats <- annotateRepeats(targets, annotationHubID  = "AH5122",
  complementary = TRUE)
 
 }
