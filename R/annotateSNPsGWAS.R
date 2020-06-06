@@ -20,8 +20,8 @@
 #' @param makeCurrent A logical specifying whether to download the
 #' current image of the GWAS catalog.  If TRUE is specified, the function
 #' \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
-#' package is used to get the more recent image. If FALSE is specified the
-#' image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.
+#' package is used to get the more recent image (slow). If FALSE is specified the
+#' image data(ebicat_37) or data(ebicat_38) are used. Default value is FALSE.
 #'
 #' @param pathToTraits A string containing the path to the traits.txt file.
 #' The file traits.txt contains diseases/traits specified by the user. It must
@@ -136,9 +136,9 @@ annotateSNPsGWAS <-
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
 
         } else{
-            #Load lifted over image
-            utils::data(ebicat37)
-            gwas <- ebicat37
+            #Load lifted over image.
+            utils::data(ebicat_b37) # Note probably deprecated
+            gwas <- ebicat_b37
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
 
@@ -157,9 +157,9 @@ annotateSNPsGWAS <-
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
 
         } else{
-            # Load image dated 3 August 2015
-            utils::data(ebicat38)
-            gwas <- ebicat38
+            # Load image dated 9 Sept 2020
+            utils::data(ebicat_b38)
+            gwas <- ebicat_b38
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
 

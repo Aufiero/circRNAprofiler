@@ -23,8 +23,8 @@ hg19 coordinates.}
 \item{makeCurrent}{A logical specifying whether to download the
 current image of the GWAS catalog.  If TRUE is specified, the function
 \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
-package is used to get the more recent image. If FALSE is specified the
-image data(ebicat37) or data(ebicat38) are used. Default value is FALSE.}
+package is used to get the more recent image (slow). If FALSE is specified the
+image data(ebicat_37) or data(ebicat_38) are used. Default value is FALSE.}
 
 \item{pathToTraits}{A string containing the path to the traits.txt file.
 The file traits.txt contains diseases/traits specified by the user. It must
