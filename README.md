@@ -30,7 +30,13 @@ BiocManager::install("circRNAprofiler")
 To download the latest development version on github use:
 
 ``` r
-BiocManager::install("Aufiero/circRNAprofiler")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("circRNAprofiler")
 ```
 
 ## Documentation

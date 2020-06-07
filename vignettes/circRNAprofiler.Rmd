@@ -73,7 +73,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)){
     
 ```
 
-The you can install circRNAprofiler using:
+You can install circRNAprofiler from Bioconductor using:
 ```{r, eval = FALSE}
 BiocManager::install("circRNAprofiler")
 ```
