@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2020-06-07" />
+<meta name="date" content="2020-06-09" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -365,7 +365,7 @@ summary {
 
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2020-06-07</h4>
+<h4 class="date">2020-06-09</h4>
 
 </div>
 
@@ -480,7 +480,7 @@ text-align: justify}
     </code></pre>
 <p>You can install circRNAprofiler from Bioconductor using:</p>
 <pre class="r"><code>BiocManager::install(&quot;circRNAprofiler&quot;)</code></pre>
-<p>To download the latest development version on github use:</p>
+<p>To download the latest development version use:</p>
 <pre class="r"><code># The following initializes usage of Bioc devel
 BiocManager::install(version=&#39;devel&#39;)
 
@@ -1291,6 +1291,8 @@ For each iteration, the number of total matches (canonical Watson-Crick (WC) + n
 <p>How to interpret the results? The user can select stringency criteria for miRNA binding prediction. For example by setting the function arguments totalMatches = 7 and maxNonCanonicalMatches = 1, one can retrieve only miRNA seed region binding sites with a number of total matches with the miRNA seed region equal to 7 of which only 1 can be a non-canonical match. In this case after running the analysis, totMatchesInSeed must be 7, if cwcMatchesInSeed is 4mer it means that there are 7 matches between the miRNA seed region binding site in the target sequence and the miRNA seed region, with 1 non-canonical match in the middle of alignment, that is: there are 4 continuous WC matches (4mer), 1 non-canonical match and 2 continuous WC matches, for a total of 7.</p>
 <p>Furthemore, for the selected site, let’s assume that for the central and compensatory region, the maximum number of matches found with the target sequence is 4 for both of them. In this case if totMatchesInCentral is 4 but cwcMatchesInCentral is 3 it means that there are 3 continuous WC matches with 1 non-canonical match, for a total of 4. Alternatively if totMatchesInCentral is 3 but cwcMatchesInCentral is 2 it means that there are 2 continuous WC matches, 1 non-canonical match for a total of 3 and 1 gap. The same rule is valid for totMatchesInCompensatory and cwcMatchesInCompensatory.</p>
 <p>The miRNA analysis starts at position 30 of the circRNA sequence to allow the analysis of the complementary and 3’ supplementary region of the miRNA that have to be aligned with the region located backwards the selected miRNA seed region binding site. The 30 nucleotides skipped in the initial phase are analyzed in the final phase together with the back-spliced junction. The computational time increases with the number of sequences and miRNAs to analyze. To reduce false positives and computational time we suggest making a selection on miRNAs, e.g.  use only miRNAs expressed in the tissues of interest.</p>
+<p>NOTE:</p>
+<p>It might be that the URL of miRBase database from which the miR sequences are retrieved can not be reached, in that case an error message will be printed and the analysis will stop. To proceed with the analysis set miRBaseLatestRelease to FALSE. If FALSE is specified then a file named mature.fa containing fasta format sequences of all mature miRNA sequences previously downloaded by the user from miRBase must be present in the working directory (e.g. projectCirc). The mature.fa will be read automatically by the module and used to extract the needed miR sequences.</p>
 <p>Type ?getMiRsites for more information about the arguments of the function and its example.</p>
 <pre class="r"><code># If you want to analysis only a subset of miRs, then specify the miR ids in 
 # miRs.txt (optional).
@@ -1356,7 +1358,7 @@ p</code></pre>
 <h4><em>annotateSNPsGWAS()</em></h4>
 <p>The function annotateSNPsGWAS() can be used to annotate the GWAS SNPs located in the regions flanking the back-spliced junctions of each circRNA. SNPs information including the corresponding genomic coordinates are retrieved from the GWAs catalog database. The genomic coordinates of the GWAS SNPs are overlapped with the genomic coordinates of the target sequences. This is possible only for the human genome. An empty list is returned if none overlapping SNPs are found.</p>
 <p>Type ?annotateSNPsGWAS for more information about the arguments of the function and its example.</p>
-<pre class="r"><code>  snpsGWAS &lt;-
+<pre class="r"><code>snpsGWAS &lt;-
     annotateSNPsGWAS(targetsFTS_gr, assembly = &quot;hg19&quot;, makeCurrent = TRUE)
   </code></pre>
 </div>
@@ -1401,25 +1403,25 @@ p</code></pre>
 ## [5] LC_TIME=English_United States.1252    
 ## 
 ## attached base packages:
-##  [1] grid      parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
+##  [1] grid      stats4    parallel  stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.3 BSgenome_1.57.0                   rtracklayer_1.49.3               
-##  [4] Biostrings_2.57.1                 XVector_0.29.1                    gridExtra_2.3                    
-##  [7] VennDiagram_1.6.20                futile.logger_1.4.3               ggpubr_0.3.0                     
-## [10] ggplot2_3.3.1                     circRNAprofiler_1.3.4             citr_0.3.2                       
-## [13] knitr_1.28                        GenomicRanges_1.41.3              GenomeInfoDb_1.25.1              
-## [16] IRanges_2.23.7                    S4Vectors_0.27.11                 BiocGenerics_0.35.3              
-## [19] gwascat_2.21.0                   
+##  [1] gridExtra_2.3                     VennDiagram_1.6.20                futile.logger_1.4.3              
+##  [4] ggpubr_0.3.0                      ggplot2_3.3.1                     citr_0.3.2                       
+##  [7] knitr_1.28                        circRNAprofiler_1.3.6             BSgenome.Hsapiens.UCSC.hg19_1.4.3
+## [10] BSgenome_1.57.0                   rtracklayer_1.49.3                Biostrings_2.57.1                
+## [13] XVector_0.29.1                    GenomicRanges_1.41.4              GenomeInfoDb_1.25.1              
+## [16] IRanges_2.23.8                    S4Vectors_0.27.11                 BiocGenerics_0.35.4              
+## [19] gwascat_2.21.3                   
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] R.utils_2.9.2                 tidyselect_1.1.0              RSQLite_2.2.0                
 ##   [4] AnnotationDbi_1.51.0          BiocParallel_1.23.0           munsell_0.5.0                
 ##   [7] miniUI_0.1.1.1                withr_2.2.0                   colorspace_1.4-1             
 ##  [10] Biobase_2.49.0                highr_0.8                     rstudioapi_0.11              
-##  [13] ggsignif_0.6.0                gbRd_0.4-11                   Rdpack_0.11-1                
-##  [16] labeling_0.3                  GenomeInfoDbData_1.2.3        bit64_0.9-7                  
-##  [19] farver_2.0.3                  rprojroot_1.3-2               vctrs_0.3.0                  
+##  [13] ggsignif_0.6.0                gbRd_0.4-11                   labeling_0.3                 
+##  [16] Rdpack_0.11-1                 GenomeInfoDbData_1.2.3        farver_2.0.3                 
+##  [19] bit64_0.9-7                   rprojroot_1.3-2               vctrs_0.3.1                  
 ##  [22] treeio_1.13.0                 generics_0.0.2                lambda.r_1.2.4               
 ##  [25] xfun_0.14                     BiocFileCache_1.13.0          ggseqlogo_0.1                
 ##  [28] R6_2.4.1                      locfit_1.5-9.4                bitops_1.0-6                 
@@ -1427,13 +1429,13 @@ p</code></pre>
 ##  [34] scales_1.1.1                  gtable_0.3.0                  processx_3.4.2               
 ##  [37] rlang_0.4.6                   genefilter_1.71.0             splines_4.0.0                
 ##  [40] rstatix_0.5.0                 lazyeval_0.2.2                broom_0.5.6                  
-##  [43] BiocManager_1.30.10           yaml_2.2.1                    reshape2_1.4.4               
-##  [46] abind_1.4-5                   GenomicFeatures_1.41.0        backports_1.1.7              
-##  [49] httpuv_1.5.3.1                tools_4.0.0                   ellipsis_0.3.1               
+##  [43] abind_1.4-5                   BiocManager_1.30.10           yaml_2.2.1                   
+##  [46] reshape2_1.4.4                GenomicFeatures_1.41.0        backports_1.1.7              
+##  [49] httpuv_1.5.4                  tools_4.0.0                   ellipsis_0.3.1               
 ##  [52] RColorBrewer_1.1-2            Rcpp_1.0.4.6                  plyr_1.8.6                   
 ##  [55] progress_1.2.2                zlibbioc_1.35.0               purrr_0.3.4                  
 ##  [58] RCurl_1.98-1.2                ps_1.3.3                      prettyunits_1.1.1            
-##  [61] openssl_1.4.1                 cowplot_1.0.0                 universalmotif_1.7.3         
+##  [61] openssl_1.4.1                 cowplot_1.0.0                 universalmotif_1.7.7         
 ##  [64] SummarizedExperiment_1.19.4   haven_2.3.1                   magrittr_1.5                 
 ##  [67] data.table_1.12.8             futile.options_1.0.1          openxlsx_4.1.5               
 ##  [70] matrixStats_0.56.0            pkgload_1.1.0                 hms_0.5.3                    
@@ -1441,13 +1443,13 @@ p</code></pre>
 ##  [76] xtable_1.8-4                  XML_3.99-0.3                  rio_0.5.16                   
 ##  [79] readxl_1.3.1                  testthat_2.3.2                compiler_4.0.0               
 ##  [82] biomaRt_2.45.0                tibble_3.0.1                  crayon_1.3.4                 
-##  [85] R.oo_1.23.0                   htmltools_0.4.0               later_1.0.0                  
+##  [85] R.oo_1.23.0                   htmltools_0.4.0               later_1.1.0.1                
 ##  [88] tidyr_1.1.0                   geneplotter_1.67.0            aplot_0.0.4                  
 ##  [91] DBI_1.1.0                     formatR_1.7                   dbplyr_1.4.4                 
 ##  [94] MASS_7.3-51.5                 rappdirs_0.3.1                Matrix_1.2-18                
 ##  [97] ade4_1.7-15                   car_3.0-8                     readr_1.3.1                  
 ## [100] cli_2.0.2                     R.methodsS3_1.8.0             forcats_0.5.0                
-## [103] pkgconfig_2.0.3               rvcheck_0.1.8                 GenomicAlignments_1.25.1     
+## [103] pkgconfig_2.0.3               rvcheck_0.1.8                 GenomicAlignments_1.25.2     
 ## [106] foreign_0.8-78                ggtree_2.3.0                  annotate_1.67.0              
 ## [109] bibtex_0.4.2.2                stringr_1.4.0                 digest_0.6.25                
 ## [112] rmarkdown_2.2                 cellranger_1.1.0              tidytree_0.3.3               

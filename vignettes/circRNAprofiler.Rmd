@@ -78,7 +78,7 @@ You can install circRNAprofiler from Bioconductor using:
 BiocManager::install("circRNAprofiler")
 ```
 
-To download the latest development version on github use:
+To download the latest development version use:
 ```{r, eval = FALSE}
 # The following initializes usage of Bioc devel
 BiocManager::install(version='devel')
@@ -1416,6 +1416,17 @@ increases with the number of sequences and miRNAs to analyze. To reduce false
 positives and computational time we suggest making a selection on miRNAs, e.g. 
 use only miRNAs expressed in the tissues of interest.
 
+NOTE:
+
+It might be that the URL of miRBase database from which the miR sequences are 
+retrieved can not be reached, in that case an error message will be printed and 
+the analysis will stop. To proceed with the analysis set miRBaseLatestRelease
+to FALSE. If FALSE is specified then a file named mature.fa containing fasta format
+sequences of all mature miRNA sequences previously downloaded by the user from 
+miRBase must be present in the working directory (e.g. projectCirc). 
+The mature.fa will be read automatically by the module and used to extract the 
+needed miR sequences. 
+
 Type ?getMiRsites for more information about the arguments of the function 
 and its example.
 
@@ -1511,7 +1522,7 @@ Type ?annotateSNPsGWAS for more information about the arguments of the function
 and its example.
 
 ```{r, eval = FALSE}
-  snpsGWAS <-
+snpsGWAS <-
     annotateSNPsGWAS(targetsFTS_gr, assembly = "hg19", makeCurrent = TRUE)
   
 ```
