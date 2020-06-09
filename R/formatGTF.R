@@ -1,6 +1,12 @@
 # Satisfy R CMD check
+
+# data ebicat37 and ebicat38 from gwascat package are deprecated.
+# if (getRversion() >= "3.1.0")
+#     utils::globalVariables(c(
+#         "gwascat", ".", "ebicat37","ebicat38")) 
+
 if (getRversion() >= "3.1.0")
-    utils::globalVariables(c("gwascat", ".", "ebicat_b38","ebicat_b37"))
+    utils::globalVariables(".")
 
 
 #' @title Format annotation file
@@ -58,10 +64,14 @@ formatGTF <- function(pathToGTF = NULL) {
                 as.data.frame()
         }
 
-        # For ensamble and ncbi the "chr" needs to be added to the chromosome number
+        # For ensemble and ncbi the "chr" needs to be added to the chromosome number
         if (is.na(stringr::str_extract(formattedGTF$chrom[1], "chr"))) {
             formattedGTF$chrom <- paste0("chr", formattedGTF$chrom)
         }
+        # Report mitocondrial chromosome as chrM (like in BSgenome) and not chrMT. 
+        formattedGTFfinal <- formattedGTF %>%
+            dplyr::mutate(
+                chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
     } else{
         formattedGTF <- data.frame()
         cat("Specify path to GTF file.\n")

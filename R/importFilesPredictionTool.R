@@ -53,7 +53,9 @@ importMapSplice <- function(pathToFile) {
             strand = substring(importedPatientCircTable$strand, 2),
             gene = unlist(lapply(.data$gene, function(x)
                 base::strsplit(x, ",")[[1]][1]))
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
 
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
@@ -165,7 +167,9 @@ importNCLscan <- function(pathToFile) {
             .data$endDownBSE,
             # back-spliced junction coordinate
             .data$coverage
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
 
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
@@ -268,7 +272,9 @@ importCircExplorer2 <- function(pathToFile) {
             endDownBSE = .data$end,
             # back-spliced junction coordinate
             coverage = .data$readNumber
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
 
 
     # Generate a unique identifier
@@ -380,7 +386,9 @@ importKnife <- function(pathToFile) {
             endDownBSE = .data$splice_position2,
             # back-spliced junction coordinate
             coverage = .data$readNumber
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -490,7 +498,9 @@ importOther <- function(pathToFile) {
             .data$endDownBSE,
             # back-spliced junction
             .data$coverage
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -561,7 +571,9 @@ importCircMarker <- function(pathToFile, gtf) {
             endDownBSE = .data$end,
             # back-spliced junction coordinate
             .data$coverage
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
@@ -639,7 +651,9 @@ importUroborus <- function(pathToFile) {
             endDownBSE = .data$end_of_junction,
             # back-spliced junction coordinate
             coverage = .data$read_counts
-        )
+        )%>%
+        dplyr::mutate(
+            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 

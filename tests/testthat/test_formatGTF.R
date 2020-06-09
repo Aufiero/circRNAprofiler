@@ -46,5 +46,7 @@ test_that("formatGTF() generates the correct data structure", {
     expect_equal(class(gtf$strand), "character")
     expect_equal(class(gtf$exon_number), "numeric")
 
+    
+    # Check for chromosome MT
 
 })
