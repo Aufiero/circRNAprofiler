@@ -17,7 +17,7 @@
 #'
 #' @param miRBaseLatestRelease A logical specifying whether to download the
 #' latest release of the mature sequences of the microRNAs from miRBase
-#' (\url{http://www.mirbase.org/ftp.shtml}). If TRUE is specifed then the
+#' (\url{http://www.mirbase.org/ftp.shtml}). If TRUE is specified then the
 #' latest release is automatically downloaded. If FALSE is specified then a
 #' file named mature.fa containing fasta format sequences of all mature miRNA
 #' sequences previously downloaded by the user from mirBase must be present
@@ -71,13 +71,13 @@
 #' # Screen target sequence for miR binding sites.
 #' pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 #'
-#' miRsites <- getMiRsites(
-#'    targets,
-#'    miRspeciesCode = "hsa",
-#'    miRBaseLatestRelease = TRUE,
-#'    totalMatches = 6,
-#'    maxNonCanonicalMatches = 1,
-#'    pathToMiRs )
+#' #miRsites <- getMiRsites(
+#' #   targets,
+#' #   miRspeciesCode = "hsa",
+#' #   miRBaseLatestRelease = TRUE,
+#' #   totalMatches = 6,
+#' #   maxNonCanonicalMatches = 1,
+#' #   pathToMiRs )
 #' }
 #' 
 #'
@@ -215,9 +215,18 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
 .getMiRsFromMiRBase <- function(miRBaseLatestRelease = TRUE){
 
     if (miRBaseLatestRelease) {
+        url<-"ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz"
+
         miRBase <-
-            readr::read_tsv("ftp://mirbase.org/pub/mirbase/CURRENT/mature.fa.gz",
-                col_names = FALSE)
+            tryCatch(
+            readr::read_tsv(url, col_names = FALSE), error = function(e) NULL)
+        if(is.null(miRBase)){
+            stop(
+                "Unable to establish a connection with mirbase.org.
+                Try later."
+            )
+        }
+
     } else if (file.exists("mature.fa")) {
         miRBase <-
             utils::read.table(
@@ -235,6 +244,7 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
         )
     }
 
+   
     colnames(miRBase)[1] <- "seq"
 
     firstChar <- base::substr(miRBase$seq[1], 1, 1)

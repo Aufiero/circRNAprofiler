@@ -25,7 +25,7 @@ in miRBase 22 release. Default value is "hsa".}
 
 \item{miRBaseLatestRelease}{A logical specifying whether to download the
 latest release of the mature sequences of the microRNAs from miRBase
-(\url{http://www.mirbase.org/ftp.shtml}). If TRUE is specifed then the
+(\url{http://www.mirbase.org/ftp.shtml}). If TRUE is specified then the
 latest release is automatically downloaded. If FALSE is specified then a
 file named mature.fa containing fasta format sequences of all mature miRNA
 sequences previously downloaded by the user from mirBase must be present
@@ -87,13 +87,13 @@ targets <- getCircSeqs(
 # Screen target sequence for miR binding sites.
 pathToMiRs <- system.file("extdata", "miRs.txt", package="circRNAprofiler")
 
-miRsites <- getMiRsites(
-   targets,
-   miRspeciesCode = "hsa",
-   miRBaseLatestRelease = TRUE,
-   totalMatches = 6,
-   maxNonCanonicalMatches = 1,
-   pathToMiRs )
+#miRsites <- getMiRsites(
+#   targets,
+#   miRspeciesCode = "hsa",
+#   miRBaseLatestRelease = TRUE,
+#   totalMatches = 6,
+#   maxNonCanonicalMatches = 1,
+#   pathToMiRs )
 }
 
 
