@@ -19,9 +19,11 @@
 #'
 #' @param makeCurrent A logical specifying whether to download the
 #' current image of the GWAS catalog.  If TRUE is specified, the function
-#' \code{\link[gwascat]{makeCurrentGwascat}} from the \code{\link{gwascat}}
-#' package is used to get the more recent image (slow). If FALSE is specified the
-#' image data(ebicat_37) or data(ebicat_38) are used. Default value is FALSE.
+#' \code{\link[gwascat]{makeCurrentGwascat}} from the gwascat package is used 
+#' to get the more recent image (slow). Default value is TRUE.
+#' If FALSE is specified the image data(ebicat37) or data(ebicat38) are used.
+#' NOTE: This second option is not available anymore since data(ebicat37) or
+#' data(ebicat38) from gwascat are deprecated.  
 #'
 #' @param pathToTraits A string containing the path to the traits.txt file.
 #' The file traits.txt contains diseases/traits specified by the user. It must
@@ -56,12 +58,12 @@
 #'     type = "ie"
 #'     )
 #'
-#' # Annotate GWAS SNPs
-#' 
-#' snpsGWAS <- annotateSNPsGWAS(targets, assembly = "hg19")
-#' 
+#' # Annotate GWAS SNPs - slow
+#'
+#' #snpsGWAS <- annotateSNPsGWAS(targets, makeCurrent = TRUE, assembly = "hg19")
+#'
 #' }
-#' 
+#'
 #'
 #' @import dplyr
 #' @importFrom gwascat makeCurrentGwascat
@@ -78,40 +80,40 @@
 #' @export
 annotateSNPsGWAS <-
     function(targets,
-        assembly = "hg19",
-        makeCurrent = FALSE,
-        pathToTraits = NULL) {
+             assembly = "hg19",
+             makeCurrent = TRUE,
+             pathToTraits = NULL) {
         options(readr.num_columns = 0)
-
+        
         # Create a snpsGWAS list
         snpsGWAS <- .createSNPsGWASlist(targets)
         # Retrieve SNPs from the GWAS catalog
-        gwas <- .getGWAS(assembly, makeCurrent)
+        gwas <- .getGWAS(assembly, makeCurrent = TRUE)
         # Read traits.txt
         traitsFromFile <- .readTraits(pathToTraits)
         # Check if there there are traits
         if (nrow(traitsFromFile) > 0) {
             gwas <- gwascat::subsetByTraits(gwas, tr = traitsFromFile$id)
-
+            
         } else{
             cat("traits.txt is empty or absent. All
                 traits in the GWAS catalog will be analyzed")
         }
         # Clean targets from NA value
         targets <- .cleanTargets(targets)
-
+        
         for (i in seq_along(snpsGWAS)) {
             # Create an empty list of 2 elements to store the extracted
             # information
             snpsGWAS[[i]] <- vector("list", 2)
             names(snpsGWAS[[i]])[1] <- "targets"
             names(snpsGWAS[[i]])[2] <- "snps"
-
+            
             targetsToAnalyze <- targets[[i]]
             overlaps <- .findOverlappingSNPs(gwas, targetsToAnalyze)
             snpsGWAS[[i]]$targets <- overlaps$targets
             snpsGWAS[[i]]$snps <- overlaps$snps
-
+            
         }
         return(snpsGWAS)
     }
@@ -120,7 +122,7 @@ annotateSNPsGWAS <-
 
 # Get GWAS SNPs
 .getGWAS <- function(assembly = "hg19",
-    makeCurrent = FALSE) {
+                     makeCurrent = TRUE) {
     if (assembly == "hg19") {
         if (makeCurrent) {
             gwas <- suppressWarnings(tryCatch(
@@ -131,17 +133,21 @@ annotateSNPsGWAS <-
         } else{
             gwas <- NULL
         }
-
+        
         if (!is.null(gwas)) {
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
-
+            
         } else{
+            stop(
+                "makeCurrentGwascat is unable to establish a connection with EBI/EMBL.
+                Try later."
+            )
             #Load lifted over image.
-            utils::data(ebicat_b37) # Note probably deprecated
-            gwas <- ebicat_b37
-            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
+            # utils::data(ebicat37) # Note:  deprecated
+            # gwas <- ebicat37
+            # GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
-
+        
     } else if (assembly == "hg38") {
         if (makeCurrent) {
             gwas <- suppressWarnings(tryCatch(
@@ -152,17 +158,21 @@ annotateSNPsGWAS <-
         } else{
             gwas <- NULL
         }
-
+        
         if (!is.null(gwas)) {
             GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
-
+            
         } else{
+            stop(
+                "makeCurrentGwascat is unable to establish a connection with EBI/EMBL.
+                Try later."
+            )
             # Load image dated 9 Sept 2020
-            utils::data(ebicat_b38)
-            gwas <- ebicat_b38
-            GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
+            # utils::data(ebicat38) # Note:  deprecated
+            # gwas <- ebicat38
+            # GenomeInfoDb::seqlevelsStyle(gwas) <- "UCSC"
         }
-
+        
     } else {
         stop("Possible genome assembly: hg19, hg38")
     }
@@ -174,17 +184,17 @@ annotateSNPsGWAS <-
 # Create a snpsGWAS list
 .createSNPsGWASlist <- function(targets) {
     if (length(targets) == 2 &
-            names(targets)[[1]] == "upGR") {
+        names(targets)[[1]] == "upGR") {
         # Create an empty list of 2 elements
         snpsGWAS <- vector("list", 2)
         names(snpsGWAS)[1] <- "upGR"
         names(snpsGWAS)[2] <- "downGR"
-
+        
     }  else {
         stop("target sequences not valid, only upstream and downtream
             GRs are allowed.")
     }
-
+    
     return(snpsGWAS)
 }
 
@@ -206,12 +216,12 @@ annotateSNPsGWAS <-
         "pubmedID",
         "study"
     )
-
+    
     return(colNames)
 }
 
 # Select the needed column and rename snps data frame
-.renameSNPsGWAS <- function(snps){
+.renameSNPsGWAS <- function(snps) {
     snps <- snps %>%
         dplyr::select(
             .data$id,
@@ -247,8 +257,7 @@ annotateSNPsGWAS <-
 
 # Find the overlapping gwas snps
 .findOverlappingSNPs <- function(gwas, targetsToAnalyze) {
-
-     # Make GR objects
+    # Make GR objects
     genRanges <- GenomicRanges::makeGRangesFromDataFrame(
         targetsToAnalyze,
         keep.extra.columns = TRUE,
@@ -260,35 +269,37 @@ annotateSNPsGWAS <-
         strand.field = "strand",
         starts.in.df.are.0based = FALSE
     )
-
+    
     overlappingGRs <-
         suppressWarnings(GenomicRanges::findOverlaps(gwas, genRanges, ignore.strand = TRUE))
-
+    
     if (length(overlappingGRs) == 0) {
         # No genomic ranges in common
         snps <-  data.frame(matrix(nrow = 0, ncol = 11))
         colnames(snps) <- .getSNPsGWASColNames()
-
-        targets <- targetsToAnalyze[NULL, ]
-
+        
+        targets <- targetsToAnalyze[NULL,]
+        
     } else{
-        snps <- data.frame(genRanges[S4Vectors::subjectHits(overlappingGRs)],
-                gwas[S4Vectors::queryHits(overlappingGRs)])
+        snps <-
+            data.frame(genRanges[S4Vectors::subjectHits(overlappingGRs)],
+                       gwas[S4Vectors::queryHits(overlappingGRs)])
         snps <- .renameSNPsGWAS(snps)
-
+        
         # Keep only targets where a hit is found
-        targets <- targetsToAnalyze[S4Vectors::subjectHits(overlappingGRs), ] %>%
+        targets <-
+            targetsToAnalyze[S4Vectors::subjectHits(overlappingGRs),] %>%
             dplyr::filter(!duplicated(.)) %>%
             dplyr::arrange(.data$id)
     }
-
+    
     overlaps <- vector("list", 2)
     names(overlaps)[1] <- "snps"
     names(overlaps)[2] <- "targets"
-
+    
     overlaps$snps <- snps
     overlaps$targets <- targets
-
+    
     return(overlaps)
 }
 
