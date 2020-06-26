@@ -65,7 +65,7 @@ Version 1.2.0 (April 27, 2020)
 
 Second release on bioconductor
 
-Version 1.2.2 (development version) (May 12, 2020)
-==================================================
+Version 1.3.1 (development version)
+===================================
 
-Added reference to cite the paper
+Added files to fix bugs
