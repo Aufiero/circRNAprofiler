@@ -104,6 +104,7 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
         miRsites <- .createMiRsitesList(targets, microRNAs)
         # Scan the target sequences, by using a sliding windows of 1
         for (i in seq_along(miRsites$targets$id)) {
+            cat(paste0('\nAnalysing: ', miRsites$targets$id[i]))
             analysisStart <- 30
             circSeq <- miRsites$targets$seq[i]
             circLen <- miRsites$targets$length[i]
@@ -122,7 +123,7 @@ getMiRsites <- function(targets, miRspeciesCode = "hsa",
                             indexTargetSeq,
                             mirSeq,
                             maxNonCanonicalMatches)
-                    # Retrive all info if seedMatches are found
+                    # Retrieve all info if seedMatches are found
                     if (nrow(seedMatches) != 0) {
                         if (seedMatches$maxTotalMatches >= totalMatches) {
                             tempDF[k, ] <- .createMiRsitesTempDF()

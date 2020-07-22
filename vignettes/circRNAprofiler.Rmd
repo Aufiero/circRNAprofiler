@@ -284,17 +284,23 @@ the files to circRNAs_X.txt and put them in the corresponding subfolder.
 A specific import function will be called internally to adapt and format the 
 content as reported below.
 
+In detail circRNAprofiler has been tested on the following output files:
+MapSplice2-v2.2.0 output file (circularRNAs.txt),NCLscan v1.4 output file 
+(e.g. MyProject.result),circExplorer2 v2.3.4 output file (circularRNA_full.txt),
+KNIFE v1.5 output file (circJuncProbs.txt),,CircMarker (July.24.2018) output file 
+(Brief_sum.txt),UROBORUS v2.0.0 output file (circRNA_list.txt).
+
 If the tool is not mapsplice, nclscan, knife, circexplorer2, uroborus or 
 circmarker, first check that the tool used is an annotation-based circRNA 
 detection tool, then rename the files to circRNAs_X.txt and put them in the 
 subfolder "other".  In this last case, you must ensure that each circRNAs_X.txt
 file must have at least the following 6 columns with the header (tab separated):
 
+- chrom: represents the chromosome from which the circRNA is derived.
+
 - gene: represents the gene from which the circRNA arises.
 
 - strand: is the strand where the gene is transcribed.
-
-- chrom: represents the chromosome from which the circRNA is derived.
 
 - startUpBSE: is the 5' coordinate of the upstream 
 back-spliced exon in the transcript. This corresponds with the back-spliced junction / 
@@ -306,6 +312,19 @@ donor site.
 
 - coverage: corresponds to the number of reads mapping to the 
 back-spliced junction in the sample. 
+
+E.g.
+```{r, echo=FALSE}
+circRNApredictions <-
+    read.table(
+        "circRNAs_test.txt",
+        header = TRUE,
+        stringsAsFactors = TRUE,
+        sep = "\t"
+    )
+head(circRNApredictions)
+
+```
 
 NOTE:
 If more columns are present they will be discared.
@@ -319,19 +338,6 @@ further import functions specifically designed to import the output files of
 the different circRNA detection tools. At the moment only import functions for
 circRNA detection from annotation-based circRNA detection tools (e.g. MapSplice2,
 NCLscan, CircMarker, CircExplorer2, KNIFE, UROBORUS) are supported.
-
-```{r, echo=FALSE}
-circRNApredictions <-
-    read.table(
-        "circRNAs_test.txt",
-        header = TRUE,
-        stringsAsFactors = TRUE,
-        sep = "\t"
-    )
-head(circRNApredictions)
-
-```
-
 
 
 <span style="color:red">For example purpose a project folder named **projectCirc** 
@@ -365,7 +371,7 @@ generated and can be use for example purpose.</span>
 
 The function checkProjectFolder() helps to verify that the project folder is 
 set up correctly.  It checks that the mandatory files 
-( .gtf file, the folders with the circRNAs_X.txt files and experiemnt.txt)
+( .gtf file, the folders with the circRNAs_X.txt files and experiment.txt)
 are present in the working directory.
 
 ```{r, eval = FALSE}
@@ -410,6 +416,7 @@ sample.
 
 Type ?getBackSplicedJunctions for more information about the arguments of the 
 function and its example.
+
 
 ```{r}
 # Set working directory to projectCirc which contains a short version of the raw
@@ -1424,6 +1431,9 @@ increases with the number of sequences and miRNAs to analyze. To reduce false
 positives and computational time we suggest making a selection on miRNAs, e.g. 
 use only miRNAs expressed in the tissues of interest.
 
+Th run time to analyze 1 circRNA sequence of length ~1700 nt for the presence of
+360 miRs, is ~4h 20m.
+
 NOTE:
 
 It might be that the URL of miRBase database from which the miR sequences are 
@@ -1442,8 +1452,7 @@ and its example.
 # If you want to analysis only a subset of miRs, then specify the miR ids in 
 # miRs.txt (optional).
 # If miRs.txt is not present in your working directory specify pathToMiRs.
-# As default miRs.txt is searched in the wd. 
-
+# As default miRs.txt is searched in the wd. 11:04
 miRsites <-
     getMiRsites(
         targetsFTS_circ,
@@ -1452,7 +1461,6 @@ miRsites <-
         totalMatches = 6,
         maxNonCanonicalMatches = 1
     )
-  
 ```
 
 #### _rearrageMiRres()_

@@ -168,7 +168,7 @@ checkProjectFolder <-
 
     } else{
         cat(
-            "Missing miRs.txt file.
+            "Missing or empty miRs.txt file.
             Optional file. If absent or empty all miRNAs of the
             specified species will be analyzed\n"
         )
