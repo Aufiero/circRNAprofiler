@@ -63,9 +63,17 @@ Version 1.1.14 (development version) (Jen 09, 2020)
 Version 1.2.0 (April 27, 2020)
 ==============================
 
-Second release on bioconductor
+-   Second release on bioconductor
 
 Version 1.3.1 (development version)
 ===================================
 
-Added files to fix bugs
+-   Added files to fix bugs
+
+Version 1.4.0 (October 27, 2020)
+================================
+
+-   Third release on bioconductor
+
+Version 1.5.1 (development version)
+===================================
