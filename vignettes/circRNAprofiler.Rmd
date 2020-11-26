@@ -14,7 +14,6 @@ vignette: >
 
 ```{r, global_options, include = FALSE}
 library(knitr)
-library(citr)
 knitr::opts_chunk$set(fig.path='figs/', warning=FALSE, message=FALSE, collapse=TRUE)
 source("render_toc.R")
 ```
