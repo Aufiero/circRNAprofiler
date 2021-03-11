@@ -58,7 +58,7 @@ NOTE: Since different detection tools can report sligtly different coordinates
 before grouping the back-spliced junctions, it is possible to fix the latter
 using the gtf file. In this way the back-spliced junctions coordinates will
 correspond to the exon coordinates reported in the gtf file. A difference of
-nucleodites is allowed between the bsj and exon coordinates.
+maximum 2 nucleodites is allowed between the bsj and exon coordinates.
 See param fixBSJsWithGTF.
 }
 \examples{
