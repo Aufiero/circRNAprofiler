@@ -4,7 +4,7 @@ output: md_document
 
 # Version 1.0.0 (Oct 29, 2019)
 
-First release on bioconductor
+*   First release on bioconductor
 
 # Version 1.1.2 (development version) (Dic 15, 2019)
 
@@ -71,6 +71,6 @@ the normalization.
 *   Third release on bioconductor
 
 
-# Version 1.5.1 (development version)
+# Version 1.5.3 (development version)
 
-
+*   Removed citr package from DESCRIPTION
