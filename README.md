@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![HitCount](http://hits.dwyl.io/Aufiero/circRNAprofiler.svg)](http://hits.dwyl.io/Aufiero/circRNAprofiler)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FAufiero%2FcircRNAprofiler&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 # circRNAprofiler: an R-based computational framework for the downstream analysis of circular RNAs
 
@@ -18,7 +18,8 @@ which facilitate the interpretation of the results.
 
 ## Installation
 
-You can install circRNAprofiler from Bioconductor using:
+You can install the latest release of circRNAprofiler from Bioconductor
+using:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -27,7 +28,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("circRNAprofiler")
 ```
 
-To download the latest development version on github use:
+To install the latest development version use:
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
