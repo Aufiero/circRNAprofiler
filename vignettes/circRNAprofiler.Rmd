@@ -1332,19 +1332,21 @@ The function getMirSites() searches miRNA binding sites within circRNA sequences
 Briefly, circRNAprofiler queries the miRBase database
 and retrieves the miRNA sequences which are subsequently reversed (3'->5'). 
 Each circRNA sequence is then scanned using a sliding window of 1, for the 
-presence of putative matches with the miRNA seed sequence.  
-For each iteration, the number of total matches (canonical Watson-Crick (WC) + 
-non-canonical matches), continuous canonical WC matches and non-canonical matches
-between the 2 given sequences (miRNA seed region and  miRNA seed region binding
-sites) are retrieved. A WC match occurs when adenosine (A) pairs with uracil (U) 
-and guanine (G) pairs with cytosine (C). A perfect seed match has no gaps in 
-alignment within the WC matching. A non-canonical match occurs when a G matches
-with U. A mismatch occurs when there is a gap in one of the two sequences 
-(asymmetric mismatch) or in the following cases (symmetric mismatch): 
-A-G or A-C or U-C. Only miRNA seed region binding sites that meet specific 
-matching requirements are collected and reported in the final
-output. Of those binding sites, additional features are also reported. These 
-features are the number of matches found between the target sequences and the 
+presence of putative matches with the miRNA seed sequence.  For each iteration, the number of 
+total matches (canonical Watson-Crick (WC) + non-canonical matches), continuous 
+canonical WC matches and non-canonical matches between the 2 given sequences 
+(miRNA seed region and  miRNA seed region binding sites) are reported. circRNAprofiler 
+compares the 2 sequences without gap and by introducing a gap in each position 
+of one of the 2 sequences at the time to find a better alignment. 
+A WC match occurs when adenosine (A) pairs with uracil (U)and guanine (G) pairs 
+with cytosine (C). A perfect seed match has no gaps in alignment within the WC matching.
+A non-canonical match occurs when a G matches with U. A mismatch occurs when there 
+is a gap in one of the two aligned sequences (asymmetric mismatch or buldge)
+or in the following cases (symmetric mismatch): A-G or A-C or U-C. Once the alignment is
+performed and the number of matches collected, miRNA seed region binding sites are filtered 
+based on the input settings and reported in the final output.
+Of those binding sites, additional features are also reported.
+These features are the number of matches found between the target sequences and the 
 central and supplementary regions of the miRNA. Information about the nucleotide
 at position 1 (t1), that is the nucleotide in the target sequence that matches 
 with the nucleotide number 1 of the miRNA sequence.  Finally, the percentage of

@@ -419,7 +419,7 @@ createMiRsitesInternalDF <- function(miRsites, microRNAs) {
     i <- 1
     # seq2Char and seq1Char have the same length
     # We do not consider the gap in the last position since it correspond to a
-    # scift of 1 nucleotide. It will be analyzed when we increase the
+    # shift of 1 nucleotide. It will be analyzed when we increase the
     # indexTargetSeq.
     while (i < (length(seq2Char) - 1)) {
         # Swap the  gap position "-" within the sequence of the microRNA
@@ -453,7 +453,7 @@ createMiRsitesInternalDF <- function(miRsites, microRNAs) {
 }
 
 # Compare the 2 sequences and find the max number of total matches and the
-# max number of continuous matches beteeen the seed region and the seed site
+# max number of continuous matches between the seed region and the seed site
 # considering also the presence of a buldge within the seed region of the miR
 # sequence or the target sequences. Store the information of each iteration
 # matches data frame.
