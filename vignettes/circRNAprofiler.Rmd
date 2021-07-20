@@ -1451,7 +1451,7 @@ and its example.
 # If you want to analysis only a subset of miRs, then specify the miR ids in 
 # miRs.txt (optional).
 # If miRs.txt is not present in your working directory specify pathToMiRs.
-# As default miRs.txt is searched in the wd. 11:04
+# As default miRs.txt is searched in the wd.
 miRsites <-
     getMiRsites(
         targetsFTS_circ,
