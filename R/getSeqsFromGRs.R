@@ -353,7 +353,7 @@ getSeqsFromGRs <-
 
 
 
-# The function getBSEcoords() retrieves the coordinates of the
+# The function getBSEcoords() retrieves the coordinates of the bse
 .getBSEcoords <- function(annotatedBSJs) {
     # Create an empty dataframe
     grCoords <- .getGRcoordsDF(annotatedBSJs)
