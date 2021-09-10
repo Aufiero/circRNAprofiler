@@ -1294,13 +1294,13 @@ head(p[[3]])
 
 The data frame contains the following columns:
 
-- foreground: number of motif found in the foreground target sequences 
+- foreground: number of motifs found in the foreground target sequences 
 (e.g. predicted circRNAs).
 
 - background: number of motifs found in the background target sequences 
 (e.g. randomly generated circRNAs).
 
-- foregroundNorm: number of motif found in the foreground target sequences (+1) 
+- foregroundNorm: number of motifs found in the foreground target sequences (+1) 
 divided by the number (or length) of sequences analyzed.
 
 - backgroundNorm: number of motifs found in background target sequences (+1) 
