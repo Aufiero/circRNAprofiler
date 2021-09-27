@@ -1000,6 +1000,10 @@ its example.
 targetsFTS_circ <-
 getCircSeqs(annotatedCirc, gtf, genome)
 
+# Background target sequences
+targetsBTS_circ <-
+getCircSeqs(annotatedBackgroundCircs, gtf, genome)
+
 ```
 
 The output is a list of 1 data frame containing the the following columns:
@@ -1046,6 +1050,10 @@ and its example.
 # Foreground target sequences
 targetsFTS_bsj <-
     getSeqsAcrossBSJs(annotatedCirc, gtf, genome)
+
+# Background target sequences
+targetsBTS_bsj <-
+getCircSeqs(annotatedBackgroundCircs, gtf, genome)
 
 ```
 
@@ -1209,12 +1217,14 @@ motifsBTS_gr <-
 The output is a list. Each element of the list has 4 elements.
 
 - The first element (targets) is a dataframe containing the information 
-of the target sequences.
+of the target sequences. Columns are: id, gene, transcript, strand, chrom, startGR, 
+endGR, length, seq, type. See above for a description of the column names.
 
 - The second element (counts) is a dataframe containing the number of motifs found
-in the target sequences.
+in the target sequences. Each column corresponds to a motif.
 
 - The third element (locations) is a dataframe containing the locations of the motifs.
+Each column corresponds to a motif.
 
 - The fourth element (motifs) is a dataframe containing the sequences of the 
 motifs and the corresponding RBP.
@@ -1243,32 +1253,31 @@ and its example.
 ```{r, fig.align="center", fig.width = 7, fig.height = 7, eval = FALSE}
 # Plot log2FC and normalized counts
 
-# Normalize using the number of target sequences:
-# nf1 = nrow(annotatedCirc), 
-# nf2 = nrow(annotatedBackgroundCircs)
-# 
-# Normalize using the length of the circRNA sequences:
-# nf1 = sum(annotatedCirc$lenCircRNA, na.rm = T) 
-# nf2 = sum(annotatedBackgroundCircs$lenCircRNA, na.rm = T)
+# Normalize using the number of target sequences. You can do this normalization if you
+# analyzed the same number of target sequences and extracted the same number of 
+# nucleotides from the latter.
 
-# Normalize using the length of the adjusted BSJ sequences. 
-# If in getMotifs width is set to 6 then the lenght of the sequence is 10.
-# nf1 = 10* nrow(annotatedCirc) 
-# nf2 = 10* nrow(annotatedBackgroundCircs)
+# Alternatively you can use the length of the target sequences.
+# If you are analyzing the flanking upstream and downstream sequences then normalize 
+# using the length of the latters.E.g.:
+# nf1 = sum(targetsFTS_gr$upGR$length, na.rm = T)+sum(targetsFTS_gr$downGR$length, na.rm = T)
+# nf2 = sum(targetsBTS_gr$upGR$length, na.rm = T)+sum(targetsBTS_gr$downGR$length, na.rm = T)
 
-# Normalize using the length of the flanking sequences.
-# In getSeqsFromGRs we retrieved 200 nucleotides from the flanking introns and 
-# 10 nucleotides from the back-spliced exons, then the lenght of the sequence
-# is 210 *2 (2 because there is the upstream and downstream genomic range).
-# nf1 = (210*2)* nrow(annotatedCirc)
-# nf2 = (210*2)* nrow(annotatedBackgroundCircs)
+# If you are analyzing the circRNA sequences then normalize using the length of 
+# the latter. E.g.:
+# nf1 = sum(targetsFTS_circ$circ$length, na.rm = T) 
+# nf2 = sum(targetsBTS_circ$circ$length, na.rm = T)
+
+# If you are analyzing the BSJ then normalize using the length of the latter. E.g.: 
+# nf1 = sum(targetsFTS_bsj$bsj$length, na.rm = T)
+# nf2 = sum(targetsBTS_bsj$bsj$length, na.rm = T)
 
 p <-
     plotMotifs(
         mergedMotifsFTS_gr,
         mergedMotifsBTS_gr,
-        nf1 = (210*2)* nrow(annotatedCirc) , 
-        nf2 = (210*2)* nrow(annotatedBackgroundCircs), 
+        nf1 = sum(targetsFTS_gr$upGR$length, na.rm = T)+sum(targetsFTS_gr$upGR$length, na.rm = T) , 
+        nf2 = sum(targetsBTS_gr$upGR$length, na.rm = T)+sum(targetsBTS_gr$upGR$length, na.rm = T), 
         log2FC = 1,
         removeNegLog2FC = TRUE,
         df1Name = "circALPK2",
