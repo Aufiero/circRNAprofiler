@@ -661,7 +661,7 @@ mergeMotifs <- function(motifs) {
         )
 
     if (!is.null(tc)) {
-        db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt")))
+        db <- suppressWarnings(read_tsv(unz(tf, "ATtRACT_db.txt"), show_col_types=FALSE))
 
         # Reformat how the species name is reported in ATtRACT database so
         # that it can be compared with the species given in input.
