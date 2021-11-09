@@ -69,3 +69,7 @@
 # Version 1.5.3 (development version)
 
 -   Removed citr package from DESCRIPTION
+
+# Version 1.8.0 (October 27, 2021)
+
+-   Fifth release on bioconductor
