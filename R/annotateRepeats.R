@@ -48,8 +48,7 @@
 #'
 #' # Annotate repeats
 #'
-#' #repeats <- annotateRepeats(targets, annotationHubID  = "AH5122",
-#' #complementary = TRUE)
+#' # repeats <- annotateRepeats(targets, annotationHubID  = "AH5122", complementary = TRUE)
 #'
 #' }
 #'
