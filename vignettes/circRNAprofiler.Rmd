@@ -666,7 +666,7 @@ ggarrange(p1,
           nrow = 2)
 ```
 
-#### _edgerRes()_
+#### _getEdgerRes()_
 
 Alternatively, the helper functions edgerRes() can also be used to identifies
 differentially expressed circRNAs. The latter uses the R Bioconductor package 
