@@ -732,13 +732,15 @@ liftedBSJcoords <- liftBSJcoords(filteredCirc, map = "hg19ToMm9",
 #### _annotateBSJs()_
 
 The function annotateBSJs() annotates circRNAs internal structure and the 
-flanking introns. The genomic features are exracted from the user provided gene
+flanking introns. The genomic features are extracted from the user provided gene
 annotation. We first define the circRNA parental transcript as a linear 
 transcript whose exon coordinates overlap with that of the detected 
 back-spliced junctions and then the features are extracted from the selected
 transcript. Since the coordinates of the detected back-spliced junctions might
-not exactly correspond to annotated exonic coordinates, a gap of 10 nucleotides 
-is allowed. As default, in situations where genes have multiple transcripts 
+not exactly correspond to annotated exonic coordinates, the match is performed 
+considering the back-spliced junction coordinates minus the last number. For example
+if the coordinate is 1225359, then 122535 is used to detect the exon of the gene.
+As default, in situations where genes have multiple transcripts 
 whose exons align to the back-spliced junction coordinates, the transcript that 
 will produce the longest sequence (exon only) will be selected. Alternatively,
 the transcript to be used can be specified in transcripts.txt.

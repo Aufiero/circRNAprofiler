@@ -11,7 +11,7 @@
 
 <meta name="author" content="Simona Aufiero" />
 
-<meta name="date" content="2022-07-26" />
+<meta name="date" content="2022-09-22" />
 
 <title>circRNAprofiler: An R-based computational framework for the downstream analysis of circular RNAs</title>
 
@@ -388,7 +388,7 @@ pre code {
 <h1 class="title toc-ignore">circRNAprofiler: An R-based computational
 framework for the downstream analysis of circular RNAs</h1>
 <h4 class="author">Simona Aufiero</h4>
-<h4 class="date">2022-07-26</h4>
+<h4 class="date">2022-09-22</h4>
 
 </div>
 
@@ -897,20 +897,20 @@ the function and its example.</p>
 # detected in the heart merged using the code above.
 data(&quot;mergedBSJunctions&quot;)
 head(mergedBSJunctions)
-##                                       id       gene strand chrom startUpBSE endDownBSE     tool   C1  C2   C3   D1
-## 1        SYCP2:-:chr20:58497514:58497445      SYCP2      - chr20   58497514   58497445       cm 4858 577 4256 6561
-## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8      + chr14  101432017  101432103       cm 4310 502 3824 5870
-## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1      -  chr2   40657441   40655613    cm,ms 2687 539 2718 2862
-## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1      -  chr2   40657444   40655613 cm,ms,ns 2064 389 2357 2263
-## 5         LGMN:-:chr14:93207524:93200027       LGMN      - chr14   93207524   93200027       cm 1367 194 1114 1652
-## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B      -  chr2   72960247   72945232 cm,ms,ns  641  89  764  741
-##     D2  D3    H1   H2   H3
-## 1 6347 253 11050 8792 5804
-## 2 5609 203 10094 7953 5256
-## 3 5623 428  2527 4446 6113
-## 4 4677 324  2196 3894 5291
-## 5 2164 195  1428 1551 1579
-## 6 1186 277  1974 1154 1649</code></pre>
+##                                       id       gene strand chrom startUpBSE endDownBSE     tool   C1  C2   C3   D1   D2  D3
+## 1        SYCP2:-:chr20:58497514:58497445      SYCP2      - chr20   58497514   58497445       cm 4858 577 4256 6561 6347 253
+## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8      + chr14  101432017  101432103       cm 4310 502 3824 5870 5609 203
+## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1      -  chr2   40657441   40655613    cm,ms 2687 539 2718 2862 5623 428
+## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1      -  chr2   40657444   40655613 cm,ms,ns 2064 389 2357 2263 4677 324
+## 5         LGMN:-:chr14:93207524:93200027       LGMN      - chr14   93207524   93200027       cm 1367 194 1114 1652 2164 195
+## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B      -  chr2   72960247   72945232 cm,ms,ns  641  89  764  741 1186 277
+##      H1   H2   H3
+## 1 11050 8792 5804
+## 2 10094 7953 5256
+## 3  2527 4446 6113
+## 4  2196 3894 5291
+## 5  1428 1551 1579
+## 6  1974 1154 1649</code></pre>
 <p>Plot commonly identified circRNAs.</p>
 <pre class="r"><code># Plot
 p &lt;- ggplot(mergedBSJunctions, aes(x = tool)) +
@@ -1002,20 +1002,20 @@ deseqResBvsA &lt;-
         pAdjustMethod = &quot;BH&quot;
     )
 head(deseqResBvsA)
-##                                       id       gene      log2FC    pvalue      padj        C1        C2        C3
-## 1        SYCP2:-:chr20:58497514:58497445      SYCP2 -0.21872628 0.6882730 0.9984061 3359.6544 1895.7608 2591.0545
-## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8 -0.23032811 0.6743555 0.9984061 2980.6732 1649.3448 2328.0528
-## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1 -0.06724610 0.8141522 0.9984061 1858.2526 1770.9100 1654.7195
-## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1 -0.04007647 0.8877923 0.9984061 1427.4036 1278.0779 1434.9426
-## 5         LGMN:-:chr14:93207524:93200027       LGMN  0.04748208 0.8536426 0.9984061  945.3782  637.3962  678.2037
-## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B  0.51441043 0.1338385 0.9984061  443.2973  292.4137  465.1235
-##          D1        D2        D3
-## 1 3555.2959 2357.5131  824.6553
-## 2 3180.8546 2083.3923  661.6800
-## 3 1550.8698 2088.5924 1395.0691
-## 4 1226.2818 1737.2127 1056.0803
-## 5  895.1911  803.7905  635.6039
-## 6  401.5355  440.5247  902.8835</code></pre>
+##                                       id       gene      log2FC    pvalue      padj        C1        C2        C3        D1
+## 1        SYCP2:-:chr20:58497514:58497445      SYCP2 -0.21872628 0.6882730 0.9984061 3359.6544 1895.7608 2591.0545 3555.2959
+## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8 -0.23032811 0.6743555 0.9984061 2980.6732 1649.3448 2328.0528 3180.8546
+## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1 -0.06724610 0.8141522 0.9984061 1858.2526 1770.9100 1654.7195 1550.8698
+## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1 -0.04007647 0.8877923 0.9984061 1427.4036 1278.0779 1434.9426 1226.2818
+## 5         LGMN:-:chr14:93207524:93200027       LGMN  0.04748208 0.8536426 0.9984061  945.3782  637.3962  678.2037  895.1911
+## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B  0.51441043 0.1338385 0.9984061  443.2973  292.4137  465.1235  401.5355
+##          D2        D3
+## 1 2357.5131  824.6553
+## 2 2083.3923  661.6800
+## 3 2088.5924 1395.0691
+## 4 1737.2127 1056.0803
+## 5  803.7905  635.6039
+## 6  440.5247  902.8835</code></pre>
 <pre class="r"><code># Compare condition C Vs A
 deseqResCvsA &lt;-
     getDeseqRes(
@@ -1025,20 +1025,20 @@ deseqResCvsA &lt;-
         pAdjustMethod = &quot;BH&quot;
     )
 head(deseqResCvsA)
-##                                       id       gene      log2FC      pvalue       padj        C1        C2        C3
-## 1        SYCP2:-:chr20:58497514:58497445      SYCP2  0.66419598 0.136048385 0.52337347 4634.2050 2498.0706 3487.7840
-## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8  0.69952766 0.110824859 0.46971699 4111.4499 2173.3647 3133.7608
-## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1  0.16723172 0.556461506 0.88083258 2563.2172 2333.5529 2227.3959
-## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1  0.31640317 0.251497581 0.66669722 1968.9171 1684.1412 1931.5571
-## 5         LGMN:-:chr14:93207524:93200027       LGMN -0.08792522 0.700433109 0.93530126 1304.0260  839.9059  912.9209
-## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B  0.90322591 0.002513725 0.03898947  611.4709  385.3176  626.0966
-##         H1        H2        H3
-## 1 7990.915 5750.6484 3099.3849
-## 2 7299.574 5201.8775 2806.7483
-## 3 1827.425 2908.0281 3264.3935
-## 4 1588.059 2546.9774 2825.4386
-## 5 1032.672 1014.4740  843.1993
-## 6 1427.517  754.8053  880.5799</code></pre>
+##                                       id       gene      log2FC      pvalue       padj        C1        C2        C3       H1
+## 1        SYCP2:-:chr20:58497514:58497445      SYCP2  0.66419598 0.136048385 0.52337347 4634.2050 2498.0706 3487.7840 7990.915
+## 2 AL132709.8:+:chr14:101432017:101432103 AL132709.8  0.69952766 0.110824859 0.46971699 4111.4499 2173.3647 3133.7608 7299.574
+## 3        SLC8A1:-:chr2:40657441:40655613     SLC8A1  0.16723172 0.556461506 0.88083258 2563.2172 2333.5529 2227.3959 1827.425
+## 4        SLC8A1:-:chr2:40657444:40655613     SLC8A1  0.31640317 0.251497581 0.66669722 1968.9171 1684.1412 1931.5571 1588.059
+## 5         LGMN:-:chr14:93207524:93200027       LGMN -0.08792522 0.700433109 0.93530126 1304.0260  839.9059  912.9209 1032.672
+## 6        EXOC6B:-:chr2:72960247:72945232     EXOC6B  0.90322591 0.002513725 0.03898947  611.4709  385.3176  626.0966 1427.517
+##          H2        H3
+## 1 5750.6484 3099.3849
+## 2 5201.8775 2806.7483
+## 3 2908.0281 3264.3935
+## 4 2546.9774 2825.4386
+## 5 1014.4740  843.1993
+## 6  754.8053  880.5799</code></pre>
 <p>Use volcanoPlot() function.</p>
 <p>Type ?volcanoPlot for more information about the arguments of the
 function and its example.</p>
@@ -1138,17 +1138,19 @@ introns</h3>
 <div id="annotatebsjs" class="section level4">
 <h4><em>annotateBSJs()</em></h4>
 <p>The function annotateBSJs() annotates circRNAs internal structure and
-the flanking introns. The genomic features are exracted from the user
+the flanking introns. The genomic features are extracted from the user
 provided gene annotation. We first define the circRNA parental
 transcript as a linear transcript whose exon coordinates overlap with
 that of the detected back-spliced junctions and then the features are
 extracted from the selected transcript. Since the coordinates of the
 detected back-spliced junctions might not exactly correspond to
-annotated exonic coordinates, a gap of 10 nucleotides is allowed. As
-default, in situations where genes have multiple transcripts whose exons
-align to the back-spliced junction coordinates, the transcript that will
-produce the longest sequence (exon only) will be selected.
-Alternatively, the transcript to be used can be specified in
+annotated exonic coordinates, the match is performed considering the
+back-spliced junction coordinates minus the last number. For example if
+the coordinate is 1225359, then 122535 is used to detect the exon of the
+gene. As default, in situations where genes have multiple transcripts
+whose exons align to the back-spliced junction coordinates, the
+transcript that will produce the longest sequence (exon only) will be
+selected. Alternatively, the transcript to be used can be specified in
 transcripts.txt. The output data frame will have the following
 columns:</p>
 <ul>
@@ -1970,66 +1972,54 @@ discussion.</p>
 ## Matrix products: default
 ## 
 ## locale:
-## [1] LC_COLLATE=English_United States.utf8  LC_CTYPE=C                            
-## [3] LC_MONETARY=English_United States.utf8 LC_NUMERIC=C                          
-## [5] LC_TIME=English_United States.utf8    
+## [1] LC_COLLATE=English_United States.utf8  LC_CTYPE=C                             LC_MONETARY=English_United States.utf8
+## [4] LC_NUMERIC=C                           LC_TIME=English_United States.utf8    
 ## 
 ## attached base packages:
 ## [1] stats4    grid      stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.3 BSgenome_1.64.0                   rtracklayer_1.56.1               
+##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.3 BSgenome_1.65.2                   rtracklayer_1.56.1               
 ##  [4] Biostrings_2.64.0                 XVector_0.36.0                    GenomicRanges_1.48.0             
-##  [7] GenomeInfoDb_1.32.2               IRanges_2.30.0                    S4Vectors_0.34.0                 
-## [10] BiocGenerics_0.42.0               gridExtra_2.3                     VennDiagram_1.7.3                
+##  [7] GenomeInfoDb_1.33.7               IRanges_2.30.0                    S4Vectors_0.34.0                 
+## [10] BiocGenerics_0.43.4               gridExtra_2.3                     VennDiagram_1.7.3                
 ## [13] futile.logger_1.4.3               ggpubr_0.4.0                      ggplot2_3.3.6                    
-## [16] knitr_1.39                        circRNAprofiler_1.11.2           
+## [16] circRNAprofiler_1.11.3            knitr_1.40                       
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] backports_1.4.1               AnnotationHub_3.4.0           BiocFileCache_2.4.0          
-##   [4] plyr_1.8.7                    splines_4.2.0                 BiocParallel_1.30.3          
-##   [7] gwascat_2.28.1                digest_0.6.29                 htmltools_0.5.3              
-##  [10] fansi_1.0.3                   magrittr_2.0.3                memoise_2.0.1                
-##  [13] tzdb_0.3.0                    limma_3.52.2                  readr_2.1.2                  
-##  [16] annotate_1.74.0               matrixStats_0.62.0            R.utils_2.12.0               
-##  [19] prettyunits_1.1.1             colorspace_2.0-3              blob_1.2.3                   
-##  [22] rappdirs_0.3.3                xfun_0.31                     dplyr_1.0.9                  
-##  [25] crayon_1.5.1                  RCurl_1.98-1.7                jsonlite_1.8.0               
-##  [28] genefilter_1.78.0             survival_3.3-1                VariantAnnotation_1.42.1     
-##  [31] glue_1.6.2                    universalmotif_1.14.1         gtable_0.3.0                 
-##  [34] zlibbioc_1.42.0               seqinr_4.2-16                 DelayedArray_0.22.0          
-##  [37] car_3.1-0                     abind_1.4-5                   scales_1.2.0                 
-##  [40] futile.options_1.0.1          DBI_1.1.3                     edgeR_3.38.1                 
-##  [43] rstatix_0.7.0                 Rcpp_1.0.9                    xtable_1.8-4                 
-##  [46] progress_1.2.2                bit_4.0.4                     httr_1.4.3                   
-##  [49] RColorBrewer_1.1-3            ellipsis_0.3.2                farver_2.1.1                 
-##  [52] pkgconfig_2.0.3               XML_3.99-0.10                 R.methodsS3_1.8.2            
-##  [55] sass_0.4.2                    dbplyr_2.2.1                  locfit_1.5-9.6               
-##  [58] utf8_1.2.2                    labeling_0.4.2                tidyselect_1.1.2             
-##  [61] rlang_1.0.2                   reshape2_1.4.4                later_1.3.0                  
-##  [64] AnnotationDbi_1.58.0          munsell_0.5.0                 BiocVersion_3.15.2           
-##  [67] tools_4.2.0                   cachem_1.0.6                  cli_3.3.0                    
-##  [70] generics_0.1.3                RSQLite_2.2.15                ade4_1.7-19                  
-##  [73] broom_1.0.0                   evaluate_0.15                 stringr_1.4.0                
-##  [76] fastmap_1.1.0                 yaml_2.3.5                    bit64_4.0.5                  
-##  [79] purrr_0.3.4                   KEGGREST_1.36.3               mime_0.12                    
-##  [82] formatR_1.12                  R.oo_1.25.0                   xml2_1.3.3                   
-##  [85] biomaRt_2.52.0                compiler_4.2.0                filelock_1.0.2               
-##  [88] curl_4.3.2                    png_0.1-7                     interactiveDisplayBase_1.34.0
-##  [91] ggsignif_0.6.3                tibble_3.1.7                  geneplotter_1.74.0           
-##  [94] bslib_0.4.0                   stringi_1.7.8                 highr_0.9                    
-##  [97] GenomicFeatures_1.48.3        lattice_0.20-45               Matrix_1.4-1                 
-## [100] vctrs_0.4.1                   pillar_1.8.0                  lifecycle_1.0.1              
-## [103] BiocManager_1.30.18           jquerylib_0.1.4               snpStats_1.46.0              
-## [106] cowplot_1.1.1                 bitops_1.0-7                  httpuv_1.6.5                 
-## [109] R6_2.5.1                      BiocIO_1.6.0                  promises_1.2.0.1             
-## [112] codetools_0.2-18              lambda.r_1.2.4                MASS_7.3-56                  
-## [115] assertthat_0.2.1              SummarizedExperiment_1.26.1   DESeq2_1.36.0                
-## [118] rjson_0.2.21                  withr_2.5.0                   GenomicAlignments_1.32.0     
-## [121] Rsamtools_2.12.0              GenomeInfoDbData_1.2.8        parallel_4.2.0               
-## [124] hms_1.1.1                     tidyr_1.2.0                   rmarkdown_2.14               
-## [127] MatrixGenerics_1.8.1          carData_3.0-5                 Biobase_2.56.0               
-## [130] shiny_1.7.2                   restfulr_0.0.15</code></pre>
+##   [1] backports_1.4.1               AnnotationHub_3.5.1           BiocFileCache_2.5.0           plyr_1.8.7                   
+##   [5] splines_4.2.0                 BiocParallel_1.30.3           gwascat_2.29.2                digest_0.6.29                
+##   [9] htmltools_0.5.3               fansi_1.0.3                   magrittr_2.0.3                memoise_2.0.1                
+##  [13] tzdb_0.3.0                    limma_3.53.9                  readr_2.1.2                   annotate_1.75.0              
+##  [17] matrixStats_0.62.0            R.utils_2.12.0                prettyunits_1.1.1             colorspace_2.0-3             
+##  [21] blob_1.2.3                    rappdirs_0.3.3                xfun_0.31                     dplyr_1.0.10                 
+##  [25] jsonlite_1.8.0                crayon_1.5.1                  RCurl_1.98-1.7                genefilter_1.79.0            
+##  [29] survival_3.4-0                VariantAnnotation_1.43.3      glue_1.6.2                    universalmotif_1.15.2        
+##  [33] gtable_0.3.1                  zlibbioc_1.42.0               seqinr_4.2-16                 DelayedArray_0.22.0          
+##  [37] car_3.1-0                     abind_1.4-5                   scales_1.2.1                  futile.options_1.0.1         
+##  [41] DBI_1.1.3                     edgeR_3.39.6                  rstatix_0.7.0                 Rcpp_1.0.9                   
+##  [45] xtable_1.8-4                  progress_1.2.2                bit_4.0.4                     httr_1.4.4                   
+##  [49] RColorBrewer_1.1-3            ellipsis_0.3.2                farver_2.1.1                  pkgconfig_2.0.3              
+##  [53] XML_3.99-0.10                 R.methodsS3_1.8.2             sass_0.4.2                    dbplyr_2.2.1                 
+##  [57] locfit_1.5-9.6                utf8_1.2.2                    labeling_0.4.2                tidyselect_1.1.2             
+##  [61] rlang_1.0.5                   reshape2_1.4.4                later_1.3.0                   AnnotationDbi_1.59.1         
+##  [65] munsell_0.5.0                 BiocVersion_3.16.0            tools_4.2.0                   cachem_1.0.6                 
+##  [69] cli_3.3.0                     generics_0.1.3                RSQLite_2.2.17                ade4_1.7-19                  
+##  [73] broom_1.0.1                   evaluate_0.16                 stringr_1.4.1                 fastmap_1.1.0                
+##  [77] yaml_2.3.5                    bit64_4.0.5                   purrr_0.3.4                   KEGGREST_1.37.3              
+##  [81] mime_0.12                     formatR_1.12                  R.oo_1.25.0                   xml2_1.3.3                   
+##  [85] biomaRt_2.53.2                compiler_4.2.0                rstudioapi_0.14               filelock_1.0.2               
+##  [89] curl_4.3.2                    png_0.1-7                     interactiveDisplayBase_1.35.0 ggsignif_0.6.3               
+##  [93] tibble_3.1.8                  geneplotter_1.75.0            bslib_0.4.0                   stringi_1.7.8                
+##  [97] highr_0.9                     GenomicFeatures_1.49.7        lattice_0.20-45               Matrix_1.5-1                 
+## [101] vctrs_0.4.1                   pillar_1.8.1                  lifecycle_1.0.2               BiocManager_1.30.18          
+## [105] jquerylib_0.1.4               snpStats_1.47.1               cowplot_1.1.1                 bitops_1.0-7                 
+## [109] httpuv_1.6.6                  R6_2.5.1                      BiocIO_1.7.1                  promises_1.2.0.1             
+## [113] codetools_0.2-18              lambda.r_1.2.4                MASS_7.3-58.1                 assertthat_0.2.1             
+## [117] SummarizedExperiment_1.27.3   DESeq2_1.37.6                 rjson_0.2.21                  withr_2.5.0                  
+## [121] GenomicAlignments_1.32.0      Rsamtools_2.12.0              GenomeInfoDbData_1.2.8        parallel_4.2.0               
+## [125] hms_1.1.2                     tidyr_1.2.1                   rmarkdown_2.16                MatrixGenerics_1.9.1         
+## [129] carData_3.0-5                 Biobase_2.56.0                shiny_1.7.2                   restfulr_0.0.15</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>
