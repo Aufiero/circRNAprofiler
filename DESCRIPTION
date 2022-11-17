@@ -15,7 +15,7 @@ Encoding: UTF-8
 biocViews: Annotation, StructuralPrediction, FunctionalPrediction, GenePrediction, 
     GenomeAssembly, DifferentialExpression
 Depends: 
-    R(>= 4.2.0)
+    R(>= 4.3.0)
 RoxygenNote: 7.1.2
 Suggests: 
     testthat,
