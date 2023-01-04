@@ -105,13 +105,13 @@ targets <- getSeqsFromGRs(
     )
 
 # Get motifs
-motifs <- getMotifs(
-    targets,
-    width = 6,
-    database = 'ATtRACT',
-    species = "Hsapiens",
-    rbp = TRUE,
-    reverse = FALSE)
+#motifs <- getMotifs(
+#    targets,
+#    width = 6,
+#    database = 'ATtRACT',
+#    species = "Hsapiens",
+#    rbp = TRUE,
+#    reverse = FALSE)
 
 }
 
