@@ -94,8 +94,8 @@
 #' #    species = "Hsapiens",
 #' #    rbp = TRUE,
 #' #    reverse = FALSE)
-#' 
-#' 
+#' #
+#' #}
 #' 
 #'
 #' @importFrom readr read_tsv
