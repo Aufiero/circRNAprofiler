@@ -113,7 +113,7 @@ targets <- getSeqsFromGRs(
 #    rbp = TRUE,
 #    reverse = FALSE)
 #
-#}
+}
 
 
 }
