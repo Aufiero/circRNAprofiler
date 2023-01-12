@@ -43,15 +43,15 @@ targets <- getSeqsFromGRs(
     )
 
 # Get motifs
-#motifs <-
-#getMotifs(
-#    targets,
-#    width = 6,
-#    species = "Hsapiens",
-#    rbp = TRUE,
-#   reverse = FALSE)
+motifs <-
+getMotifs(
+    targets,
+    width = 6,
+    species = "Hsapiens",
+    rbp = TRUE,
+   reverse = FALSE)
 
 # Group motifs
-#mergedMotifs <- mergeMotifs(motifs)
+mergedMotifs <- mergeMotifs(motifs)
 
 }

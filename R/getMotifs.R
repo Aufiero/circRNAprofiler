@@ -87,14 +87,14 @@
 #'     )
 #'
 #' # Get motifs
-#' #motifs <- getMotifs(
-#' #    targets,
-#' #    width = 6,
-#' #    database = 'ATtRACT',
-#' #    species = "Hsapiens",
-#' #    rbp = TRUE,
-#' #    reverse = FALSE)
-#' #
+#' motifs <- getMotifs(
+#'     targets,
+#'     width = 6,
+#'     database = 'ATtRACT',
+#'     species = "Hsapiens",
+#'     rbp = TRUE,
+#'     reverse = FALSE)
+#' 
 #' }
 #' 
 #'
@@ -146,7 +146,7 @@ getMotifs <-
             for (j in seq_along(motifs[[i]]$motif$motif)) {
                 stringMotif <- motifs[[i]]$motif$motif[j]
                 # Find location. Consider also overlapping patterns (?=pattern)
-                locations <- stringi::stri_locate_all(rnaSS,
+                locations <- stringi::stri_locate_all(as.character(rnaSS),
                                                       regex = paste("(?=", stringMotif, ")", sep = ""))
 
                 if (names(motifs)[1] == "circ") {
@@ -166,7 +166,7 @@ getMotifs <-
                 }
                 # Count occurences
                 motifs[[i]]$counts[stringMotif] <-
-                    stringr::str_count(rnaSS,
+                    stringr::str_count(as.character(rnaSS),
                                        paste("(?=", stringMotif, ")", sep = ""))
             }
         }
@@ -327,12 +327,12 @@ getMotifs <-
         if (rbp) {
             # Keep motifs matching with known RBP motifs
             filteredMotifs <- filteredMotifs %>%
-                dplyr::filter(!is.na(.data$id))
+                dplyr::filter(!is.na(id))
         } else{
             # Keep unknown motifs
             filteredMotifs <- filteredMotifs %>%
-                dplyr::filter(is.na(.data$id)) %>%
-                dplyr::mutate(id = paste("m", seq(1, length(.data$id)), sep = ""))
+                dplyr::filter(is.na(id)) %>%
+                dplyr::mutate(id = paste("m", seq(1, length(id)), sep = ""))
         }
 
         return(filteredMotifs)
@@ -365,8 +365,8 @@ getMotifs <-
             # the second
             grepedM <-
                 userDBmotifs[base::grep(filteredMotifs$motif[j], userDBmotifs$motif), ] %>%
-                dplyr::mutate(motif = as.character(.data$motif),
-                              id = as.character(.data$id))
+                dplyr::mutate(motif = as.character(motif),
+                              id = as.character(id))
 
             # str_extract works with pattern.
             extractedM <-
@@ -376,11 +376,11 @@ getMotifs <-
                 ) %>%
                 magrittr::set_colnames(c("motif", "id")) %>%
                 as.data.frame() %>%
-                dplyr::select(.data$id, .data$motif) %>%
-                dplyr::filter(!is.na(.data$motif)) %>%
-                dplyr::mutate(motif = as.character(.data$motif),
-                              id = as.character(.data$id)) %>%
-                dplyr::filter(base::nchar(.data$motif) >= widthCompMotifs)
+                dplyr::select(id, motif) %>%
+                dplyr::filter(!is.na(motif)) %>%
+                dplyr::mutate(motif = as.character(motif),
+                              id = as.character(id)) %>%
+                dplyr::filter(base::nchar(motif) >= widthCompMotifs)
 
             joinedM <- dplyr::bind_rows(grepedM, extractedM) %>%
                 dplyr::filter(!duplicated(.))
@@ -498,16 +498,16 @@ getMotifs <-
 #'     )
 #'
 #' # Get motifs
-#' #motifs <-
-#' #getMotifs(
-#' #    targets,
-#' #    width = 6,
-#' #    species = "Hsapiens",
-#' #    rbp = TRUE,
-#' #   reverse = FALSE)
+#' motifs <-
+#' getMotifs(
+#'     targets,
+#'     width = 6,
+#'     species = "Hsapiens",
+#'     rbp = TRUE,
+#'    reverse = FALSE)
 #'
 #' # Group motifs
-#' #mergedMotifs <- mergeMotifs(motifs)
+#' mergedMotifs <- mergeMotifs(motifs)
 #'
 #' @importFrom rlang .data
 #' @importFrom reshape2 melt
@@ -540,8 +540,8 @@ mergeMotifs <- function(motifs) {
         if (length(mergedMotifs) == 2) {
             mergedMotifsAll <-
                 dplyr::bind_rows(mergedMotifs[[1]], mergedMotifs[[2]]) %>%
-                dplyr::group_by(.data$motif) %>%
-                dplyr::summarise(count = sum(.data$count)) %>%
+                dplyr::group_by(motif) %>%
+                dplyr::summarise(count = sum(count)) %>%
                 base::merge(
                     .,
                     splittedRBPs,
@@ -550,10 +550,10 @@ mergeMotifs <- function(motifs) {
                     sort = FALSE
                 ) %>%
                 dplyr::ungroup() %>%
-                dplyr::group_by(.data$id) %>%
+                dplyr::group_by(id) %>%
                 dplyr::summarise(
-                    count = sum(.data$count),
-                    motif = paste(.data$motif, collapse = ",")
+                    count = sum(count),
+                    motif = paste(motif, collapse = ",")
                 ) %>%
                 as.data.frame()
 
@@ -567,10 +567,10 @@ mergeMotifs <- function(motifs) {
                     sort = FALSE
                 ) %>%
                 dplyr::ungroup() %>%
-                dplyr::group_by(.data$id) %>%
+                dplyr::group_by(id) %>%
                 dplyr::summarise(
-                    count = sum(.data$count),
-                    motif = paste(.data$motif, collapse = ",")
+                    count = sum(count),
+                    motif = paste(motif, collapse = ",")
                 ) %>%
                 as.data.frame()
         }
@@ -588,9 +588,9 @@ mergeMotifs <- function(motifs) {
             value.name = "count"
         ) %>%
         # dplyr::mutate_all(funs(replace(., is.na(.), 0)))%>%
-        dplyr::group_by(.data$motif) %>%
-        dplyr::summarise(count = sum(.data$count, na.rm = TRUE)) %>%
-        dplyr::mutate(motif = as.character(.data$motif))
+        dplyr::group_by(motif) %>%
+        dplyr::summarise(count = sum(count, na.rm = TRUE)) %>%
+        dplyr::mutate(motif = as.character(motif))
     return(reshapedCounts)
 }
 
@@ -621,8 +621,8 @@ mergeMotifs <- function(motifs) {
                     as.data.frame(cbind(id[b], toSplit$motif[j])) %>%
                         magrittr::set_colnames(c("id", "motif")) %>%
                         dplyr::mutate(
-                            id = as.character(.data$id),
-                            motif = as.character(.data$motif)
+                            id = as.character(id),
+                            motif = as.character(motif)
                         )
                 )
             }
@@ -682,11 +682,11 @@ mergeMotifs <- function(motifs) {
 
         if (species %in% db$Organism) {
             attractRBPmotifs <- db %>%
-                dplyr::filter(.data$Organism == species) %>%
-                dplyr::select(.data$Gene_name,
-                              .data$Motif) %>%
-                dplyr::rename(id = .data$Gene_name,
-                              motif = .data$Motif)
+                dplyr::filter(Organism == species) %>%
+                dplyr::select(Gene_name,
+                              Motif) %>%
+                dplyr::rename(id = Gene_name,
+                              motif = Motif)
         } else{
             cat(
                 paste(
@@ -696,11 +696,11 @@ mergeMotifs <- function(motifs) {
                 )
             )
             attractRBPmotifs <- db %>%
-                dplyr::filter(.data$Organism == "Hsapiens") %>%
-                dplyr::select(.data$Gene_name,
-                              .data$Motif) %>%
-                dplyr::rename(id = .data$Gene_name,
-                              motif = .data$Motif)
+                dplyr::filter(Organism == "Hsapiens") %>%
+                dplyr::select(Gene_name,
+                              Motif) %>%
+                dplyr::rename(id = Gene_name,
+                              motif = Motif)
         }
     } else{
         attractRBPmotifs <- data.frame(matrix(nrow = 0, ncol = 2))
@@ -741,7 +741,7 @@ mergeMotifs <- function(motifs) {
             memeFile <- grep('rbp', memeDB, value = TRUE) %>%
                 data.frame() %>%
                 magrittr::set_colnames('path') %>%
-                dplyr::filter(., !grepl("dna_encoded",.data$path)) %>%
+                dplyr::filter(., !grepl("dna_encoded",path)) %>%
                 dplyr::mutate(index = seq_along(.data$path)) %>%
                 dplyr::filter(.data$index == memeIndexFilePath)
 
