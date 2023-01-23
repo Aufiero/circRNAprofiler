@@ -87,13 +87,13 @@
 #'     )
 #'
 #' # Get motifs
-#' #motifs <- getMotifs(
-#' #    targets,
-#' #    width = 6,
-#' #    database = 'ATtRACT',
-#' #    species = "Hsapiens",
-#' #    rbp = TRUE,
-#' #    reverse = FALSE)
+#' motifs <- getMotifs(
+#'     targets,
+#'     width = 6,
+#'     database = 'ATtRACT',
+#'     species = "Hsapiens",
+#'     rbp = TRUE,
+#'     reverse = FALSE)
 #' 
 #' }
 #' 
@@ -146,7 +146,7 @@ getMotifs <-
             for (j in seq_along(motifs[[i]]$motif$motif)) {
                 stringMotif <- motifs[[i]]$motif$motif[j]
                 # Find location. Consider also overlapping patterns (?=pattern)
-                locations <- stringi::stri_locate_all(rnaSS,
+                locations <- stringi::stri_locate_all(as.character(rnaSS),
                                                       regex = paste("(?=", stringMotif, ")", sep = ""))
 
                 if (names(motifs)[1] == "circ") {
@@ -166,7 +166,7 @@ getMotifs <-
                 }
                 # Count occurences
                 motifs[[i]]$counts[stringMotif] <-
-                    stringr::str_count(rnaSS,
+                    stringr::str_count(as.character(rnaSS),
                                        paste("(?=", stringMotif, ")", sep = ""))
             }
         }
