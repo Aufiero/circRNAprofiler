@@ -569,11 +569,11 @@ createMiRsitesInternalDF <- function(miRsites, microRNAs) {
         # Filter based on the number of non-canonical matches
         # allowed and keep the max total matches found
         seedMatchesFiltered <- seedMatches %>%
-            dplyr::filter(.data$ncm <= maxNonCanonicalMatches) %>%
-            dplyr::arrange(desc(.data$tm)) %>%
+            dplyr::filter(ncm <= maxNonCanonicalMatches) %>%
+            dplyr::arrange(desc(tm)) %>%
             dplyr::slice(1) %>%
-            dplyr::rename(maxTotalMatches = .data$tm,
-                maxContinuousMatches = .data$cwcm)
+            dplyr::rename(maxTotalMatches = tm,
+                maxContinuousMatches = cwcm)
 
 
         return(seedMatchesFiltered)
@@ -637,10 +637,10 @@ createMiRsitesInternalDF <- function(miRsites, microRNAs) {
     # matches allowed and keep the max total matches
     # found
     centralMatchesFiltered <- centralMatches %>%
-        dplyr::arrange(desc(.data$tm)) %>%
+        dplyr::arrange(desc(tm)) %>%
         dplyr::slice(1) %>%
-        dplyr::rename(maxTotalMatches = .data$tm,
-            maxContinuousMatches = .data$cwcm)
+        dplyr::rename(maxTotalMatches = tm,
+            maxContinuousMatches = cwcm)
 
     return(centralMatchesFiltered)
 }
@@ -671,10 +671,10 @@ createMiRsitesInternalDF <- function(miRsites, microRNAs) {
         # found
         compensatoryMatchesFiltered <-
             compensatoryMatches %>%
-            dplyr::arrange(desc(.data$tm)) %>%
+            dplyr::arrange(desc(tm)) %>%
             dplyr::slice(1) %>%
-            dplyr::rename(maxTotalMatches = .data$tm,
-                maxContinuousMatches = .data$cwcm)
+            dplyr::rename(maxTotalMatches = tm,
+                maxContinuousMatches = cwcm)
 
         return(compensatoryMatchesFiltered)
 

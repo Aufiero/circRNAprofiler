@@ -153,31 +153,31 @@ annotateRepeats <-
         matchingRepeats <- df %>%
             dplyr::mutate_if(is.factor, as.character) %>%
             dplyr::filter(
-                .data$name == .data$name.1 &
-                    .data$gr != .data$gr.1 &
-                    .data$strand != .data$strand.1
+                name == name.1 &
+                    gr != gr.1 &
+                    strand != strand.1
             )
         
         repeats$upGR$repeats <-
             matchingRepeats[, c(1, 2, 4, 5, 6, 7, 8)] %>%
-            dplyr::arrange(.data$id)
+            dplyr::arrange(id)
         
         repeats$upGR$targets <-
             repeats$upGR$targets %>%
-            dplyr::filter(.data$id %in% unique(matchingRepeats$id)) %>%
-            dplyr::arrange(.data$id)
+            dplyr::filter(id %in% unique(matchingRepeats$id)) %>%
+            dplyr::arrange(id)
         
         
         repeats$downGR$repeats <-
             matchingRepeats[, c(10, 11, 12, 13, 14, 15, 16, 17)] %>%
             stats::setNames(gsub(".1", "", names(.))) %>%
-            dplyr::arrange(.data$id)
+            dplyr::arrange(id)
         
         
         repeats$downGR$targets <-
             repeats$downGR$targets %>%
-            dplyr::filter(.data$id %in% unique(matchingRepeats$id)) %>%
-            dplyr::arrange(.data$id)
+            dplyr::filter(id %in% unique(matchingRepeats$id)) %>%
+            dplyr::arrange(id)
         
     } else {
         repeats[[1]]$repeats <-
@@ -198,22 +198,22 @@ annotateRepeats <-
 .renameRepeats <- function(repeats) {
     repeats <- repeats %>%
         dplyr::select(
-            .data$id,
-            .data$name,
-            .data$seqnames.1,
-            .data$start.1,
-            .data$end.1,
-            .data$width.1,
-            .data$strand.1,
-            .data$score
+            id,
+            name,
+            seqnames.1,
+            start.1,
+            end.1,
+            width.1,
+            strand.1,
+            score
         ) %>%
         dplyr::rename(
-            chrom = .data$seqnames.1,
-            start = .data$start.1,
-            end = .data$end.1,
-            width = .data$width.1,
-            strand = .data$strand.1,
-            score = .data$score
+            chrom = seqnames.1,
+            start = start.1,
+            end = end.1,
+            width = width.1,
+            strand = strand.1,
+            score = score
         )
     
     repeats <- repeats[!duplicated(repeats),]

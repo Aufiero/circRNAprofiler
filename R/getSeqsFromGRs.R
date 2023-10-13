@@ -264,10 +264,10 @@ getSeqsFromGRs <-
         }
 
         grCoords <- grCoords %>%
-            dplyr::select(.data$startUpGR,
-                .data$endUpGR,
-                .data$startDownGR,
-                .data$endDownGR)
+            dplyr::select(startUpGR,
+                endUpGR,
+                startDownGR,
+                endDownGR)
         return(grCoords)
     }
 
@@ -343,10 +343,10 @@ getSeqsFromGRs <-
         }
 
         grCoords <- grCoords %>%
-            dplyr::select(.data$startUpGR,
-                .data$endUpGR,
-                .data$startDownGR,
-                .data$endDownGR)
+            dplyr::select(startUpGR,
+                endUpGR,
+                startDownGR,
+                endDownGR)
 
         return(grCoords)
     }

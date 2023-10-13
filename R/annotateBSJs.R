@@ -181,22 +181,22 @@ annotateBSJs <- function(backSplicedJunctions,
     # Find the isofom containing the back-spliced exon junction coordinates
     #  given in input
     start <- gtf %>%
-        dplyr::filter(.data$gene_name == gene,
-            .data$type == "exon") %>%
-        dplyr::group_by(.data$transcript_id) %>%
+        dplyr::filter(gene_name == gene,
+            type == "exon") %>%
+        dplyr::group_by(transcript_id) %>%
         dplyr::filter(
-            stringr::str_detect(.data$start, exJ1) |
-                stringr::str_detect(.data$start, exJ2)
+            stringr::str_detect(start, exJ1) |
+                stringr::str_detect(start, exJ2)
         )
 
     # Find the isofom containing the back-spliced exon junction coordinates
     # given in input
     end <- gtf %>%
-        dplyr::filter(.data$gene_name == gene,
-            .data$type == "exon") %>%
-        dplyr::group_by(.data$transcript_id) %>%
-        dplyr::filter(stringr::str_detect(.data$end, exJ1) |
-                stringr::str_detect(.data$end, exJ2))
+        dplyr::filter(gene_name == gene,
+            type == "exon") %>%
+        dplyr::group_by(transcript_id) %>%
+        dplyr::filter(stringr::str_detect(end, exJ1) |
+                stringr::str_detect(end, exJ2))
 
     # Check whether the end and the start coordinates are present and
     # if so take the the transcripts and sort by lenght. The first transcript
@@ -204,10 +204,10 @@ annotateBSJs <- function(backSplicedJunctions,
     inter <- intersect(start$transcript_id, end$transcript_id)
     if (length(inter) != 0) {
         allTranscripts <- gtf %>%
-            dplyr::filter(.data$transcript_id %in% inter) %>%
-            dplyr::group_by(.data$transcript_id) %>%
-            dplyr::summarise(len = sum(.data$width)) %>%
-            dplyr::arrange(desc(.data$len)) %>%
+            dplyr::filter(transcript_id %in% inter) %>%
+            dplyr::group_by(transcript_id) %>%
+            dplyr::summarise(len = sum(width)) %>%
+            dplyr::arrange(desc(len)) %>%
             .$transcript_id
 
     } else{
@@ -240,7 +240,7 @@ annotateBSJs <- function(backSplicedJunctions,
     # Retrieve the upstream and the downstream exons (adiacent exons) flanking
     # the back-spliced given in input.
     adiacentExons <- transcriptToAnalyze %>%
-        dplyr::filter(.data$exon_number %in% c(bsExons$exon_number[1] - 1,
+        dplyr::filter(exon_number %in% c(bsExons$exon_number[1] - 1,
             bsExons$exon_number[2] + 1))
 
     # Retrive the intron coordinates flanking the back-spliced exons given in
@@ -280,7 +280,7 @@ annotateBSJs <- function(backSplicedJunctions,
     # Retrieve the upstream and the downstream exons (adiacent exons) flanking
     # the back-spliced exons given in input.
     adiacentExons <- transcriptToAnalyze %>%
-        dplyr::filter(.data$exon_number ==
+        dplyr::filter(exon_number ==
                 bsExons$exon_number[2] + 1)
 
     # Retrive the coordinates of the downstream intron.
@@ -319,7 +319,7 @@ annotateBSJs <- function(backSplicedJunctions,
     # Retrieve the upstream and the downstream exons (adiacent exons) flanking
     # the back-spliced exons given in input.
     adiacentExons <- transcriptToAnalyze %>%
-        dplyr::filter(.data$exon_number ==
+        dplyr::filter(exon_number ==
                 bsExons$exon_number[1] - 1)
 
     # Retrive the coordinates of the upstream intron
@@ -397,26 +397,26 @@ annotateBSJs <- function(backSplicedJunctions,
     # columns
     lenBSEfi <- annotatedBSJs %>%
         dplyr::mutate(
-            lenUpIntron = abs(.data$endUpIntron - .data$startUpIntron),
-            lenUpBSE = abs(.data$endUpBSE - .data$startUpBSE),
-            lenDownBSE = abs(.data$endDownBSE - .data$startDownBSE),
-            lenDownIntron = abs(.data$endDownIntron - .data$startDownIntron),
-            meanLengthBSEs = base::rowMeans(base::cbind(.data$lenUpBSE, .data$lenDownBSE), na.rm =
+            lenUpIntron = abs(endUpIntron - startUpIntron),
+            lenUpBSE = abs(endUpBSE - startUpBSE),
+            lenDownBSE = abs(endDownBSE - startDownBSE),
+            lenDownIntron = abs(endDownIntron - startDownIntron),
+            meanLengthBSEs = base::rowMeans(base::cbind(lenUpBSE, lenDownBSE), na.rm =
                     TRUE),
             meanLengthIntrons = base::rowMeans(
-                base::cbind(.data$lenUpIntron, .data$lenDownIntron),
+                base::cbind(lenUpIntron, lenDownIntron),
                 na.rm =
                     TRUE
             )
         ) %>%
         dplyr::select(
-            .data$id,
-            .data$lenUpIntron,
-            .data$lenUpBSE,
-            .data$lenDownBSE,
-            .data$lenDownIntron,
-            .data$meanLengthBSEs,
-            .data$meanLengthIntrons
+            id,
+            lenUpIntron,
+            lenUpBSE,
+            lenDownBSE,
+            lenDownIntron,
+            meanLengthBSEs,
+            meanLengthIntrons
         )
     # Return a data frame containing the length (bp) of the back-spliced exons
     # and the corresponding falnking introns.
@@ -466,9 +466,9 @@ annotateBSJs <- function(backSplicedJunctions,
         # in transcripts.txt
         # TODO consider the exons to keep if this is known
         transcriptToAnalyze <- gtf  %>%
-            dplyr::filter(.data$transcript_id ==
+            dplyr::filter(transcript_id ==
                     transcript) %>%
-            dplyr::arrange(.data$exon_number)
+            dplyr::arrange(exon_number)
 
         return(transcriptToAnalyze)
     }
@@ -480,12 +480,12 @@ annotateBSJs <- function(backSplicedJunctions,
     # coordinates of the back-spliced exons
     bsExons <- transcriptToAnalyze %>%
         dplyr::filter(
-            stringr::str_detect(.data$start, exJ1) |
-                stringr::str_detect(.data$end, exJ1) |
-                stringr::str_detect(.data$start, exJ2) |
-                stringr::str_detect(.data$end, exJ2)
+            stringr::str_detect(start, exJ1) |
+                stringr::str_detect(end, exJ1) |
+                stringr::str_detect(start, exJ2) |
+                stringr::str_detect(end, exJ2)
         ) %>%
-        dplyr::arrange(.data$exon_number)
+        dplyr::arrange(exon_number)
 
     # If only one exon is present then the row is duplicated.
     # This step is only made to simplify the code below without
@@ -504,9 +504,9 @@ annotateBSJs <- function(backSplicedJunctions,
     # exons in between the back-spliced junctions
     lenCircRNA <-
         transcriptToAnalyze %>%
-        dplyr::filter(.data$exon_number %in%
+        dplyr::filter(exon_number %in%
                 c(bsExons$exon_number[1]:bsExons$exon_number[2])) %>%
-        dplyr::summarise(lenCircRNA = sum(.data$width))
+        dplyr::summarise(lenCircRNA = sum(width))
     return(lenCircRNA)
 }
 

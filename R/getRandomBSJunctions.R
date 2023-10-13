@@ -100,27 +100,27 @@ getRandomBSJunctions <- function(gtf, n = 100, f = 10, setSeed=NULL) {
   # Select two random back-spliced exons (up and down) from n randomly
   # selected transcript
   bsExons2 <- gtf %>%
-    dplyr::filter(.data$type == "exon") %>%
-    dplyr::group_by(.data$transcript_id) %>%
+    dplyr::filter(type == "exon") %>%
+    dplyr::group_by(transcript_id) %>%
     dplyr::filter(n() >= 3) %>%
     dplyr::ungroup() %>%
-    dplyr::filter(.data$transcript_id %in%
-                    sample(unique(.data$transcript_id), n - c)) %>%
-    dplyr::group_by(.data$transcript_id) %>%
+    dplyr::filter(transcript_id %in%
+                    sample(unique(transcript_id), n - c)) %>%
+    dplyr::group_by(transcript_id) %>%
     dplyr::sample_n(2) %>%
-    dplyr::arrange(.data$exon_number)
+    dplyr::arrange(exon_number)
   
     if(c !=0){
       # Select one random exon from n randomly selected transcript
       bsExons1 <- gtf %>%
-        dplyr::filter(.data$type == "exon") %>%
-        dplyr::group_by(.data$transcript_id) %>%
-        dplyr::filter(n() >= 3) %>%
+        dplyr::filter(type == "exon") %>%
+        dplyr::group_by(transcript_id) %>%
+        dplyr::filter(n >= 3) %>%
         dplyr::ungroup() %>%
-        dplyr::filter(.data$transcript_id %in% base::sample(unique(.data$transcript_id), c)) %>%
-        dplyr::group_by(.data$transcript_id) %>%
+        dplyr::filter(transcript_id %in% base::sample(unique(transcript_id), c)) %>%
+        dplyr::group_by(transcript_id) %>%
         dplyr::sample_n(1) %>%
-        dplyr::arrange(.data$exon_number)
+        dplyr::arrange(exon_number)
       
       # If only one exon is picked then the row is duplicated. This step is only
       # made to simplify the code below without introducing an additional if

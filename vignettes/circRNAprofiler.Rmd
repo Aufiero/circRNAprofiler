@@ -123,7 +123,8 @@ In order to initialize the project folder the helper function initCircRNAprofile
 can be used to streamline the process. To initialize the project folder run the 
 following command specifying the tools used to predict circRNAs. The following 
 options are allowed: "mapsplice", "nclscan", "knife", "circexplorer2", 
-"uroborus", "circmarker", and "other" (see below when to use the option "other"). 
+"uroborus", "circmarker", "tool1", "tool2" or "tool3". The last 3 options are for 
+unsupported tools. For now, a maximum of 3 unsupported tools can be used.
 The function will automatically create the project folder with the
 corresponding subfolders named as the circRNA detection tools used, and the 
 5 *.txt files templates with the corresponding headers. These files should be 
@@ -286,14 +287,15 @@ content as reported below.
 In detail circRNAprofiler has been tested on the following output files:
 MapSplice2-v2.2.0 output file (circularRNAs.txt),NCLscan v1.4 output file 
 (e.g. MyProject.result),circExplorer2 v2.3.4 output file (circularRNA_full.txt),
-KNIFE v1.5 output file (circJuncProbs.txt),,CircMarker (July.24.2018) output file 
+KNIFE v1.5 output file (circJuncProbs.txt),CircMarker (July.24.2018) output file 
 (Brief_sum.txt),UROBORUS v2.0.0 output file (circRNA_list.txt).
 
 If the tool is not mapsplice, nclscan, knife, circexplorer2, uroborus or 
 circmarker, first check that the tool used is an annotation-based circRNA 
 detection tool, then rename the files to circRNAs_X.txt and put them in the 
-subfolder "other".  In this last case, you must ensure that each circRNAs_X.txt
-file must have at least the following 6 columns with the header (tab separated):
+subfolders "tool1", "tool2" or "tool3". In these last cases, you must ensure that 
+each circRNAs_X.txt file must have at least the following 6 columns 
+with the header (tab separated):
 
 - chrom: represents the chromosome from which the circRNA is derived.
 

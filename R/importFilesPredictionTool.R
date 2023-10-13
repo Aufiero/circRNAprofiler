@@ -38,24 +38,24 @@ importMapSplice <- function(pathToFile) {
     # unwanted characters (e.g. chr1~chr1 = chr1, ++ = +, Raph1, = Raph1 )
     adaptedPatientCircTable <- importedPatientCircTable %>%
         dplyr::select(
-            gene = .data$annotated_gene_acceptor,
-            .data$strand,
-            .data$chrom,
-            startUpBSE = .data$acceptor_start,
+            gene = annotated_gene_acceptor,
+            strand,
+            chrom,
+            startUpBSE = acceptor_start,
             # back-spliced junction coordinate
-            endDownBSE = .data$doner_end,
+            endDownBSE = doner_end,
             # back-spliced junction coordinate
-            .data$coverage
+            coverage
         ) %>%
         dplyr::mutate(
-            chrom = unlist(lapply(.data$chrom, function(x)
+            chrom = unlist(lapply(chrom, function(x)
                 base::strsplit(x, "~")[[1]][1])),
             strand = substring(importedPatientCircTable$strand, 2),
-            gene = unlist(lapply(.data$gene, function(x)
+            gene = unlist(lapply(gene, function(x)
                 base::strsplit(x, ",")[[1]][1]))
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
 
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
@@ -63,16 +63,16 @@ importMapSplice <- function(pathToFile) {
     # Merge duplicated
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything()) %>%
+        dplyr::select(id, everything()) %>%
         dplyr::group_by(
-            .data$id,
-            .data$gene,
-            .data$strand,
-            .data$chrom,
-            .data$startUpBSE,
-            .data$endDownBSE
+            id,
+            gene,
+            strand,
+            chrom,
+            startUpBSE,
+            endDownBSE
         ) %>%
-        dplyr::summarise(coverage = sum(.data$coverage))
+        dplyr::summarise(coverage = sum(coverage))
 
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
@@ -157,26 +157,26 @@ importNCLscan <- function(pathToFile) {
     # 1 STEP - keep Only intergenic circRNAs (type==1).
     # 2 STEP - Select the needed columns
     adaptedPatientCircTable <- importedPatientCircTable %>%
-        dplyr::filter(.data$type == 1) %>%
+        dplyr::filter(type == 1) %>%
         dplyr::select(
-            .data$gene,
-            .data$strand,
-            .data$chrom,
-            .data$startUpBSE,
+            gene,
+            strand,
+            chrom,
+            startUpBSE,
             # back-spliced junction coordinate
-            .data$endDownBSE,
+            endDownBSE,
             # back-spliced junction coordinate
-            .data$coverage
+            coverage
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
 
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything())
+        dplyr::select(id, everything())
 
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
@@ -262,19 +262,19 @@ importCircExplorer2 <- function(pathToFile) {
     # 1 keep only exonic circRNAs (circType == "circRNA").
     # 2 STEP - Select the needed columns
     adaptedPatientCircTable <- importedPatientCircTable %>%
-        dplyr::filter(.data$circType == "circRNA") %>%
+        dplyr::filter(circType == "circRNA") %>%
         dplyr::select(
-            gene = .data$geneName,
-            .data$strand,
-            .data$chrom,
-            startUpBSE = .data$start,
+            gene = geneName,
+            strand,
+            chrom,
+            startUpBSE = start,
             # back-spliced junction coordinate
-            endDownBSE = .data$end,
+            endDownBSE = end,
             # back-spliced junction coordinate
-            coverage = .data$readNumber
+            coverage = readNumber
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
 
 
     # Generate a unique identifier
@@ -282,7 +282,7 @@ importCircExplorer2 <- function(pathToFile) {
 
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything())
+        dplyr::select(id, everything())
 
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
@@ -378,23 +378,23 @@ importKnife <- function(pathToFile) {
     # Select the needed columns.
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::select(
-            gene = .data$gene1_symbol,
-            .data$strand,
-            chrom = .data$chr,
-            startUpBSE = .data$splice_position1,
+            gene = gene1_symbol,
+            strand,
+            chrom = chr,
+            startUpBSE = splice_position1,
             # back-spliced junction coordinate
-            endDownBSE = .data$splice_position2,
+            endDownBSE = splice_position2,
             # back-spliced junction coordinate
-            coverage = .data$readNumber
+            coverage = readNumber
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything())
+        dplyr::select(id, everything())
 
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
@@ -471,7 +471,7 @@ importKnife <- function(pathToFile) {
 #'
 #' @examples
 #' # Path to an example file containing circRNAs
-#' pathToFile <- system.file("extdata", "other/circRNAs_001.txt",
+#' pathToFile <- system.file("extdata", "tool1/circRNAs_001.txt",
 #'     package="circRNAprofiler")
 #'
 #' # Inner function.
@@ -490,23 +490,23 @@ importOther <- function(pathToFile) {
 
     adaptedPatientCircTable <- importedPatientCircTable %>%
         dplyr::select(
-            .data$gene,
-            .data$strand,
-            .data$chrom,
-            .data$startUpBSE,
+            gene,
+            strand,
+            chrom,
+            startUpBSE,
             # back-spliced junction
-            .data$endDownBSE,
+            endDownBSE,
             # back-spliced junction
-            .data$coverage
+            coverage
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything())
+        dplyr::select(id, everything())
 
     return(adaptedPatientCircTable)
 }
@@ -563,33 +563,33 @@ importCircMarker <- function(pathToFile, gtf) {
     adaptedPatientCircTable <- importedPatientCircTable %>%
         dplyr::mutate(gene = genes) %>%
         dplyr::select(
-            .data$gene,
-            .data$strand,
-            chrom = .data$chrom,
-            startUpBSE = .data$start,
+            gene,
+            strand,
+            chrom = chrom,
+            startUpBSE = start,
             # back-spliced junction coordinate
-            endDownBSE = .data$end,
+            endDownBSE = end,
             # back-spliced junction coordinate
-            .data$coverage
+            coverage
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
     # Merge duplicated
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, .data$gene, everything()) %>%
+        dplyr::select(id, gene, everything()) %>%
         dplyr::group_by(
-            .data$id,
-            .data$gene,
-            .data$strand,
-            .data$chrom,
-            .data$startUpBSE,
-            .data$endDownBSE
+            id,
+            gene,
+            strand,
+            chrom,
+            startUpBSE,
+            endDownBSE
         ) %>%
-        dplyr::summarise(coverage = sum(.data$coverage))
+        dplyr::summarise(coverage = sum(coverage))
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
     return(adaptedPatientCircTable)
@@ -643,23 +643,23 @@ importUroborus <- function(pathToFile) {
     # Select the needed columns and rename them
     adaptedPatientCircTable <- importedPatientCircTable %>%
         dplyr::select(
-            gene = .data$Parental_gene_name,
-            .data$strand,
-            chrom = .data$Chromosome,
-            startUpBSE = .data$start_of_junction,
+            gene = Parental_gene_name,
+            strand,
+            chrom = Chromosome,
+            startUpBSE = start_of_junction,
             # back-spliced junction coordinate
-            endDownBSE = .data$end_of_junction,
+            endDownBSE = end_of_junction,
             # back-spliced junction coordinate
-            coverage = .data$read_counts
+            coverage = read_counts
         )%>%
         dplyr::mutate(
-            chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
     # Generate a unique identifier
     id <- .getID(adaptedPatientCircTable)
 
     adaptedPatientCircTable <- adaptedPatientCircTable %>%
         dplyr::mutate(id = id) %>%
-        dplyr::select(.data$id, everything())
+        dplyr::select(id, everything())
 
     # Fix coordinates
     adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)

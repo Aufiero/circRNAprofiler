@@ -40,27 +40,27 @@ formatGTF <- function(pathToGTF = NULL) {
         # For UCSC and Ncbi the exon_number column needs to be added
         if (!("exon_number" %in% colnames(gtf))) {
             pos <-  gtf  %>%
-                dplyr::filter(.data$strand == "+") %>%
-                dplyr::group_by(.data$transcript_id) %>%
-                dplyr::arrange(.data$start, .by_group = TRUE) %>%
+                dplyr::filter(strand == "+") %>%
+                dplyr::group_by(transcript_id) %>%
+                dplyr::arrange(start, .by_group = TRUE) %>%
                 dplyr::mutate (exon_number = row_number())
 
             neg <-  gtf  %>%
-                dplyr::filter(.data$strand == "-") %>%
-                dplyr::group_by(.data$transcript_id) %>%
-                dplyr::arrange(.data$start, .by_group = TRUE) %>%
+                dplyr::filter(strand == "-") %>%
+                dplyr::group_by(transcript_id) %>%
+                dplyr::arrange(start, .by_group = TRUE) %>%
                 dplyr::mutate (exon_number = rev(row_number()))
 
             formattedGTF <- rbind(pos, neg)
             formattedGTF <- formattedGTF %>%
-                dplyr::select(c(needColumns), "exon_number") %>%
-                dplyr::mutate(exon_number = as.numeric(.data$exon_number)) %>%
+                dplyr::select(all_of(needColumns), "exon_number") %>%
+                dplyr::mutate(exon_number = as.numeric(exon_number)) %>%
                 as.data.frame()
 
         } else {
             formattedGTF <- gtf %>%
-                dplyr::select(c(needColumns), "exon_number") %>%
-                dplyr::mutate(exon_number = as.numeric(.data$exon_number)) %>%
+                dplyr::select(all_of(needColumns), "exon_number") %>%
+                dplyr::mutate(exon_number = as.numeric(exon_number)) %>%
                 as.data.frame()
         }
 
@@ -71,7 +71,7 @@ formatGTF <- function(pathToGTF = NULL) {
         # Report mitocondrial chromosome as chrM (like in BSgenome) and not chrMT. 
         formattedGTFfinal <- formattedGTF %>%
             dplyr::mutate(
-                chrom = ifelse(.data$chrom == 'chrMT', 'chrM', .data$chrom))
+                chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
     } else{
         formattedGTF <- data.frame()
         cat("Specify path to GTF file.\n")
@@ -90,10 +90,10 @@ formatGTF <- function(pathToGTF = NULL) {
     # Keep only the needed rows
     # Rename seqnames to chrom
     gtf <- gtf %>%
-        dplyr::filter(.data$type == "exon") %>%
-        dplyr::rename(chrom = .data$seqnames) %>%
-        dplyr::mutate(strand = as.character(.data$strand),
-            chrom = as.character(.data$chrom))
+        dplyr::filter(type == "exon") %>%
+        dplyr::rename(chrom = seqnames) %>%
+        dplyr::mutate(strand = as.character(strand),
+            chrom = as.character(chrom))
     return(gtf)
 }
 

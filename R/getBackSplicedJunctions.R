@@ -54,7 +54,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
         detectionTools <- getDetectionTools()
         # Keep tools that have been used for circRNA detection
         detectionToolsUsed <- detectionTools %>%
-            dplyr::filter(.data$name %in% fileNames)
+            dplyr::filter(name %in% fileNames)
         if (nrow(detectionToolsUsed) > 0) {
             # Create backSplicedJunctions data frame
             backSplicedJunctions <-
@@ -137,7 +137,7 @@ getBackSplicedJunctions <-  function(gtf, pathToExperiment = NULL) {
 #' @export
 getDetectionTools <- function() {
     # Create a data frame
-    detectionTools <- data.frame(matrix(nrow = 7, ncol = 2))
+    detectionTools <- data.frame(matrix(nrow = 9, ncol = 2))
     colnames(detectionTools) <- c("name", "code")
 
     detectionTools$name[1] <- "mapsplice"
@@ -152,14 +152,20 @@ getDetectionTools <- function() {
     detectionTools$name[4] <- "knife"
     detectionTools$code[4] <- "kn"
 
-    detectionTools$name[5] <- "other"
-    detectionTools$code[5] <- "ot"
+    detectionTools$name[5] <- "tool1"
+    detectionTools$code[5] <- "t1"
 
     detectionTools$name[6] <- "circmarker"
     detectionTools$code[6] <- "cm"
 
     detectionTools$name[7] <- "uroborus"
     detectionTools$code[7] <- "ur"
+    
+    detectionTools$name[8] <- "tool2"
+    detectionTools$code[8] <- "t2"
+    
+    detectionTools$name[9] <- "tool3"
+    detectionTools$code[9] <- "t3"    
 
     return(detectionTools)
 
@@ -259,24 +265,24 @@ mergeBSJunctions <-
             # Find and merge commonly identified back-spliced junctions
             mergedBSJunctions <- backSplicedJunctionsFixed %>%
                 dplyr::mutate(mean = rowMeans(.[, experiment$label])) %>%
-                dplyr::group_by(.data$strand,
-                    .data$chrom,
-                    .data$startUpBSE,
-                    .data$endDownBSE) %>%
+                dplyr::group_by(strand,
+                    chrom,
+                    startUpBSE,
+                    endDownBSE) %>%
                 dplyr::arrange(desc(mean)) %>%
-                dplyr::mutate(mergedTools = paste(sort(unique(.data$tool)), collapse = ",")) %>%
+                dplyr::mutate(mergedTools = paste(sort(unique(tool)), collapse = ",")) %>%
                 dplyr::filter(row_number() == 1) %>%
                 dplyr::ungroup() %>%
-                dplyr::select(-c(.data$tool, .data$mean)) %>%
-                dplyr::rename(tool = .data$mergedTools) %>%
+                dplyr::select(-c(tool, mean)) %>%
+                dplyr::rename(tool = mergedTools) %>%
                 dplyr::select(
-                    .data$id,
-                    .data$gene,
-                    .data$strand,
-                    .data$chrom,
-                    .data$startUpBSE,
-                    .data$endDownBSE,
-                    .data$tool,
+                    id,
+                    gene,
+                    strand,
+                    chrom,
+                    startUpBSE,
+                    endDownBSE,
+                    tool,
                     everything()
                 ) %>%
                 as.data.frame()
@@ -340,7 +346,9 @@ mergeBSJunctions <-
                 nclscan = importNCLscan(pathToFile),
                 knife = importKnife(pathToFile),
                 circexplorer2 = importCircExplorer2(pathToFile),
-                other = importOther(pathToFile),
+                tool1 = importOther(pathToFile),
+                tool2 = importOther(pathToFile),
+                tool3 = importOther(pathToFile),
                 circmarker = importCircMarker(pathToFile, gtf),
                 uroborus <- importUroborus(pathToFile)
             )
@@ -354,8 +362,8 @@ mergeBSJunctions <-
 .getAntisenseCircRNAs <-
     function(mergedBSJunctions, gtf, exportAntisense = FALSE) {
         shrinkedGTF <- gtf %>%
-            dplyr::select(.data$gene_name, .data$strand) %>%
-            dplyr::group_by(.data$gene_name) %>%
+            dplyr::select(gene_name, strand) %>%
+            dplyr::group_by(gene_name) %>%
             dplyr::filter(row_number() == 1)
         colnames(shrinkedGTF)<- paste0(colnames(shrinkedGTF),'1')
 
@@ -363,8 +371,8 @@ mergeBSJunctions <-
             match(mergedBSJunctions$gene, shrinkedGTF$gene_name1)
         antisenseCircRNAs <-
             dplyr::bind_cols(mergedBSJunctions, shrinkedGTF[mt,]) %>%
-            dplyr::filter(.data$strand != .data$strand1) %>%
-            dplyr::select(-c(.data$gene_name1, .data$strand1))
+            dplyr::filter(strand != strand1) %>%
+            dplyr::select(-c(gene_name1, strand1))
 
         if (exportAntisense) {
             utils::write.table(

@@ -73,3 +73,7 @@
 # Version 1.8.0 (October 27, 2021)
 
 -   Fifth release on bioconductor
+
+# Version 1.15.2 (October 10, 2023)
+
+-   Possibility to use a maximum of 3 unsupported/‘other’ tools.

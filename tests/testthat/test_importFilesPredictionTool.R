@@ -42,7 +42,7 @@ test_that("importOther() generate the correct data structure with
             stringsAsFactors = FALSE,
             sep = "\t"
         )
-    pathToFile <- paste("other", experiment$fileName[1], sep = "/")
+    pathToFile <- paste("tool1", experiment$fileName[1], sep = "/")
 
     adaptedPatientBSJunctions <- importOther(pathToFile)
 

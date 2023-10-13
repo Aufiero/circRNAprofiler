@@ -23,7 +23,7 @@ If more columns are present they will be discared.
 }
 \examples{
 # Path to an example file containing circRNAs
-pathToFile <- system.file("extdata", "other/circRNAs_001.txt",
+pathToFile <- system.file("extdata", "tool1/circRNAs_001.txt",
     package="circRNAprofiler")
 
 # Inner function.

@@ -224,32 +224,32 @@ annotateSNPsGWAS <-
 .renameSNPsGWAS <- function(snps) {
     snps <- snps %>%
         dplyr::select(
-            .data$id,
-            .data$SNPS,
-            .data$seqnames.1,
-            .data$start.1,
-            .data$MAPPED_GENE,
-            .data$DISEASE.TRAIT,
-            .data$P.VALUE,
-            .data$CONTEXT,
-            .data$STRONGEST.SNP.RISK.ALLELE,
-            .data$PUBMEDID,
-            .data$STUDY
+            id,
+            SNPS,
+            seqnames.1,
+            start.1,
+            MAPPED_GENE,
+            DISEASE.TRAIT,
+            P.VALUE,
+            CONTEXT,
+            STRONGEST.SNP.RISK.ALLELE,
+            PUBMEDID,
+            STUDY
         ) %>%
         dplyr::rename(
-            snp = .data$SNPS,
-            chrom = .data$seqnames.1 ,
-            coord = .data$start.1,
-            mappedGene = .data$MAPPED_GENE,
-            diseaseTrait = .data$DISEASE.TRAIT,
-            pvalue = .data$P.VALUE,
-            context = .data$CONTEXT,
+            snp = SNPS,
+            chrom = seqnames.1 ,
+            coord = start.1,
+            mappedGene = MAPPED_GENE,
+            diseaseTrait = DISEASE.TRAIT,
+            pvalue = P.VALUE,
+            context = CONTEXT,
             strongestSNPriskAllele =
-                .data$STRONGEST.SNP.RISK.ALLELE,
-            pubmedID = .data$PUBMEDID,
-            study = .data$STUDY
+                STRONGEST.SNP.RISK.ALLELE,
+            pubmedID = PUBMEDID,
+            study = STUDY
         ) %>%
-        dplyr::arrange(.data$id)
+        dplyr::arrange(id)
     return(snps)
 }
 
@@ -290,7 +290,7 @@ annotateSNPsGWAS <-
         targets <-
             targetsToAnalyze[S4Vectors::subjectHits(overlappingGRs),] %>%
             dplyr::filter(!duplicated(.)) %>%
-            dplyr::arrange(.data$id)
+            dplyr::arrange(id)
     }
     
     overlaps <- vector("list", 2)
