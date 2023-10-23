@@ -248,46 +248,63 @@ importNCLscan <- function(pathToFile) {
 #' @importFrom rlang .data
 #' @export
 importCircExplorer2 <- function(pathToFile) {
-
-    # Get circExplorer column names
-    colNames <- .getCEcolNames()
-
-    options(readr.num_columns = 0)
-
-    # Read a tab separated (\t) values
-    importedPatientCircTable <- .readPathToFile(pathToFile, header = FALSE)
-
-    colnames(importedPatientCircTable) <- colNames
-
-    # 1 keep only exonic circRNAs (circType == "circRNA").
-    # 2 STEP - Select the needed columns
-    adaptedPatientCircTable <- importedPatientCircTable %>%
-        dplyr::filter(circType == "circRNA") %>%
-        dplyr::select(
-            gene = geneName,
-            strand,
-            chrom,
-            startUpBSE = start,
-            # back-spliced junction coordinate
-            endDownBSE = end,
-            # back-spliced junction coordinate
-            coverage = readNumber
-        )%>%
-        dplyr::mutate(
-            chrom = ifelse(chrom == 'chrMT', 'chrM', chrom))
-
-
-    # Generate a unique identifier
-    id <- .getID(adaptedPatientCircTable)
-
-    adaptedPatientCircTable <- adaptedPatientCircTable %>%
-        dplyr::mutate(id = id) %>%
-        dplyr::select(id, everything())
-
-    # Fix coordinates
-    adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
-
-    return(adaptedPatientCircTable)
+  
+  # Get circExplorer column names
+  colNames <- .getCEcolNames()
+  
+  options(readr.num_columns = 0)
+  
+  # Read a tab separated (\t) values
+  importedPatientCircTable <- .readPathToFile(pathToFile, header = FALSE)
+  
+  if (importedPatientCircTable[1,14]=="circRNA"){
+    colnames(importedPatientCircTable) <- colNames  
+    
+  }else if((importedPatientCircTable[1,14])=="circType" & 
+           identical(as.character(importedPatientCircTable[1,]),colNames)){
+    
+    names(importedPatientCircTable) <- as.character(importedPatientCircTable[1,])
+    importedPatientCircTable <- importedPatientCircTable[-1,]
+    
+  } else{
+    cat("(!) Column names do not match, circRNaprofiler was tested with 
+          circExplorer2 v2.3.4 output file (circularRNA_full.txt)\n")
+    cat("(!) Column names order should be:", colNames, "\n")      
+    
+  }
+  
+  
+  
+  # 1 keep only exonic circRNAs (circType == "circRNA").
+  # 2 STEP - Select the needed columns
+  adaptedPatientCircTable <- importedPatientCircTable %>%
+    dplyr::filter(circType == "circRNA") %>%
+    dplyr::select(
+      gene = geneName,
+      strand,
+      chrom,
+      startUpBSE = start,
+      # back-spliced junction coordinate
+      endDownBSE = end,
+      # back-spliced junction coordinate
+      coverage = readNumber
+    )%>%
+    dplyr::mutate(
+      chrom = ifelse(chrom == 'chrMT', 'chrM', chrom)) %>%
+    dplyr::mutate_at(c('startUpBSE', 'endDownBSE','coverage'), as.numeric)
+  
+  
+  # Generate a unique identifier
+  id <- .getID(adaptedPatientCircTable)
+  
+  adaptedPatientCircTable <- adaptedPatientCircTable %>%
+    dplyr::mutate(id = id) %>%
+    dplyr::select(id, everything())
+  
+  # Fix coordinates
+  adaptedPatientCircTable <- .fixCoords(adaptedPatientCircTable)
+  
+  return(adaptedPatientCircTable)
 }
 
 # Get circExplorer column names

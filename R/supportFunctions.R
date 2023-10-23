@@ -310,15 +310,15 @@
     fixedCircTable <- backSplicedJunctions
 
     coords1 <- fixedCircTable %>%
-        dplyr::mutate(start = .data$startUpBSE - 2) %>%
-        dplyr::mutate(end = .data$startUpBSE + 2) %>%
-        dplyr::select(-c(.data$endDownBSE, .data$startUpBSE))
+        dplyr::mutate(start = startUpBSE - 2) %>%
+        dplyr::mutate(end = startUpBSE + 2) %>%
+        dplyr::select(-c(endDownBSE, startUpBSE))
 
 
     coords2 <- fixedCircTable %>%
-        dplyr::mutate(start = .data$endDownBSE - 2) %>%
-        dplyr::mutate(end = .data$endDownBSE + 2) %>%
-        dplyr::select(-c(.data$endDownBSE, .data$startUpBSE))
+        dplyr::mutate(start = endDownBSE - 2) %>%
+        dplyr::mutate(end = endDownBSE + 2) %>%
+        dplyr::select(-c(endDownBSE, startUpBSE))
 
     grCoords1 <- GenomicRanges::makeGRangesFromDataFrame(
         coords1,
@@ -348,12 +348,12 @@
 
 
     gtfCoord1 <- gtf %>%
-        dplyr::mutate(start = .data$start,
-                      end = .data$start + 1)
+        dplyr::mutate(start = start,
+                      end = start + 1)
 
     gtfCoord2 <- gtf %>%
-        dplyr::mutate(start = .data$end,
-                      end = .data$end + 1)
+        dplyr::mutate(start = end,
+                      end = end + 1)
 
     newGTF <- gtfCoord1 %>%
         dplyr::bind_rows(gtfCoord2)
@@ -381,10 +381,10 @@
 
     x1 <- data.frame(grGTF[S4Vectors::subjectHits(overlappingGRs)],
                      grCoords1[S4Vectors::queryHits(overlappingGRs)]) %>%
-        dplyr::group_by(.data$id) %>%
+        dplyr::group_by(id) %>%
         dplyr::slice(row_number(1)) %>%
         dplyr::ungroup() %>%
-        dplyr::select(.data$id, .data$start)
+        dplyr::select(id, start)
 
     overlappingGRs2 <-
         suppressWarnings(GenomicRanges::findOverlaps(
@@ -396,12 +396,12 @@
 
     x2 <- data.frame(grGTF[S4Vectors::subjectHits(overlappingGRs2)],
                      grCoords2[S4Vectors::queryHits(overlappingGRs2)]) %>%
-        dplyr::group_by(.data$id) %>%
+        dplyr::group_by(id) %>%
         dplyr::slice(row_number(1)) %>%
         dplyr::ungroup() %>%
-        dplyr::select(.data$id, .data$start) %>%
-        dplyr::mutate(end = .data$start) %>%
-        dplyr::select(.data$id, .data$end)
+        dplyr::select(id, start) %>%
+        dplyr::mutate(end = start) %>%
+        dplyr::select(id, end)
 
     mt <- match(x1$id, x2$id)
     fixedCoords <- cbind(x1, x2[mt, ])
