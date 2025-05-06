@@ -247,6 +247,7 @@ getMotifs <-
         if (database == 'ATtRACT') {
             # Get motifs from attract data base (it contains motifs for 159 human RBPs)
             rbpMotifsFromDB <- .getRBPmotifsAttract(species)
+            
         } else if (database == 'MEME') {
             # Get MEME motifs (it contains motifs for 80 human RBPs)
             rbpMotifsFromDB <- .getRBPmotifsMEME(memeIndexFilePath)
@@ -278,6 +279,11 @@ getMotifs <-
                     .getReverseAttractRBPmotifs(rbpMotifsFromDB)
             } else if (nrow(rbpMotifsFromDB) > 0) {
                 rbpMotifsFromDBnew <- getReverseMotifs(rbpMotifsFromDB)
+            } else if (nrow(rbpMotifsFromDB) == 0){
+              
+              rbpMotifsFromDBnew <- rbpMotifsFromDB
+              cat("No motifs were retrieved from the database. Please check the connection to",
+                  database, "database")
             }
 
 
