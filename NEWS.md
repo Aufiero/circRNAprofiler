@@ -81,3 +81,8 @@
 # Version 1.15.3 (October 24, 2023)
 
 -   Fixed bug due to dplyr::bind\_rows()
+
+# Version 1.22.1 (May 8, 2024)
+
+-   Disabling  test_getMotifs due to failure caused by unreachable URL/database. 
+
